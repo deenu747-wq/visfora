@@ -1,56 +1,73 @@
-"use client";
-import Image from "next/image";
-import { useState } from "react";
-
-export default function Home() {
-  const [yearly, setYearly] = useState(true);
-  const plans = [
-    { name: "Starter", monthly: 499, yearly: 3999, features: ["100 Generations/mo", "Ad Creatives", "BG Remover"] },
-    { name: "Pro", monthly: 1499, yearly: 11999, popular: true, features: ["500 Generations/mo", "All Tools", "Product Shoots", "Priority Support"] },
-    { name: "Scale", monthly: 3999, yearly: 31999, features: ["Unlimited Generations", "Team Access (5)", "API Access", "Custom Models"] },
-  ];
+export default function Landing() {
   return (
-    <main className="min-h-screen bg-[#fafafa] text-black antialiased">
-      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-black/5">
-        <div className="max-w-7xl mx-auto flex items-center justify-between px-6 md:px-10 py-4">
-          <div className="flex items-center gap-3">
-            <Image src="/Logo.png" alt="Visfora" width={48} height={48} className="object-contain" />
-            <span className="text-[20px] font-extrabold tracking-tight">VISFORA</span>
-          </div>
-          <button className="px-6 py-2.5 bg-black text-white rounded-full text-[13px] font-semibold">Get Started</button>
+    <div className="min-h-screen bg-[#0A0A0A] text-white selection:bg-[#C9A86A]/30 font-sans antialiased">
+      {/* HEADER - Screenshot 6 */}
+      <header className="sticky top-0 z-50 h-[64px] px-6 flex items-center justify-between border-b border-white/[0.06] bg-[#0A0A0A]/80 backdrop-blur-xl">
+        <div className="flex items-center gap-3">
+          <div className="w-[36px] h-[36px] rounded-[10px] border-[1.5px] border-[#C9A86A] flex items-center justify-center font-black text-[14px] tracking-widest">VF</div>
+          <span className="text-[18px] font-bold tracking-[-0.02em]">VISFORΛ</span>
+        </div>
+        <nav className="hidden md:flex items-center gap-2">
+          {["Photo","Vector","3D","Motion","Mockup","Template"].map(t=>(
+            <a key={t} href={`/${t.toLowerCase()}`} className="h-[32px] px-4 rounded-full text-[13px] font-medium bg-white/[0.06] hover:bg-white text-white hover:text-black transition flex items-center">{t}</a>
+          ))}
+        </nav>
+        <div className="flex items-center gap-3">
+          <a href="/api" className="h-[36px] px-4 rounded-full bg-white/[0.06] text-[13px] flex items-center hover:bg-white hover:text-black transition">API</a>
+          <a href="/vector" className="h-[36px] px-5 rounded-full bg-white text-black text-[13px] font-semibold flex items-center">Start Free</a>
         </div>
       </header>
-      <section className="max-w-7xl mx-auto px-6 md:px-10 pt-16 md:pt-24 pb-12 text-center">
-        <h1 className="text-[44px] md:text-[72px] font-black leading-[0.9] tracking-tighter">Create Visuals<br/><span className="relative">That Convert.<span className="absolute bottom-2 left-0 w-full h-3 bg-yellow-400/40 -z-10"></span></span></h1>
-        <p className="mt-5 text-[17px] opacity-60 max-w-2xl mx-auto">Generate high-converting ad creatives, product shoots & social content in seconds.</p>
+
+      {/* HERO */}
+      <section className="relative px-6 pt-20 pb-16 text-center overflow-hidden">
+        <div className="absolute inset-0 -z-10 bg-[radial-gradient(600px_400px_at_50%_0%,#C9A86A22,transparent)]" />
+        <div className="inline-flex items-center gap-2 h-[28px] px-3 rounded-full bg-[#C9A86A]/10 border border-[#C9A86A]/20 text-[11px] tracking-widest text-[#C9A86A] mb-6">7 STUDIOS • API • MCP • $0 COST VECTOR</div>
+        <h1 className="text-[56px] md:text-[84px] font-black tracking-[-0.05em] leading-[0.9]">Design API<br/><span className="text-[#C9A86A]">for Developers.</span></h1>
+        <p className="mt-6 text-[16px] md:text-[18px] opacity-60 max-w-[560px] mx-auto leading-relaxed">One platform: Photo, Vector, 3D, Motion, Mockup, Template, API. Batch 100x, VTracer WASM, FLUX Fill, R3D. 100% margin on Vector.</p>
+        <div className="mt-8 flex justify-center gap-3">
+          <a href="/vector" className="h-[44px] px-6 rounded-full bg-white text-black font-semibold text-[14px] flex items-center">Start Vector Free →</a>
+          <a href="/api" className="h-[44px] px-6 rounded-full bg-white/[0.08] border border-white/10 font-medium text-[14px] flex items-center">View API Docs</a>
+        </div>
       </section>
-      <section className="max-w-7xl mx-auto px-6 md:px-10 pb-24">
-        <div className="text-center mb-10">
-          <h2 className="text-3xl font-black tracking-tight">Simple Pricing in INR</h2>
-          <div className="mt-6 inline-flex p-1 bg-white border border-black/10 rounded-full">
-            <button onClick={()=>setYearly(false)} className={`px-5 py-2 rounded-full text-[13px] font-semibold transition ${!yearly? 'bg-black text-white' : 'opacity-60'}`}>Monthly</button>
-            <button onClick={()=>setYearly(true)} className={`px-5 py-2 rounded-full text-[13px] font-semibold transition ${yearly? 'bg-black text-white' : 'opacity-60'}`}>Yearly <span className="ml-1 text-[10px] bg-yellow-400 text-black px-1.5 py-0.5 rounded-full">SAVE 33%</span></button>
+
+      {/* 6 STUDIOS GRID */}
+      <section className="px-6 py-12 max-w-[1200px] mx-auto grid md:grid-cols-3 gap-4">
+        {[
+          {n:"Photo Studio", d:"Background Remover + Upscaler + FLUX Fill + Gen Fill. 60% margin.", c:"#8B5CF6"},
+          {n:"Vector Studio", d:"Image→SVG/EPS/AI/PDF/CDR. VTracer Rust WASM. 100% margin.", c:"#C9A86A", hot:true},
+          {n:"3D Studio", d:"Image→3D Textured Mesh. TripoSR + R3D Remesh + USDZ.", c:"#06B6D4"},
+          {n:"Motion Studio", d:"Image→Video, Video Upscale, Face Swap. fal.ai + REEM.", c:"#F59E0B"},
+          {n:"Mockup Studio", d:"T-shirt, Mug, Book, Box, Device. Print-ready.", c:"#EC4899"},
+          {n:"Template Studio", d:"Posters, Resumes, Social. Fabric.js + Export PDF/PNG.", c:"#10B981"},
+        ].map(s=>(
+          <a key={s.n} href={`/${s.n.split(" ")[0].toLowerCase()}`} className="group p-6 rounded-[20px] bg-[#121212] border border-white/[0.06] hover:border-white/20 transition text-left">
+            <div className="flex items-center justify-between mb-4"><div className="w-[40px] h-[40px] rounded-[12px] flex items-center justify-center font-bold text-black" style={{background:s.c}}>{s.n[0]}</div>{s.hot&&<span className="text-[10px] px-2 py-1 rounded-full bg-[#C9A86A] text-black font-bold">HOT • $0 COST</span>}</div>
+            <h3 className="text-[18px] font-bold">{s.n}</h3>
+            <p className="mt-2 text-[13px] opacity-60 leading-relaxed">{s.d}</p>
+            <div className="mt-4 text-[12px] opacity-40 group-hover:opacity-100">Open Studio →</div>
+          </a>
+        ))}
+      </section>
+
+      {/* PRICING */}
+      <section className="px-6 py-16 max-w-[900px] mx-auto">
+        <div className="rounded-[24px] bg-[#121212] border border-white/[0.06] p-8 md:p-10 grid md:grid-cols-2 gap-8">
+          <div>
+            <h3 className="text-[28px] font-bold tracking-tight">Pricing</h3>
+            <div className="mt-6 space-y-4">
+              <div className="p-4 rounded-[14px] bg-white/[0.04] border border-white/5"><div className="text-[11px] tracking-widest opacity-50">FREE</div><div className="text-[20px] font-bold mt-1">₹0 / 10 credits</div><div className="text-[12px] opacity-60 mt-1">Watermarked • Try all studios</div></div>
+              <div className="p-4 rounded-[14px] bg-white text-black"><div className="text-[11px] tracking-widest opacity-60">CREATOR</div><div className="text-[20px] font-bold mt-1">₹499 / 100 credits</div><div className="text-[12px] opacity-60 mt-1">Vector ₹2/call • Photo ₹8/call • 60-100% margin</div></div>
+              <div className="p-4 rounded-[14px] bg-[#C9A86A] text-black"><div className="text-[11px] tracking-widest">PRO</div><div className="text-[20px] font-bold mt-1">₹1999 / 500 credits</div><div className="text-[12px] mt-1">Batch 100x + API + No watermark</div></div>
+            </div>
+          </div>
+          <div className="space-y-4">
+            <div className="p-4 rounded-[14px] bg-[#0A0A0A] border border-white/10"><h4 className="font-bold">API + MCP</h4><p className="text-[13px] opacity-60 mt-2">POST /api/v1/vector/image-to-vector<br/>MCP: visfora-vectorize, visfora-remove-bg<br/>Margin: 50-85% on API</p><a href="/api" className="mt-3 inline-flex h-[32px] px-4 rounded-full bg-white text-black text-[12px] font-semibold items-center">Docs →</a></div>
+            <div className="p-4 rounded-[14px] bg-[#8B5CF6]/10 border border-[#8B5CF6]/20"><h4 className="font-bold text-[#8B5CF6]">Why VISFORA?</h4><p className="text-[12px] opacity-70 mt-2">• Vector: $0 cost WASM = 100% profit<br/>• Photo: fal.ai + Replicate mix = 60% margin<br/>• Batch 100x = 10x competitors<br/>• Vercel + Upstash = Auto-scale India</p></div>
           </div>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 max-w-5xl mx-auto">
-          {plans.map((p) => (
-            <div key={p.name} className={`bg-white rounded-[24px] border p-7 flex flex-col ${p.popular? 'border-black shadow-xl scale-[1.02]' : 'border-black/5 shadow-sm'}`}>
-              {p.popular && <span className="text-[10px] font-bold tracking-widest bg-yellow-400 px-2 py-1 rounded-full self-start mb-3">MOST POPULAR</span>}
-              <h3 className="font-bold text-[18px]">{p.name}</h3>
-              <div className="mt-4 flex items-baseline gap-1">
-                <span className="text-[36px] font-black">₹{yearly? p.yearly.toLocaleString('en-IN') : p.monthly.toLocaleString('en-IN')}</span>
-                <span className="text-[13px] opacity-50">/{yearly? 'year' : 'month'}</span>
-              </div>
-              {yearly && <p className="text-[12px] opacity-50 mt-1">₹{Math.round(p.yearly/12).toLocaleString('en-IN')}/mo billed yearly</p>}
-              <ul className="mt-6 space-y-3 flex-1">
-                {p.features.map(f => <li key={f} className="text-[13px] flex gap-2"><span className="text-yellow-500">✓</span> {f}</li>)}
-              </ul>
-              <button className={`mt-7 w-full py-3 rounded-full font-semibold text-[14px] ${p.popular? 'bg-black text-white' : 'bg-zinc-100'}`}>Choose {p.name}</button>
-            </div>
-          ))}
-        </div>
       </section>
-      <footer className="border-t border-black/5 py-8 text-center text-[12px] opacity-30">© 2026 VISFORA</footer>
-    </main>
-  );
+
+      <footer className="px-6 py-8 text-center text-[11px] opacity-30 border-t border-white/[0.06]">© 2026 VISFORA • Built for India • Delhi</footer>
+    </div>
+  )
 }
