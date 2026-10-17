@@ -1,71 +1,43 @@
-import Link from 'next/link'
-
+﻿import Link from 'next/link'
+import HeaderHome from '@/components/home/HeaderHome'
 export default function HomePage(){
  return (
-  <div className="bg-[#FFFBF5] min-h-screen">
-   {/* HERO */}
-   <section className="max-w-[1400px] mx-auto px-6 pt-10 pb-6 text-center">
-    <h1 className="font-sans font-bold text-[48px] md:text-[64px] leading-[0.95] tracking-tight text-black">CRAFTED BY AI, FOR CREATORS</h1>
-    <p className="mt-3 text-[15px] text-[#8B7355] underline decoration-[#C8A165]/30 underline-offset-8">AI photography studio for e-commerce brands — fast, consistent, on-brand visuals</p>
-   </section>
-
-   {/* MAIN DASHBOARD */}
-   <section id="batch" className="max-w-[1400px] mx-auto px-6 grid grid-cols-12 gap-5">
-    
-    {/* LEFT TRUST */}
-    <div className="col-span-12 md:col-span-3">
-     <h2 className="font-bold text-[20px] text-black">Generate professional photos</h2>
-     <p className="font-medium mt-1 text-[14px]">Built for Indian sellers</p>
-     <div className="mt-4 space-y-3 text-[13px]">
-      <div className="flex gap-2"><span className="bg-[#C8A165] text-white w-5 h-5 rounded-full grid place-items-center text-[10px]">✓</span>GST-compliant invoices & billing</div>
-      <div className="flex gap-2"><span className="bg-[#C8A165] text-white w-5 h-5 rounded-full grid place-items-center text-[10px]">✓</span>UPI payments enabled</div>
-      <div className="flex gap-2"><span className="bg-[#C8A165] text-white w-5 h-5 rounded-full grid place-items-center text-[10px]">✓</span>Optimized for Amazon, Flipkart, Meesho</div>
-     </div>
-     <div className="mt-4 border border-[#C8A165]/30 inline-block px-3 py-1 rounded-lg text-[11px] bg-white">Trusted by 10,000+ Indian sellers</div>
-     <Link href="/photo-studio" className="mt-4 block w-full bg-black text-white text-center py-2 rounded-full text-[13px]">Open Photo Studio →</Link>
-    </div>
-
-    {/* CENTER BATCH */}
-    <div className="col-span-12 md:col-span-5">
-     <div className="bg-white border border-black/10 rounded-[12px] p-4 shadow-sm">
-      <div className="flex justify-between items-center">
-       <div className="flex items-center gap-2 font-semibold text-[14px]">☰ Batch Studio Dashboard</div>
-       <div className="text-[10px] border border-[#C8A165]/40 px-2 py-1 rounded-full">Batch: #BF-1248</div>
-      </div>
-      <div className="mt-4 border rounded-lg p-3 space-y-3">
-       <div className="flex justify-between text-[12px]"><span>📄 gold_candle.png</span><span className="text-[#B8945F]">Processing 80%</span></div>
-       <div className="h-1.5 bg-black/10 rounded-full overflow-hidden"><div className="h-full w-[80%] bg-[#C8A165]"></div></div>
-       <div className="flex justify-between text-[12px]"><span>📄 gold_perfume.png</span><span className="bg-[#1A7A4C] text-white text-[10px] px-2 py-1 rounded-full">✓ Completed</span></div>
-      </div>
-      <Link href="/photo-studio" className="mt-3 block text-center text-[12px] text-[#C8A165] underline">Upload More → Photo Studio</Link>
-     </div>
-    </div>
-
-    {/* RIGHT PRODUCT */}
-    <div className="col-span-12 md:col-span-4">
-     <div className="bg-white border rounded-xl overflow-hidden shadow-sm">
-      <img src="/sneaker.png" alt="product" className="h-[230px] w-full object-cover" />
-      <div className="p-3">
-       <div className="text-[11px] font-medium">Shadow Controls — Marble Light</div>
-       <Link href="/photo-studio" className="mt-2 block w-full bg-[#C8A165] text-white text-center py-2 rounded-full text-[12px]">Edit in Photo Studio</Link>
-      </div>
-     </div>
+  <div className="min-h-screen bg-[#FFFCF7] text-black">
+   <HeaderHome/>
+   <section className="max-w-[1280px] mx-auto px-6 pt-14 text-center">
+    <h1 className="font-extrabold tracking-tight leading-[0.9] text-[38px] md:text-[62px]">CRAFTED BY AI, FOR<br/><span className="text-[#C89B3C]">CREATATORS</span></h1>
+    <p className="mt-4 text-[15px] text-black/60">Generate studio-quality product photos for Amazon in seconds.</p>
+    <div className="mt-6 flex justify-center gap-3">
+     <Link href="/photo-studio" className="bg-black text-white rounded-full px-6 py-2.5 text-[13px]">Start creating free</Link>
+     <Link href="/resources" className="border bg-white rounded-full px-6 py-2.5 text-[13px]">Watch demo</Link>
     </div>
    </section>
-
-   {/* PRICING */}
-   <section id="pricing" className="max-w-[1400px] mx-auto px-6 mt-12">
-    <h2 className="text-center font-bold text-[20px]">Simple, transparent pricing</h2>
-    <p className="text-center text-[13px] text-black/50">Choose a plan that grows with your business</p>
-    <div className="grid grid-cols-12 gap-4 mt-5">
-     <div className="col-span-6 md:col-span-3 bg-white border rounded-xl p-5 text-center"><div className="font-bold">Free</div><div className="text-[32px] font-bold">₹0</div><Link href="/photo-studio" className="mt-3 block border border-black rounded-full py-2 text-[12px]">Start Free</Link></div>
-     <div className="col-span-6 md:col-span-3 bg-white border rounded-xl p-5 text-center"><div className="font-bold">Starter</div><div className="text-[32px] font-bold">₹699</div><Link href="/photo-studio" className="mt-3 block bg-[#C8A165] text-white rounded-full py-2 text-[12px]">Get Starter</Link></div>
-     <div className="col-span-6 md:col-span-3 bg-white border-2 border-[#C8A165] rounded-xl p-5 text-center relative"><div className="absolute -top-2 right-3 bg-[#C8A165] text-white text-[9px] px-2 py-1 rounded-full">Best for Amazon sellers</div><div className="font-bold">Growth</div><div className="text-[32px] font-bold">₹1999</div><Link href="/photo-studio" className="mt-3 block bg-black text-white rounded-full py-2 text-[12px]">Get Growth</Link></div>
-     <div className="col-span-6 md:col-span-3 bg-white border rounded-xl p-5 text-center"><div className="font-bold">Scale</div><div className="text-[32px] font-bold">₹4999</div><Link href="/photo-studio" className="mt-3 block border border-black rounded-full py-2 text-[12px]">Get Scale</Link></div>
+   <section className="max-w-[1280px] mx-auto px-6 mt-12 grid md:grid-cols-3 gap-5">
+    <Link href="/photo-studio" className="bg-white rounded-[16px] border border-black/5 p-5 shadow-[0_8px_24px_rgba(0,0,0,0.04)] hover:shadow-lg transition">
+     <div className="flex items-center gap-2"><span className="bg-[#FFF0C0] w-7 h-7 grid place-items-center rounded-full">Photo</span><span className="font-bold text-[18px]">Photo Studio</span></div>
+     <div className="mt-1 text-[11px] bg-[#FFF0C0] inline-block px-2 py-0.5 rounded-full ml-9">Output</div>
+     <div className="mt-4 flex justify-center"><img src="/sneaker.png" alt="product" className="h-[120px] w-auto object-contain"/></div>
+    </Link>
+    <Link href="/batch-studio" className="bg-white rounded-[16px] border border-black/5 p-5 shadow-[0_8px_24px_rgba(0,0,0,0.04)] hover:shadow-lg transition">
+     <div className="flex items-center gap-2"><span className="bg-[#FFF0C0] w-7 h-7 grid place-items-center rounded-full">Batch</span><span className="font-bold text-[18px]">Batch Studio</span></div>
+     <div className="text-[16px] font-bold mt-1">100 images <span className="text-[12px] font-normal text-black/50">2 min left</span></div>
+     <div className="mt-3 grid grid-cols-2 gap-2"><div className="bg-[#F8F5EF] rounded-lg h-[54px] grid place-items-center text-[11px]">bottle</div><div className="bg-[#F8F5EF] rounded-lg h-[54px] grid place-items-center text-[11px]">candle</div><div className="bg-[#F8F5EF] rounded-lg h-[54px] grid place-items-center text-[11px]">mug</div><div className="bg-[#F8F5EF] rounded-lg h-[54px] grid place-items-center text-[11px]">cream</div></div>
+    </Link>
+    <Link href="/home#pricing" className="bg-white rounded-[16px] border border-black/5 p-5 shadow-[0_8px_24px_rgba(0,0,0,0.04)] hover:shadow-lg transition">
+     <div className="flex items-center gap-2"><span className="bg-[#FFF0C0] w-7 h-7 grid place-items-center rounded-full">Price</span><span className="font-bold text-[18px]">Pricing Pro</span></div>
+     <div className="mt-6 text-[42px] font-extrabold text-[#C89B3C]">Rs.1999</div>
+     <div className="mt-1 text-[11px] bg-[#FFF0C0] inline-block px-2 py-0.5 rounded-full">Most Popular</div>
+    </Link>
+   </section>
+   <section id="pricing" className="max-w-[1280px] mx-auto px-6 mt-10 pb-12">
+    <div className="text-center text-[11px] tracking-[0.2em] text-black/40 mb-4">PRICING</div>
+    <div className="grid md:grid-cols-4 gap-4">
+     <div className="bg-white rounded-[14px] border p-5"><div className="font-semibold">Starter</div><div className="text-[28px] font-extrabold">Rs.499<span className="text-[12px] font-normal text-black/50"> /month</span></div><ul className="mt-4 text-[12px] space-y-1.5 text-black/70"><li>Up to 50 images</li><li>Basic AI edits</li><li>Email support</li></ul><Link href="/photo-studio" className="mt-5 block text-center border rounded-full py-2 text-[12px]">Start Starter</Link></div>
+     <div className="bg-white rounded-[14px] border-2 border-[#C89B3C]/30 p-5 relative"><div className="absolute top-3 right-3 bg-[#FFEDB0] text-[10px] px-2 py-0.5 rounded-full">Most Popular</div><div className="font-semibold">Pro</div><div className="text-[28px] font-extrabold">Rs.1999<span className="text-[12px] font-normal text-black/50"> /month</span></div><ul className="mt-4 text-[12px] space-y-1.5 text-black/70"><li>Up to 500 images</li><li>Advanced AI edits</li><li>Batch processing</li><li>Priority support</li></ul><Link href="/photo-studio" className="mt-5 block text-center bg-black text-white rounded-full py-2 text-[12px]">Get Pro</Link></div>
+     <div className="bg-white rounded-[14px] border p-5"><div className="font-semibold">Business</div><div className="text-[28px] font-extrabold">Rs.4999<span className="text-[12px] font-normal text-black/50"> /month</span></div><ul className="mt-4 text-[12px] space-y-1.5 text-black/70"><li>Up to 2000 images</li><li>Custom styles</li><li>Team collaboration</li><li>API access</li></ul><Link href="/company" className="mt-5 block text-center border rounded-full py-2 text-[12px]">Talk to Sales</Link></div>
+     <div className="bg-white rounded-[14px] border p-5"><div className="font-bold leading-tight">Enterprise<br/>Custom</div><div className="mt-1 text-[11px] text-black/50">Contact us for volume</div><ul className="mt-4 text-[12px] space-y-1.5 text-black/70"><li>Unlimited images</li><li>Dedicated manager</li><li>SLA and security</li><li>Custom integration</li></ul><Link href="/company" className="mt-5 block text-center border rounded-full py-2 text-[12px]">Contact Us</Link></div>
     </div>
    </section>
-
-   <div className="mt-10 border-t py-4 text-center text-[11px] text-black/50">Made in India — Built in Bengaluru · Secure · GST-compliant · 24/7 Support</div>
   </div>
  )
 }
