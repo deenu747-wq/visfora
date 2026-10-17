@@ -20,7 +20,7 @@ export default function HeaderHome(){
     </nav>
     <div className="flex items-center gap-3">
      <Link href="/login" className="hidden md:flex border rounded-full px-4 py-2 text-[13px]">Log in</Link>
-     <Link href="/photo-studio" className="bg-black text-white rounded-full px-5 py-2.5 text-[13px] font-medium">Get started</Link>
+     <Link href="/get-started" className="bg-black text-white rounded-full px-5 py-2.5 text-[13px] font-medium">Get started</Link>
     </div>
    </div>
   </header>
