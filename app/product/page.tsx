@@ -1,5 +1,6 @@
 ﻿import Link from 'next/link'
 import HeaderHome from '@/components/home/HeaderHome'
+import Footer from '@/components/Footer'
 
 export default function ProductPage(){
  return (
@@ -68,6 +69,7 @@ export default function ProductPage(){
      </div>
     </div>
    </section>
+    <Footer/>
   </div>
  )
 }
