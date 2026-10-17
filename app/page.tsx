@@ -1,14 +1,15 @@
 "use client";
 import Image from "next/image";
+import Link from "next/link";
 import { useState, useEffect } from "react";
 
 const SLIDES = [
-  { img: "/banners/banner-photo-studio.jpg", link: "/photo-studio" },
-  { img: "/banners/banner-vector-studio.jpg", link: "/vector-studio" },
-  { img: "/banners/banner-3d-studio.jpg", link: "/3d-studio" },
-  { img: "/banners/banner-motion-studio.jpg", link: "/motion-studio" },
-  { img: "/banners/banner-mockup-studio.jpg", link: "/mockup-studio" },
-  { img: "/banners/banner-template-studio.jpg", link: "/template-studio" },
+  { img: "/banners/banner-photo-studio.jpg" },
+  { img: "/banners/banner-vector-studio.jpg" },
+  { img: "/banners/banner-3d-studio.jpg" },
+  { img: "/banners/banner-motion-studio.jpg" },
+  { img: "/banners/banner-mockup-studio.jpg" },
+  { img: "/banners/banner-template-studio.jpg" },
 ];
 
 export default function Home() {
@@ -35,13 +36,13 @@ export default function Home() {
         </span>
       </div>
 
-      {/* CTA - DOUBLE SIZE + >> */}
-      <a
-        href={SLIDES[current].link}
+      {/* CTA - FIXED: ALWAYS GOES TO /home */}
+      <Link
+        href="/home"
         className="absolute bottom-10 right-10 md:bottom-14 md:right-16 z-20 font-serif italic font-light text-white text-[44px] md:text-[56px] tracking-wide hover:text-[#d6a85a] transition-colors"
       >
         Continue &gt;&gt;
-      </a>
+      </Link>
 
       <div className="absolute bottom-12 left-1/2 -translate-x-1/2 z-20 flex gap-3">
         {SLIDES.map((_, i) => (
