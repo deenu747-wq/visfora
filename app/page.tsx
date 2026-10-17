@@ -35,12 +35,12 @@ export default function Home() {
         </span>
       </div>
 
-      {/* CTA - Only premium "continue" */}
+      {/* CTA - DOUBLE SIZE + >> */}
       <a
         href={SLIDES[current].link}
-        className="absolute bottom-10 right-10 md:bottom-14 md:right-16 z-20 font-serif italic font-light text-white text-[22px] md:text-[26px] tracking-wide hover:text-[#d6a85a] transition-colors"
+        className="absolute bottom-10 right-10 md:bottom-14 md:right-16 z-20 font-serif italic font-light text-white text-[44px] md:text-[56px] tracking-wide hover:text-[#d6a85a] transition-colors"
       >
-        Continue
+        Continue &gt;&gt;
       </a>
 
       <div className="absolute bottom-12 left-1/2 -translate-x-1/2 z-20 flex gap-3">
