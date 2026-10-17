@@ -9,7 +9,7 @@ export default function Footer(){
       <Image src="/Logo.png" alt="V" width={32} height={32} className="h-8 w-8 object-contain"/>
       <span className="text-[22px] tracking-[0.3em] font-light">VISF<span className="font-bold text-[#d6a85a]">ORA</span></span>
      </Link>
-     <p className="mt-3 text-[12px] text-white/50 leading-relaxed">AI-powered SaaS solutions for modern<br/>eCommerce sellers.</p>
+     <p className="mt-3 text-[12px] text-white/50 leading-relaxed">AI-powered SaaS solutions for modern eCommerce sellers.</p>
      <div className="mt-4 text-[12px] text-white/50">Contact: info@visfora.com<br/>Made in India</div>
     </div>
     <div><div className="font-semibold text-[14px]">Product</div><div className="mt-3 space-y-2 text-[13px] text-white/60"><Link href="/product" className="block hover:text-white">Features</Link><Link href="/home#pricing" className="block hover:text-white">Pricing</Link><Link href="/product" className="block hover:text-white">Integrations</Link><Link href="/resources" className="block hover:text-white">Changelog</Link></div></div>
