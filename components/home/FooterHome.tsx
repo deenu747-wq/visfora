@@ -9,8 +9,8 @@ export default function FooterHome() {
         <div className="grid grid-cols-2 md:grid-cols-5 gap-8 items-start">
           
           {/* 1. Logo - ENLARGED + ALIGNED */}
-          <div className="col-span-2 md:col-span-1 flex justify-start">
-            <Link href="/" className="block -mt-2">
+          <div className="col-span-2 md:col-span-1 flex justify-start items-center h-full">
+          <Link href="/" className="block translate-y-3">
               <Image 
                 src="/Logo.png"
                 alt="VISFORA" 
