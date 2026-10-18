@@ -61,19 +61,19 @@ export default function HomePage() {
       <section className="max-w-[1280px] mx-auto px-6 mt-8 grid md:grid-cols-3 gap-6">
         <Link href="/photo-studio" className="group rounded-[24px] border border-black/[0.06] bg-white overflow-hidden shadow-[0_16px_40px_rgba(0,0,0,0.06)] hover:shadow-[0_24px_60px_rgba(0,0,0,0.10)] hover:-translate-y-1.5 transition-all duration-300">
           <div className="p-6">
-            <div className="text-[10px] font-bold tracking-[0.14em] uppercase text-[#C9A86A]">01 Photo Studio</div>
-            <div className="font-semibold mt-2 text-[16px] tracking-tight leading-tight">Studio-Grade Shoe Enhancement • AI Background Removal</div>
+            <div className="text-[16px] font-bold tracking-[0.14em] uppercase text-[#C9A86A]">01 Photo Studio</div>
+            <div className="font-semibold mt-2 text-[14px] tracking-tight leading-tight">Studio-Grade Photo Enhancement • AI Background Removal</div>
           </div>
           <img src="/images/photo-studio-shoe-before-after.jpg" alt="Shoe before after" className="w-full h-[220px] object-cover" />
           <div className="p-4">
-            <div className="rounded-[12px] bg-[#FAF6EE] border border-black/[0.04] p-3 text-[11px] font-medium text-black/70 text-center">BEFORE → AFTER | Studio lighting auto-fix</div>
+            <div className="rounded-[12px] bg-[#FAF6EE] border border-black/[0.04] p-3 text-[12px] font-medium text-black/70 text-center">BEFORE → AFTER | Studio lighting auto-fix</div>
           </div>
         </Link>
 
         <Link href="/batch-studio" className="group rounded-[24px] border border-black/[0.06] bg-white overflow-hidden shadow-[0_16px_40px_rgba(0,0,0,0.06)] hover:shadow-[0_24px_60px_rgba(0,0,0,0.10)] hover:-translate-y-1.5 transition-all duration-300">
           <div className="p-6">
-            <div className="text-[10px] font-bold tracking-[0.14em] uppercase text-[#C9A86A]">02 Batch Studio</div>
-            <div className="font-semibold mt-2 text-[16px] tracking-tight">100 images • 2 min</div>
+            <div className="text-[16px] font-bold tracking-[0.14em] uppercase text-[#C9A86A]">02 Batch Studio</div>
+            <div className="font-semibold mt-2 text-[14px] tracking-tight">100 images • 2 min</div>
           </div>
           <img src="/images/batch-studio-100-images.jpg" alt="Batch 100 images" className="w-full h-[220px] object-cover" />
           <div className="p-4 flex flex-wrap gap-2 text-[10px]"><span className="px-3 py-1.5 bg-[#FFFCF7] border border-black/[0.06] rounded-full font-medium">Social Post</span><span className="px-3 py-1.5 bg-[#FFFCF7] border border-black/[0.06] rounded-full font-medium">Holiday Sale</span><span className="px-3 py-1.5 bg-[#FFFCF7] border border-black/[0.06] rounded-full font-medium">New Launch</span><span className="px-3 py-1.5 bg-[#FFFCF7] border border-black/[0.06] rounded-full font-medium">Promo Offer</span></div>
@@ -81,8 +81,8 @@ export default function HomePage() {
 
         <Link href="/product" className="group rounded-[24px] border border-black/[0.06] bg-white overflow-hidden shadow-[0_16px_40px_rgba(0,0,0,0.06)] hover:shadow-[0_24px_60px_rgba(0,0,0,0.10)] hover:-translate-y-1.5 transition-all duration-300">
           <div className="p-6">
-            <div className="text-[10px] font-bold tracking-[0.14em] uppercase text-[#C9A86A]">03 Template Studio</div>
-            <div className="font-semibold mt-2 text-[16px] tracking-tight">Instant 3D Templates</div>
+            <div className="text-[16px] font-bold tracking-[0.14em] uppercase text-[#C9A86A]">03 Template Studio</div>
+            <div className="font-semibold mt-2 text-[14px] tracking-tight">Instant 3D Templates</div>
           </div>
           <img src="/images/template-studio-3d-instant.jpg" alt="3D Templates" className="w-full h-[220px] object-cover" />
           <div className="p-4 grid grid-cols-2 gap-2 text-[11px] font-medium">
