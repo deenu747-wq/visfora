@@ -20,9 +20,8 @@ export default function HomePage() {
     <div className="min-h-screen bg-[#FFFCF7] text-black antialiased">
       <HeaderHome />
 
-      {/* FONT-STYLE PREMIUM - Editorial mix serif + sans */}
       <section className="max-w-[1280px] mx-auto px-6 pt-14 pb-6 text-center">
-        <h1 className="text-[38px] md:text-[58px] font-[800] tracking-[-0.03em] leading-[0.9] text-black">
+        <h1 className="text-[38px] md:text-[60px] font-[800] tracking-[-0.03em] leading-[0.9] text-black">
           CRAFTED BY AI, FOR <span className="font-serif font-[700] italic tracking-[-0.01em] text-[#C9A86A]">CREATORS</span>
         </h1>
         <p className="mt-4 text-[14px] tracking-[0.02em] text-black/50 font-[450]">
@@ -48,32 +47,45 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* FONT-STYLE PREMIUM - second */}
+      {/* 1 - INCREASED FONT SIZE */}
       <section className="max-w-[1280px] mx-auto px-6 mt-16 text-center">
-        <h2 className="text-[26px] md:text-[34px] font-bold tracking-[-0.025em] leading-[1.15]">
+        <h2 className="text-[30px] md:text-[40px] font-bold tracking-[-0.025em] leading-[1.15]">
           From Photos to 3D — <span className="font-serif font-semibold italic text-black/70">All in One Studio</span>
         </h2>
-        <p className="mt-2.5 text-[12px] tracking-[0.04em] uppercase font-medium text-black/40">
+        <p className="mt-3 text-[14px] tracking-[0.03em] uppercase font-medium text-black/40">
           Studios showcase — Text to 3D models • AI texturing • PBR maps • Turn ideas into 3D fast, realistic
         </p>
       </section>
 
-      {/* CARD-STYLE PREMIUM TRENDY - soft, floating, no thick border */}
+      {/* 2 + IMAGES - INCREASED SIZE + CHANGED LINE + IMAGES */}
       <section className="max-w-[1280px] mx-auto px-6 mt-8 grid md:grid-cols-3 gap-6">
-        <Link href="/photo-studio" className="group rounded-[24px] border border-black/[0.06] bg-white p-6 shadow-[0_16px_40px_rgba(0,0,0,0.06)] hover:shadow-[0_24px_60px_rgba(0,0,0,0.10)] hover:-translate-y-1.5 transition-all duration-300">
-          <div className="text-[10px] font-bold tracking-[0.14em] uppercase text-[#C9A86A]">01 Photo Studio</div>
-          <div className="font-semibold mt-2 text-[14.5px] tracking-tight">Output: before & after shoe transformation</div>
-          <div className="mt-4 rounded-[14px] bg-[#FAF6EE] border border-black/[0.04] p-3.5 text-[12px] font-medium text-black/70">BEFORE → AFTER | Studio lighting auto-fix</div>
+        <Link href="/photo-studio" className="group rounded-[24px] border border-black/[0.06] bg-white overflow-hidden shadow-[0_16px_40px_rgba(0,0,0,0.06)] hover:shadow-[0_24px_60px_rgba(0,0,0,0.10)] hover:-translate-y-1.5 transition-all duration-300">
+          <div className="p-6">
+            <div className="text-[10px] font-bold tracking-[0.14em] uppercase text-[#C9A86A]">01 Photo Studio</div>
+            <div className="font-semibold mt-2 text-[16px] tracking-tight leading-tight">Studio-Grade Shoe Enhancement • AI Background Removal</div>
+          </div>
+          <img src="/images/photo-studio-shoe-before-after.jpg" alt="Shoe before after" className="w-full h-[220px] object-cover" />
+          <div className="p-4">
+            <div className="rounded-[12px] bg-[#FAF6EE] border border-black/[0.04] p-3 text-[11px] font-medium text-black/70 text-center">BEFORE → AFTER | Studio lighting auto-fix</div>
+          </div>
         </Link>
-        <Link href="/batch-studio" className="group rounded-[24px] border border-black/[0.06] bg-white p-6 shadow-[0_16px_40px_rgba(0,0,0,0.06)] hover:shadow-[0_24px_60px_rgba(0,0,0,0.10)] hover:-translate-y-1.5 transition-all duration-300">
-          <div className="text-[10px] font-bold tracking-[0.14em] uppercase text-[#C9A86A]">02 Batch Studio</div>
-          <div className="font-semibold mt-2 text-[14.5px] tracking-tight">100 images • 2 min</div>
-          <div className="mt-4 flex flex-wrap gap-2 text-[10px]"><span className="px-3 py-1.5 bg-[#FFFCF7] border border-black/[0.06] rounded-full font-medium">Social Post</span><span className="px-3 py-1.5 bg-[#FFFCF7] border border-black/[0.06] rounded-full font-medium">Holiday Sale</span><span className="px-3 py-1.5 bg-[#FFFCF7] border border-black/[0.06] rounded-full font-medium">New Launch</span><span className="px-3 py-1.5 bg-[#FFFCF7] border border-black/[0.06] rounded-full font-medium">Promo Offer</span></div>
+
+        <Link href="/batch-studio" className="group rounded-[24px] border border-black/[0.06] bg-white overflow-hidden shadow-[0_16px_40px_rgba(0,0,0,0.06)] hover:shadow-[0_24px_60px_rgba(0,0,0,0.10)] hover:-translate-y-1.5 transition-all duration-300">
+          <div className="p-6">
+            <div className="text-[10px] font-bold tracking-[0.14em] uppercase text-[#C9A86A]">02 Batch Studio</div>
+            <div className="font-semibold mt-2 text-[16px] tracking-tight">100 images • 2 min</div>
+          </div>
+          <img src="/images/batch-studio-100-images.jpg" alt="Batch 100 images" className="w-full h-[220px] object-cover" />
+          <div className="p-4 flex flex-wrap gap-2 text-[10px]"><span className="px-3 py-1.5 bg-[#FFFCF7] border border-black/[0.06] rounded-full font-medium">Social Post</span><span className="px-3 py-1.5 bg-[#FFFCF7] border border-black/[0.06] rounded-full font-medium">Holiday Sale</span><span className="px-3 py-1.5 bg-[#FFFCF7] border border-black/[0.06] rounded-full font-medium">New Launch</span><span className="px-3 py-1.5 bg-[#FFFCF7] border border-black/[0.06] rounded-full font-medium">Promo Offer</span></div>
         </Link>
-        <Link href="/product" className="group rounded-[24px] border border-black/[0.06] bg-white p-6 shadow-[0_16px_40px_rgba(0,0,0,0.06)] hover:shadow-[0_24px_60px_rgba(0,0,0,0.10)] hover:-translate-y-1.5 transition-all duration-300">
-          <div className="text-[10px] font-bold tracking-[0.14em] uppercase text-[#C9A86A]">03 Template Studio</div>
-          <div className="font-semibold mt-2 text-[14.5px] tracking-tight">Instant 3D Templates</div>
-          <div className="mt-4 grid grid-cols-2 gap-2.5 text-[11px] font-medium">
+
+        <Link href="/product" className="group rounded-[24px] border border-black/[0.06] bg-white overflow-hidden shadow-[0_16px_40px_rgba(0,0,0,0.06)] hover:shadow-[0_24px_60px_rgba(0,0,0,0.10)] hover:-translate-y-1.5 transition-all duration-300">
+          <div className="p-6">
+            <div className="text-[10px] font-bold tracking-[0.14em] uppercase text-[#C9A86A]">03 Template Studio</div>
+            <div className="font-semibold mt-2 text-[16px] tracking-tight">Instant 3D Templates</div>
+          </div>
+          <img src="/images/template-studio-3d-instant.jpg" alt="3D Templates" className="w-full h-[220px] object-cover" />
+          <div className="p-4 grid grid-cols-2 gap-2 text-[11px] font-medium">
             <div className="p-2.5 border border-black/[0.06] rounded-[12px] bg-[#FFFCF7]">Text to 3D models</div>
             <div className="p-2.5 border border-black/[0.06] rounded-[12px] bg-[#FFFCF7]">AI texturing</div>
             <div className="p-2.5 border border-black/[0.06] rounded-[12px] bg-[#FFFCF7]">PBR maps</div>
@@ -82,11 +94,12 @@ export default function HomePage() {
         </Link>
       </section>
 
+      {/* 3 + 4 - PREMIUM FONT STYLE + INCREASED SIZE */}
       <section id="pricing" className="max-w-[1280px] mx-auto px-6 mt-20 pb-20">
         <div className="text-center">
-          <div className="font-bold tracking-[-0.03em] text-[32px] md:text-[40px] leading-none">PRICING</div>
-          <p className="mt-3 text-[11px] tracking-[0.12em] uppercase font-semibold text-black/35">
-            Simple, transparent pricing — scale your visuals without breaking the bank
+          <div className="font-serif font-[900] tracking-[-0.03em] text-[36px] md:text-[44px] leading-none">PRICING</div>
+          <p className="mt-3 text-[14px] tracking-[0.02em] font-medium text-black/40">
+            SIMPLE, TRANSPARENT PRICING — SCALE YOUR VISUALS WITHOUT BREAKING THE BANK
           </p>
           <div className="flex items-center justify-center gap-3 mt-6">
             <span className={isMonthly ? "text-sm font-semibold text-black" : "text-sm text-black/40"}>Monthly</span>
@@ -98,15 +111,14 @@ export default function HomePage() {
         </div>
 
         <div className="grid md:grid-cols-4 gap-6 mt-12">
-          <div className="rounded-[24px] border border-black/[0.06] bg-white p-7 text-center shadow-[0_16px_40px_rgba(0,0,0,0.05)] hover:shadow-[0_24px_60px_rgba(0,0,0,0.08)] hover:-translate-y-1 transition-all">
+          <div className="rounded-[24px] border border-black/[0.06] bg-white p-7 text-center shadow-[0_16px_40px_rgba(0,0,0,0.05)]">
             <div className="font-medium text-[13px] tracking-tight">Starter</div>
             <div className="text-[22px] font-bold tracking-tight mt-3">Rs{isMonthly ? prices.starter.m : prices.starter.y}/month</div>
             <div className="text-[11px] opacity-60 mt-1">Up to 50 images</div>
             <ul className="text-[12px] mt-5 text-left space-y-1.5 text-black/70"><li>✓ Basic AI edits</li><li>✓ Email support</li></ul>
-            <Link href="/get-started?plan=starter" className="block w-full mt-6 py-3 rounded-full border border-black/10 text-[13px] font-semibold bg-white hover:bg-black hover:text-white transition">Start Starter</Link>
+            <Link href="/get-started?plan=starter" className="block w-full mt-6 py-3 rounded-full border border-black/10 text-[13px] font-semibold bg-white">Start Starter</Link>
           </div>
-
-          <div className="rounded-[24px] border border-black bg-black text-white p-7 text-center relative shadow-[0_20px_60px_rgba(0,0,0,0.25)] hover:shadow-[0_30px_80px_rgba(0,0,0,0.35)] hover:-translate-y-1.5 transition-all">
+          <div className="rounded-[24px] border border-black bg-black text-white p-7 text-center relative shadow-[0_20px_60px_rgba(0,0,0,0.25)]">
             <div className="absolute top-4 right-4 text-[9px] bg-[#D4B87A] text-black px-2.5 py-1 rounded-full font-bold tracking-widest">Most Popular</div>
             <div className="font-medium text-[13px] tracking-tight">Pro</div>
             <div className="text-[22px] font-bold tracking-tight mt-3">Rs{isMonthly ? prices.pro.m : prices.pro.y}/month</div>
@@ -114,21 +126,19 @@ export default function HomePage() {
             <ul className="text-[12px] mt-5 text-left space-y-1.5 text-white/80"><li>✓ Advanced AI edits</li><li>✓ Batch processing</li><li>✓ Priority support</li></ul>
             <Link href="/get-started?plan=pro" className="block w-full mt-6 py-3 rounded-full bg-[#D4B87A] text-black text-[13px] font-semibold">Get Pro</Link>
           </div>
-
-          <div className="rounded-[24px] border border-black/[0.06] bg-white p-7 text-center shadow-[0_16px_40px_rgba(0,0,0,0.05)] hover:shadow-[0_24px_60px_rgba(0,0,0,0.08)] hover:-translate-y-1 transition-all">
+          <div className="rounded-[24px] border border-black/[0.06] bg-white p-7 text-center shadow-[0_16px_40px_rgba(0,0,0,0.05)]">
             <div className="font-medium text-[13px] tracking-tight">Business</div>
             <div className="text-[22px] font-bold tracking-tight mt-3">Rs{isMonthly ? prices.business.m : prices.business.y}/month</div>
             <div className="text-[11px] opacity-60 mt-1">Up to 2000 images</div>
             <ul className="text-[12px] mt-5 text-left space-y-1.5 text-black/70"><li>✓ Custom styles</li><li>✓ Team collaboration</li><li>✓ API access</li></ul>
-            <Link href="/company" className="block w-full mt-6 py-3 rounded-full border border-black/10 text-[13px] font-semibold bg-white hover:bg-black hover:text-white transition">Talk to Sales</Link>
+            <Link href="/company" className="block w-full mt-6 py-3 rounded-full border border-black/10 text-[13px] font-semibold bg-white">Talk to Sales</Link>
           </div>
-
-          <div className="rounded-[24px] border border-black/[0.06] bg-white p-7 text-center shadow-[0_16px_40px_rgba(0,0,0,0.05)] hover:shadow-[0_24px_60px_rgba(0,0,0,0.08)] hover:-translate-y-1 transition-all">
+          <div className="rounded-[24px] border border-black/[0.06] bg-white p-7 text-center shadow-[0_16px_40px_rgba(0,0,0,0.05)]">
             <div className="font-medium text-[13px] tracking-tight">Enterprise • Custom</div>
             <div className="text-[20px] font-bold tracking-tight mt-3">Custom</div>
             <div className="text-[11px] opacity-60 mt-1">Contact us for volume</div>
             <ul className="text-[12px] mt-5 text-left space-y-1.5 text-black/70"><li>✓ Unlimited images</li><li>✓ Dedicated manager • SLA and security</li><li>✓ Custom integration</li></ul>
-            <Link href="/company" className="block w-full mt-6 py-3 rounded-full border border-black/10 text-[13px] font-semibold bg-white hover:bg-black hover:text-white transition">Contact Us</Link>
+            <Link href="/company" className="block w-full mt-6 py-3 rounded-full border border-black/10 text-[13px] font-semibold bg-white">Contact Us</Link>
           </div>
         </div>
       </section>
