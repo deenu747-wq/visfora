@@ -6,10 +6,10 @@ export default function FooterHome() {
     <footer className="bg-[#111111] text-gray-300 border-t border-white/10">
       {/* TOP SECTION */}
       <div className="max-w-7xl mx-auto px-6 lg:px-8 py-12">
-        <div className="flex justify-between gap-8 items-center">
+        <div className="flex justify-between gap-8 items-start">
           
-          {/* 1. Logo */}
-          <div className="flex justify-center items-center">
+          {/* 1. Logo - WIDTH FIXED to 130px so its center = Privacy/Terms center */}
+          <div className="w-[130px] flex justify-center items-start">
           <Link href="/" className="block">
               <Image 
                 src="/Logo.png"
@@ -22,10 +22,10 @@ export default function FooterHome() {
             </Link>
           </div>
 
-          {/* Product */}
-          <div className="text-center">
-            <h4 className="text-white font-semibold text-sm mb-4">Product</h4>
-            <ul className="space-y-3 text-sm text-gray-400">
+          {/* Product - Title Centre, Content Left */}
+          <div className="flex flex-col items-center">
+            <h4 className="text-white font-semibold text-sm mb-4 text-center w-full">Product</h4>
+            <ul className="space-y-3 text-sm text-gray-400 text-left flex flex-col items-start">
               <li><Link href="/product" className="hover:text-white">Features</Link></li>
               <li><Link href="#" className="hover:text-white">Pricing</Link></li>
               <li><Link href="#" className="hover:text-white">Integrations</Link></li>
@@ -33,10 +33,10 @@ export default function FooterHome() {
             </ul>
           </div>
 
-          {/* Solutions */}
-          <div className="text-center">
-            <h4 className="text-white font-semibold text-sm mb-4">Solutions</h4>
-            <ul className="space-y-3 text-sm text-gray-400">
+          {/* Solutions - Title Centre, Content Left */}
+          <div className="flex flex-col items-center">
+            <h4 className="text-white font-semibold text-sm mb-4 text-center w-full">Solutions</h4>
+            <ul className="space-y-3 text-sm text-gray-400 text-left flex flex-col items-start">
               <li><Link href="#" className="hover:text-white">Amazon Sellers</Link></li>
               <li><Link href="#" className="hover:text-white">Shopify Stores</Link></li>
               <li><Link href="#" className="hover:text-white">D2C Brands</Link></li>
@@ -44,10 +44,10 @@ export default function FooterHome() {
             </ul>
           </div>
 
-          {/* Resources */}
-          <div className="text-center">
-            <h4 className="text-white font-semibold text-sm mb-4">Resources</h4>
-            <ul className="space-y-3 text-sm text-gray-400">
+          {/* Resources - Title Centre, Content Left */}
+          <div className="flex flex-col items-center">
+            <h4 className="text-white font-semibold text-sm mb-4 text-center w-full">Resources</h4>
+            <ul className="space-y-3 text-sm text-gray-400 text-left flex flex-col items-start">
               <li><Link href="#" className="hover:text-white">Documentation</Link></li>
               <li><Link href="#" className="hover:text-white">Blog</Link></li>
               <li><Link href="#" className="hover:text-white">Help Center</Link></li>
@@ -55,10 +55,10 @@ export default function FooterHome() {
             </ul>
           </div>
 
-          {/* Company */}
-          <div className="text-center">
-            <h4 className="text-white font-semibold text-sm mb-4">Company</h4>
-            <ul className="space-y-3 text-sm text-gray-400">
+          {/* Company - Title Centre, Content Left */}
+          <div className="flex flex-col items-center">
+            <h4 className="text-white font-semibold text-sm mb-4 text-center w-full">Company</h4>
+            <ul className="space-y-3 text-sm text-gray-400 text-left flex flex-col items-start">
               <li><Link href="/company" className="hover:text-white">About Us</Link></li>
               <li><Link href="#" className="hover:text-white">Careers</Link></li>
               <li><Link href="#" className="hover:text-white">Contact</Link></li>
@@ -68,12 +68,12 @@ export default function FooterHome() {
         </div>
       </div>
 
-      {/* BOTTOM BAR - Same margin + Single words */}
+      {/* BOTTOM BAR */}
       <div className="border-t border-white/10">
         <div className="max-w-7xl mx-auto px-6 lg:px-8 h-[56px] flex items-center justify-between">
           
-          {/* LEFT - Single words */}
-          <div className="flex items-center gap-5 text-xs">
+          {/* LEFT - Fixed width same as Logo so logo center = gap center */}
+          <div className="w-[130px] flex justify-center items-center gap-5 text-xs">
             <Link href="/privacy" className="text-gray-400 hover:text-white transition">Privacy</Link>
             <Link href="/terms" className="text-gray-400 hover:text-white transition">Terms</Link>
           </div>
