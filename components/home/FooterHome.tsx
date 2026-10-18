@@ -8,11 +8,11 @@ export default function FooterHome() {
       <div className="max-w-7xl mx-auto px-6 lg:px-8 py-14">
         <div className="grid grid-cols-2 md:grid-cols-5 gap-10">
           
-          {/* 1. Logo - Aligned left + Clickable like header */}
+          {/* 1. Logo - FIXED PATH: /Logo.png */}
           <div className="col-span-2 md:col-span-1 flex flex-col items-start justify-start -mt-2">
-            <Link href="/" className="bg-black p-2 rounded block hover:opacity-90 transition-opacity">
+            <Link href="/" className="block hover:opacity-90 transition-opacity">
               <Image 
-                src="/logo-visfora.png" // <-- change to your actual logo path if different: /images/logo.svg etc
+                src="/Logo.png" // <-- FIXED: Was /logo-visfora.png, actual file is /Logo.png
                 alt="VISFORA" 
                 width={140} 
                 height={60}
@@ -68,38 +68,37 @@ export default function FooterHome() {
         </div>
       </div>
 
-      {/* BOTTOM BAR */}
+      {/* BOTTOM BAR - RECTIFIED: Left Legal | Center Copyright | Right Icons */}
       <div className="border-t border-white/10">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8 py-5 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8 h-[56px] flex items-center justify-between relative">
           
-          {/* Left - Copyright */}
-          <p className="text-xs text-gray-500 order-2 md:order-1">
+          {/* LEFT - Privacy + Terms */}
+          <div className="flex items-center gap-4 text-xs">
+            <Link href="/privacy" className="text-gray-400 hover:text-white transition">Privacy Policy</Link>
+            <Link href="/terms" className="text-gray-400 hover:text-white transition">Terms of Service</Link>
+          </div>
+          
+          {/* CENTER - Copyright */}
+          <p className="text-xs text-gray-500 absolute left-1/2 -translate-x-1/2 whitespace-nowrap">
             © 2024 VISFORA, All rights reserved.
           </p>
 
-          {/* Right - Privacy + Terms + Icons BIGGER */}
-          <div className="flex items-center gap-6 order-1 md:order-2">
-            <div className="flex items-center gap-4 text-xs">
-              <Link href="/privacy" className="text-gray-400 hover:text-white transition">Privacy Policy</Link>
-              <Link href="/terms" className="text-gray-400 hover:text-white transition">Terms of Service</Link>
-            </div>
-            
-            {/* Icons - Bigger & Visible */}
-            <div className="flex items-center gap-4 ml-6 text-gray-400">
-              <Link href="#" aria-label="LinkedIn" className="hover:text-white transition">
-                <span className="text-[18px] font-bold leading-none">in</span>
-              </Link>
-              <Link href="#" aria-label="X" className="hover:text-white transition">
-                <span className="text-[16px] font-bold leading-none">X</span>
-              </Link>
-              <Link href="#" aria-label="Instagram" className="hover:text-white transition">
-                <span className="text-[14px] font-bold tracking-widest leading-none">IG</span>
-              </Link>
-              <Link href="#" aria-label="YouTube" className="hover:text-white transition">
-                <span className="text-[18px] leading-none">▶</span>
-              </Link>
-            </div>
+          {/* RIGHT - Icons */}
+          <div className="flex items-center gap-4 text-gray-400">
+            <Link href="#" aria-label="LinkedIn" className="hover:text-white transition">
+              <span className="text-[18px] font-bold leading-none">in</span>
+            </Link>
+            <Link href="#" aria-label="X" className="hover:text-white transition">
+              <span className="text-[16px] font-bold leading-none">X</span>
+            </Link>
+            <Link href="#" aria-label="Instagram" className="hover:text-white transition">
+              <span className="text-[14px] font-bold tracking-widest leading-none">IG</span>
+            </Link>
+            <Link href="#" aria-label="YouTube" className="hover:text-white transition">
+              <span className="text-[18px] leading-none">▶</span>
+            </Link>
           </div>
+
         </div>
       </div>
     </footer>
