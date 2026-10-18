@@ -15,7 +15,7 @@ export default function HeaderHome(){
        className="h-[56px] w-[56px] object-contain"
        priority
      />
-     <span className="text-[21px] tracking-[0.32em] font-light text-black">
+     <span className="text-[36px] tracking-[0.32em] font-light text-black">
        VIS<span className="font-bold text-[#d6a85a]">FORA</span>
      </span>
     </Link>
