@@ -10,7 +10,7 @@ export default function FooterHome() {
           
           {/* 1. Logo - ENLARGED + ALIGNED */}
           <div className="col-span-2 md:col-span-1 flex justify-start items-center h-full">
-          <Link href="/" className="block translate-x-3">
+          <Link href="/" className="block translate-x-5">
               <Image 
                 src="/Logo.png"
                 alt="VISFORA" 
