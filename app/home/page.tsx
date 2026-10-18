@@ -1,6 +1,6 @@
 ﻿import Link from 'next/link'
-import HeaderHome from '@/components/home/HeaderHome'
-import FooterHome from '@/components/home/FooterHome'
+import FooterHome from "@/components/home/FooterHome"
+import HeaderHome from "@/components/home/HeaderHome"
 export default function HomePage(){
  return (
   <div className="min-h-screen bg-[#FFFCF7] text-black">
