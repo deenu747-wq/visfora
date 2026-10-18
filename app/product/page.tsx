@@ -1,5 +1,6 @@
 ﻿import Link from 'next/link'
-
+import HeaderHome from '@/components/home/HeaderHome'
+import FooterHome from '@/components/home/FooterHome'
 export default function ProductPage(){
   return(
     <div className="min-h-screen bg-[#F9F6F0] text-[#111827]">
