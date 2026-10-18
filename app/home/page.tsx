@@ -52,7 +52,7 @@ export default function HomePage() {
         <h2 className="text-[30px] md:text-[40px] font-bold tracking-[-0.025em] leading-[1.15]">
           From Photos to 3D — <span className="font-serif font-semibold italic text-black/70">All in One Studio</span>
         </h2>
-        <p className="mt-3 text-[14px] tracking-[0.03em] uppercase font-medium text-black/40">
+        <p className="mt-3 text-[14px] tracking-[0.02em] font-medium text-black/40">
           Studios showcase — Text to 3D models • AI texturing • PBR maps • Turn ideas into 3D fast, realistic
         </p>
       </section>
@@ -97,9 +97,9 @@ export default function HomePage() {
       {/* 3 + 4 - PREMIUM FONT STYLE + INCREASED SIZE */}
       <section id="pricing" className="max-w-[1280px] mx-auto px-6 mt-20 pb-20">
         <div className="text-center">
-          <div className="font-serif font-[900] tracking-[-0.03em] text-[36px] md:text-[44px] leading-none">PRICING</div>
+          <div className="font-serif font-[900] tracking-[-0.03em] text-[26px] md:text-[44px] leading-none">Pricing</div>
           <p className="mt-3 text-[14px] tracking-[0.02em] font-medium text-black/40">
-            SIMPLE, TRANSPARENT PRICING — SCALE YOUR VISUALS WITHOUT BREAKING THE BANK
+            Simple, Transparent Pricing — Scale Your Visuals Without Breaking The Bank
           </p>
           <div className="flex items-center justify-center gap-3 mt-6">
             <span className={isMonthly ? "text-sm font-semibold text-black" : "text-sm text-black/40"}>Monthly</span>
