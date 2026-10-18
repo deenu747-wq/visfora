@@ -16,7 +16,7 @@ export default function FooterHome() {
                 alt="VISFORA" 
                 width={180}
                 height={90}
-                className="object-contain w-[150px] md:w-[180px] h-auto"
+                className="object-contain w-[100px] md:w-[130px] h-auto"
                 priority
               />
             </Link>
