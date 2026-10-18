@@ -1,4 +1,4 @@
-﻿import Link from 'next/link'
+import Link from 'next/link'
 import FooterHome from "@/components/home/FooterHome"
 import HeaderHome from "@/components/home/HeaderHome"
 
@@ -58,7 +58,7 @@ export default function SolutionsPage(){
     </div>
    </section>
 
-   <Footer/>
+   <FooterHome/>
   </div>
  )
 }
