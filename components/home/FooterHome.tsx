@@ -6,10 +6,10 @@ export default function FooterHome() {
     <footer className="bg-[#111111] text-gray-300 border-t border-white/10">
       {/* TOP SECTION */}
       <div className="max-w-7xl mx-auto px-6 lg:px-8 py-12">
-        <div className="flex justify-between gap-8 items-start">
+        <div className="flex justify-between gap-8 items-center">
           
           {/* 1. Logo */}
-          <div className="flex justify-start items-center h-full">
+          <div className="flex justify-center items-center">
           <Link href="/" className="block">
               <Image 
                 src="/Logo.png"
@@ -23,7 +23,7 @@ export default function FooterHome() {
           </div>
 
           {/* Product */}
-          <div>
+          <div className="text-center">
             <h4 className="text-white font-semibold text-sm mb-4">Product</h4>
             <ul className="space-y-3 text-sm text-gray-400">
               <li><Link href="/product" className="hover:text-white">Features</Link></li>
@@ -34,7 +34,7 @@ export default function FooterHome() {
           </div>
 
           {/* Solutions */}
-          <div>
+          <div className="text-center">
             <h4 className="text-white font-semibold text-sm mb-4">Solutions</h4>
             <ul className="space-y-3 text-sm text-gray-400">
               <li><Link href="#" className="hover:text-white">Amazon Sellers</Link></li>
@@ -45,7 +45,7 @@ export default function FooterHome() {
           </div>
 
           {/* Resources */}
-          <div>
+          <div className="text-center">
             <h4 className="text-white font-semibold text-sm mb-4">Resources</h4>
             <ul className="space-y-3 text-sm text-gray-400">
               <li><Link href="#" className="hover:text-white">Documentation</Link></li>
@@ -56,7 +56,7 @@ export default function FooterHome() {
           </div>
 
           {/* Company */}
-          <div>
+          <div className="text-center">
             <h4 className="text-white font-semibold text-sm mb-4">Company</h4>
             <ul className="space-y-3 text-sm text-gray-400">
               <li><Link href="/company" className="hover:text-white">About Us</Link></li>
