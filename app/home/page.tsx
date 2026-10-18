@@ -86,7 +86,7 @@ export default function HomePage() {
       {/* 3 - CHANGE SIZE AND FONT STYLE */}
       <section id="pricing" className="max-w-[1280px] mx-auto px-6 mt-16 pb-20">
         <div className="text-center">
-          <div className="font-[950] tracking-[-0.03em] text-[40px] md:text-[52px] leading-none uppercase">PRICING</div>
+          <div className="font-[950] tracking-[-0.03em] text-[26px] md:text-[36px] leading-none uppercase">PRICING</div>
           <p className="mt-3 text-[13px] tracking-[0.05em] uppercase font-semibold text-black/40">
             Simple, transparent pricing — scale your visuals without breaking the bank
           </p>
