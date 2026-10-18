@@ -1,80 +1,107 @@
 ﻿import Link from 'next/link'
 import Image from 'next/image'
 
-export default function FooterHome(){
- return (
-  <footer className="bg-[#111111] text-white">
-   <div className="max-w-[1440px] mx-auto px-6 lg:px-8 pt-12 pb-10 grid md:grid-cols-5 gap-8 items-start">
-    
-    {/* 1. LOGO SYMBOL + TEXT CENTER ALIGNED */}
-    <div className="md:col-span-1 flex items-center">
-     <Link href="/home" className="flex items-center gap-3">
-      <Image src="/Logo.png" alt="Visfora" width={48} height={48} className="h-11 w-11 object-contain"/>
-      {/* 2. FORA SAME COLOR - ALL GOLD */}
-      <span className="text-[22px] tracking-[0.25em] font-bold text-[#d6a85a]">VISFORA</span>
-     </Link>
-     {/* 4. EMAIL REMOVED */}
-    </div>
+export default function FooterHome() {
+  return (
+    <footer className="bg-[#111111] text-gray-300 border-t border-white/10">
+      {/* TOP SECTION */}
+      <div className="max-w-7xl mx-auto px-6 lg:px-8 py-14">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-10">
+          
+          {/* 1. Logo - Aligned left + Clickable like header */}
+          <div className="col-span-2 md:col-span-1 flex flex-col items-start justify-start -mt-2">
+            <Link href="/" className="bg-black p-2 rounded block hover:opacity-90 transition-opacity">
+              <Image 
+                src="/logo-visfora.png" // <-- change to your actual logo path if different: /images/logo.svg etc
+                alt="VISFORA" 
+                width={140} 
+                height={60}
+                className="object-contain"
+                priority
+              />
+            </Link>
+          </div>
 
-    <div>
-     <div className="font-semibold text-[13px]">Product</div>
-     <div className="mt-4 space-y-3 text-[12px] text-white/55">
-      <Link href="/product" className="block hover:text-white">Features</Link>
-      <Link href="/home#pricing" className="block hover:text-white">Pricing</Link>
-      <Link href="/product" className="block hover:text-white">Integrations</Link>
-      <Link href="/resources" className="block hover:text-white">Changelog</Link>
-     </div>
-    </div>
+          {/* Product */}
+          <div>
+            <h4 className="text-white font-semibold text-sm mb-4">Product</h4>
+            <ul className="space-y-3 text-sm text-gray-400">
+              <li><Link href="/product" className="hover:text-white">Features</Link></li>
+              <li><Link href="#" className="hover:text-white">Pricing</Link></li>
+              <li><Link href="#" className="hover:text-white">Integrations</Link></li>
+              <li><Link href="#" className="hover:text-white">Changelog</Link></li>
+            </ul>
+          </div>
 
-    <div>
-     <div className="font-semibold text-[13px]">Solutions</div>
-     <div className="mt-4 space-y-3 text-[12px] text-white/55">
-      <Link href="/solutions" className="block hover:text-white">Amazon Sellers</Link>
-      <Link href="/solutions" className="block hover:text-white">Shopify Stores</Link>
-      <Link href="/solutions" className="block hover:text-white">D2C Brands</Link>
-      <Link href="/solutions" className="block hover:text-white">Agencies</Link>
-     </div>
-    </div>
+          {/* Solutions */}
+          <div>
+            <h4 className="text-white font-semibold text-sm mb-4">Solutions</h4>
+            <ul className="space-y-3 text-sm text-gray-400">
+              <li><Link href="#" className="hover:text-white">Amazon Sellers</Link></li>
+              <li><Link href="#" className="hover:text-white">Shopify Stores</Link></li>
+              <li><Link href="#" className="hover:text-white">D2C Brands</Link></li>
+              <li><Link href="#" className="hover:text-white">Agencies</Link></li>
+            </ul>
+          </div>
 
-    <div>
-     <div className="font-semibold text-[13px]">Resources</div>
-     <div className="mt-4 space-y-3 text-[12px] text-white/55">
-      <Link href="/resources" className="block hover:text-white">Documentation</Link>
-      <Link href="/resources" className="block hover:text-white">Blog</Link>
-      <Link href="/resources" className="block hover:text-white">Help Center</Link>
-      <Link href="/resources" className="block hover:text-white">Case Studies</Link>
-     </div>
-    </div>
+          {/* Resources */}
+          <div>
+            <h4 className="text-white font-semibold text-sm mb-4">Resources</h4>
+            <ul className="space-y-3 text-sm text-gray-400">
+              <li><Link href="#" className="hover:text-white">Documentation</Link></li>
+              <li><Link href="#" className="hover:text-white">Blog</Link></li>
+              <li><Link href="#" className="hover:text-white">Help Center</Link></li>
+              <li><Link href="#" className="hover:text-white">Case Studies</Link></li>
+            </ul>
+          </div>
 
-    <div>
-     <div className="font-semibold text-[13px]">Company</div>
-     <div className="mt-4 space-y-3 text-[12px] text-white/55">
-      <Link href="/company" className="block hover:text-white">About Us</Link>
-      <Link href="/company" className="block hover:text-white">Careers</Link>
-      <Link href="/company" className="block hover:text-white">Contact</Link>
-      <Link href="/company" className="block hover:text-white">Legal</Link>
-     </div>
-    </div>
-   </div>
+          {/* Company */}
+          <div>
+            <h4 className="text-white font-semibold text-sm mb-4">Company</h4>
+            <ul className="space-y-3 text-sm text-gray-400">
+              <li><Link href="/company" className="hover:text-white">About Us</Link></li>
+              <li><Link href="#" className="hover:text-white">Careers</Link></li>
+              <li><Link href="#" className="hover:text-white">Contact</Link></li>
+              <li><Link href="#" className="hover:text-white">Legal</Link></li>
+            </ul>
+          </div>
+        </div>
+      </div>
 
-   {/* 3. BOTTOM MOVED TO CENTER */}
-   <div className="border-t border-white/10">
-    <div className="max-w-[1440px] mx-auto px-6 lg:px-8 py-4 flex flex-col md:flex-row items-center justify-between md:justify-center md:gap-0 relative">
-     
-     <div className="flex flex-wrap justify-center items-center gap-3 text-[11px] text-white/40">
-      <span>© 2024 VISFORA. All rights reserved.</span>
-      <Link href="/company" className="hover:text-white">Privacy Policy</Link>
-      <Link href="/company" className="hover:text-white">Terms of Service</Link>
-     </div>
+      {/* BOTTOM BAR */}
+      <div className="border-t border-white/10">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8 py-5 flex flex-col md:flex-row items-center justify-between gap-4">
+          
+          {/* Left - Copyright */}
+          <p className="text-xs text-gray-500 order-2 md:order-1">
+            © 2024 VISFORA, All rights reserved.
+          </p>
 
-     <div className="flex gap-3.5 mt-3 md:mt-0 md:absolute md:right-8 text-[#d6a85a] text-[11px]">
-      <a href="#" className="hover:text-white">in</a>
-      <a href="#" className="hover:text-white">X</a>
-      <a href="#" className="hover:text-white">IG</a>
-      <a href="#" className="hover:text-white">▶</a>
-     </div>
-    </div>
-   </div>
-  </footer>
- )
+          {/* Right - Privacy + Terms + Icons BIGGER */}
+          <div className="flex items-center gap-6 order-1 md:order-2">
+            <div className="flex items-center gap-4 text-xs">
+              <Link href="/privacy" className="text-gray-400 hover:text-white transition">Privacy Policy</Link>
+              <Link href="/terms" className="text-gray-400 hover:text-white transition">Terms of Service</Link>
+            </div>
+            
+            {/* Icons - Bigger & Visible */}
+            <div className="flex items-center gap-4 ml-6 text-gray-400">
+              <Link href="#" aria-label="LinkedIn" className="hover:text-white transition">
+                <span className="text-[18px] font-bold leading-none">in</span>
+              </Link>
+              <Link href="#" aria-label="X" className="hover:text-white transition">
+                <span className="text-[16px] font-bold leading-none">X</span>
+              </Link>
+              <Link href="#" aria-label="Instagram" className="hover:text-white transition">
+                <span className="text-[14px] font-bold tracking-widest leading-none">IG</span>
+              </Link>
+              <Link href="#" aria-label="YouTube" className="hover:text-white transition">
+                <span className="text-[18px] leading-none">▶</span>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+  )
 }
