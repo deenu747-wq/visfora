@@ -24,8 +24,8 @@ export default function HeaderHome(){
     <nav className="hidden md:flex items-center gap-9 text-[13.5px] tracking-wide text-black/60">
      <Link href="/product" className="hover:text-black transition">Product</Link>
      <Link href="/solutions" className="hover:text-black transition">Solutions</Link>
-     <Link href="/home#pricing" className="hover:text-black transition">Pricing</Link>
-     <Link href="/resources" className="hover:text-black transition">Resources</Link>
+     <Link href="/studios" className="hover:text-black transition">Studios</Link>
+     <Link href="/assets" className="hover:text-black transition">Assets</Link>
      <Link href="/company" className="hover:text-black transition">Company</Link>
     </nav>
 
