@@ -29,8 +29,7 @@ export default function HeaderHome(){
   <button className="flex items-center gap-1 py-6 font-medium">
     Studios <span className="text-[10px] group-hover:rotate-180 transition">▼</span>
   </button>
-
-  {/* MEGA MENU - Horizontal Line */}
+  
   <div className="absolute left-1/2 -translate-x-1/2 top-full invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-all duration-200 z-50">
     <div className="bg-white rounded-[24px] shadow-[0_20px_80px_rgba(0,0,0,0.12)] border border-black/5 p-3 flex gap-2 w-[980px]">
       {[
