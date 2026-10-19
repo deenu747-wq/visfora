@@ -56,15 +56,13 @@ export default function HomePage() {
         </p>
       </section>
 
-      {/* RECTIFIED CARDS - ALL 3 POINTS FIXED */}
+      {/* UPPER CARDS */}
       <section className="max-w-[1280px] mx-auto px-6 mt-8 grid md:grid-cols-3 gap-6">
-        {/* POINT-1: IMAGE FRAME + INCREASED BOX FONT */}
         <Link href="/photo-studio" className="group rounded-[24px] border border-black/[0.06] bg-white overflow-hidden shadow-[0_16px_40px_rgba(0,0,0,0.06)] hover:shadow-[0_24px_60px_rgba(0,0,0,0.10)] hover:-translate-y-1.5 transition-all duration-300 flex flex-col">
           <div className="p-6 pb-3">
             <div className="text-[16px] font-bold tracking-[0.14em] uppercase text-[#C9A86A]">01 Photo Studio</div>
             <div className="font-semibold mt-2 text-[14px] tracking-tight leading-tight">Studio-Grade Photo Enhancement • AI Background Removal</div>
           </div>
-          {/* IMAGE FRAME */}
           <div className="mx-4 rounded-[16px] overflow-hidden border border-black/[0.06] bg-[#FAF6EE] aspect-[16/10]">
             <img src="/images/photo-studio-shoe-before-after.jpg" alt="Shoe before after" className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-500" />
           </div>
@@ -73,13 +71,11 @@ export default function HomePage() {
           </div>
         </Link>
 
-        {/* POINT-2: FRAME + 2+2 LAYOUT + UNIFORM 13px */}
         <Link href="/batch-studio" className="group rounded-[24px] border border-black/[0.06] bg-white overflow-hidden shadow-[0_16px_40px_rgba(0,0,0,0.06)] hover:shadow-[0_24px_60px_rgba(0,0,0,0.10)] hover:-translate-y-1.5 transition-all duration-300 flex flex-col">
           <div className="p-6 pb-3">
             <div className="text-[16px] font-bold tracking-[0.14em] uppercase text-[#C9A86A]">02 Batch Studio</div>
             <div className="font-semibold mt-2 text-[14px] tracking-tight">100 images • 2 min</div>
           </div>
-          {/* IMAGE FRAME */}
           <div className="mx-4 rounded-[16px] overflow-hidden border border-black/[0.06] bg-[#FAF6EE] aspect-[16/10]">
             <img src="/images/batch-studio-100-images.jpg" alt="Batch 100 images" className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-500" />
           </div>
@@ -91,13 +87,11 @@ export default function HomePage() {
           </div>
         </Link>
 
-        {/* POINT-3: FRAME + UNIFORM 13px */}
         <Link href="/product" className="group rounded-[24px] border border-black/[0.06] bg-white overflow-hidden shadow-[0_16px_40px_rgba(0,0,0,0.06)] hover:shadow-[0_24px_60px_rgba(0,0,0,0.10)] hover:-translate-y-1.5 transition-all duration-300 flex flex-col">
           <div className="p-6 pb-3">
             <div className="text-[16px] font-bold tracking-[0.14em] uppercase text-[#C9A86A]">03 Template Studio</div>
             <div className="font-semibold mt-2 text-[14px] tracking-tight">Instant 3D Templates</div>
           </div>
-          {/* IMAGE FRAME */}
           <div className="mx-4 rounded-[16px] overflow-hidden border border-black/[0.06] bg-[#FAF6EE] aspect-[16/10]">
             <img src="/images/template-studio-3d-instant.jpg" alt="3D Templates" className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-500" />
           </div>
@@ -110,15 +104,13 @@ export default function HomePage() {
         </Link>
       </section>
 
-      {/* POINT-4 & 5: PREMIUM FONT + REDUCED SPACING */}
+      {/* PRICING - RECTIFIED WITH SAME HOVER AS UPPER SECTION */}
       <section id="pricing" className="max-w-[1280px] mx-auto px-6 mt-10 pb-16">
         <div className="text-center">
-          {/* POINT-4: PREMIUM FONT - Serif Editorial Luxury */}
-          <h2 className="font-serif font-[900] tracking-[-0.04em] text-[36px] md:text-[52px] leading-[0.9]">Pricing</h2>
+          <h2 className="font-serif font-[900] tracking-[-0.04em] text-[26px] md:text-[42px] leading-[0.9]">Pricing</h2>
           <p className="mt-2 text-[14px] tracking-[0.02em] font-medium text-black/40">
             Simple, Transparent Pricing — Scale Your Visuals Without Breaking The Bank
           </p>
-          {/* POINT-5: REDUCED SPACING mt-3 instead of mt-6 */}
           <div className="flex items-center justify-center gap-3 mt-3">
             <span className={isMonthly ? "text-sm font-semibold text-black" : "text-sm text-black/40"}>Monthly</span>
             <button onClick={() => setBilling(isMonthly ? "yearly" : "monthly")} className="relative w-14 h-7 rounded-full bg-black/[0.08] border border-black/10 p-1">
@@ -128,36 +120,42 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* REDUCED SPACING mt-6 instead of mt-12 */}
         <div className="grid md:grid-cols-4 gap-6 mt-6">
-          <div className="rounded-[24px] border border-black/[0.06] bg-white p-7 text-center shadow-[0_16px_40px_rgba(0,0,0,0.05)]">
+          {/* STARTER - HOVER ADDED */}
+          <div className="group rounded-[24px] border border-black/[0.06] bg-white p-7 text-center shadow-[0_16px_40px_rgba(0,0,0,0.05)] hover:shadow-[0_24px_60px_rgba(0,0,0,0.10)] hover:-translate-y-1.5 hover:border-black/10 transition-all duration-300 cursor-pointer">
             <div className="font-medium text-[13px] tracking-tight">Starter</div>
             <div className="text-[22px] font-bold tracking-tight mt-3">Rs{isMonthly ? prices.starter.m : prices.starter.y}/month</div>
             <div className="text-[11px] opacity-60 mt-1">Up to 50 images</div>
             <ul className="text-[12px] mt-5 text-left space-y-1.5 text-black/70"><li>✓ Basic AI edits</li><li>✓ Email support</li></ul>
-            <Link href="/get-started?plan=starter" className="block w-full mt-6 py-3 rounded-full border border-black/10 text-[13px] font-semibold bg-white">Start Starter</Link>
+            <Link href="/get-started?plan=starter" className="block w-full mt-6 py-3 rounded-full border border-black/10 text-[13px] font-semibold bg-white group-hover:bg-black group-hover:text-white transition-all duration-300">Start Starter</Link>
           </div>
-          <div className="rounded-[24px] border border-black bg-black text-white p-7 text-center relative shadow-[0_20px_60px_rgba(0,0,0,0.25)]">
+
+          {/* PRO - HOVER ADDED */}
+          <div className="group rounded-[24px] border border-black bg-black text-white p-7 text-center relative shadow-[0_20px_60px_rgba(0,0,0,0.25)] hover:shadow-[0_28px_80px_rgba(0,0,0,0.35)] hover:-translate-y-1.5 hover:scale-[1.02] transition-all duration-300 cursor-pointer">
             <div className="absolute top-4 right-4 text-[9px] bg-[#D4B87A] text-black px-2.5 py-1 rounded-full font-bold tracking-widest">Most Popular</div>
             <div className="font-medium text-[13px] tracking-tight">Pro</div>
             <div className="text-[22px] font-bold tracking-tight mt-3">Rs{isMonthly ? prices.pro.m : prices.pro.y}/month</div>
             <div className="text-[11px] opacity-60 mt-1">Up to 500 images</div>
             <ul className="text-[12px] mt-5 text-left space-y-1.5 text-white/80"><li>✓ Advanced AI edits</li><li>✓ Batch processing</li><li>✓ Priority support</li></ul>
-            <Link href="/get-started?plan=pro" className="block w-full mt-6 py-3 rounded-full bg-[#D4B87A] text-black text-[13px] font-semibold">Get Pro</Link>
+            <Link href="/get-started?plan=pro" className="block w-full mt-6 py-3 rounded-full bg-[#D4B87A] text-black text-[13px] font-semibold group-hover:bg-white transition-all duration-300">Get Pro</Link>
           </div>
-          <div className="rounded-[24px] border border-black/[0.06] bg-white p-7 text-center shadow-[0_16px_40px_rgba(0,0,0,0.05)]">
+
+          {/* BUSINESS - HOVER ADDED */}
+          <div className="group rounded-[24px] border border-black/[0.06] bg-white p-7 text-center shadow-[0_16px_40px_rgba(0,0,0,0.05)] hover:shadow-[0_24px_60px_rgba(0,0,0,0.10)] hover:-translate-y-1.5 hover:border-black/10 transition-all duration-300 cursor-pointer">
             <div className="font-medium text-[13px] tracking-tight">Business</div>
             <div className="text-[22px] font-bold tracking-tight mt-3">Rs{isMonthly ? prices.business.m : prices.business.y}/month</div>
             <div className="text-[11px] opacity-60 mt-1">Up to 2000 images</div>
             <ul className="text-[12px] mt-5 text-left space-y-1.5 text-black/70"><li>✓ Custom styles</li><li>✓ Team collaboration</li><li>✓ API access</li></ul>
-            <Link href="/company" className="block w-full mt-6 py-3 rounded-full border border-black/10 text-[13px] font-semibold bg-white">Talk to Sales</Link>
+            <Link href="/company" className="block w-full mt-6 py-3 rounded-full border border-black/10 text-[13px] font-semibold bg-white group-hover:bg-black group-hover:text-white transition-all duration-300">Talk to Sales</Link>
           </div>
-          <div className="rounded-[24px] border border-black/[0.06] bg-white p-7 text-center shadow-[0_16px_40px_rgba(0,0,0,0.05)]">
+
+          {/* ENTERPRISE - HOVER ADDED */}
+          <div className="group rounded-[24px] border border-black/[0.06] bg-white p-7 text-center shadow-[0_16px_40px_rgba(0,0,0,0.05)] hover:shadow-[0_24px_60px_rgba(0,0,0,0.10)] hover:-translate-y-1.5 hover:border-black/10 transition-all duration-300 cursor-pointer">
             <div className="font-medium text-[13px] tracking-tight">Enterprise • Custom</div>
             <div className="text-[20px] font-bold tracking-tight mt-3">Custom</div>
             <div className="text-[11px] opacity-60 mt-1">Contact us for volume</div>
             <ul className="text-[12px] mt-5 text-left space-y-1.5 text-black/70"><li>✓ Unlimited images</li><li>✓ Dedicated manager • SLA and security</li><li>✓ Custom integration</li></ul>
-            <Link href="/company" className="block w-full mt-6 py-3 rounded-full border border-black/10 text-[13px] font-semibold bg-white">Contact Us</Link>
+            <Link href="/company" className="block w-full mt-6 py-3 rounded-full border border-black/10 text-[13px] font-semibold bg-white group-hover:bg-black group-hover:text-white transition-all duration-300">Contact Us</Link>
           </div>
         </div>
       </section>
