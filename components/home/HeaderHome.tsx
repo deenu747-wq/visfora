@@ -17,7 +17,7 @@ export default function HeaderHome(){
     style={{ width: "56px", height: "56px" }}
   />
      <span className="text-[36px] tracking-[0.32em] font-light text-black">
-       VIS<span className="font-bold text-[#d6a85a]">FORA</span>
+       VISF<span className="font-light text-[#d6a85a]">ORA</span>
      </span>
     </Link>
 
