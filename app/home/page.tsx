@@ -123,8 +123,8 @@ export default function HomePage() {
         <div className="grid md:grid-cols-4 gap-6 mt-6">
           {/* STARTER - HOVER ADDED */}
           <div className="group rounded-[24px] border border-black/[0.06] bg-white p-7 text-center shadow-[0_16px_40px_rgba(0,0,0,0.05)] hover:shadow-[0_24px_60px_rgba(0,0,0,0.10)] hover:-translate-y-1.5 hover:border-black/10 transition-all duration-300 cursor-pointer">
-            <div className="font-medium text-[13px] tracking-tight">Starter</div>
-            <div className="text-[22px] font-bold tracking-tight mt-3">Rs{isMonthly ? prices.starter.m : prices.starter.y}/month</div>
+            <div className="font-medium text-[16px] tracking-tight">Starter</div>
+            <div className="text-[22px] font-bold tracking-tight mt-3">₹{isMonthly ? prices.starter.m : prices.starter.y}/month</div>
             <div className="text-[11px] opacity-60 mt-1">Up to 50 images</div>
             <ul className="text-[12px] mt-5 text-left space-y-1.5 text-black/70"><li>✓ Basic AI edits</li><li>✓ Email support</li></ul>
             <Link href="/get-started?plan=starter" className="block w-full mt-6 py-3 rounded-full border border-black/10 text-[13px] font-semibold bg-white group-hover:bg-black group-hover:text-white transition-all duration-300">Start Starter</Link>
@@ -133,8 +133,8 @@ export default function HomePage() {
           {/* PRO - HOVER ADDED */}
           <div className="group rounded-[24px] border border-black bg-black text-white p-7 text-center relative shadow-[0_20px_60px_rgba(0,0,0,0.25)] hover:shadow-[0_28px_80px_rgba(0,0,0,0.35)] hover:-translate-y-1.5 hover:scale-[1.02] transition-all duration-300 cursor-pointer">
             <div className="absolute top-4 right-4 text-[9px] bg-[#D4B87A] text-black px-2.5 py-1 rounded-full font-bold tracking-widest">Most Popular</div>
-            <div className="font-medium text-[13px] tracking-tight">Pro</div>
-            <div className="text-[22px] font-bold tracking-tight mt-3">Rs{isMonthly ? prices.pro.m : prices.pro.y}/month</div>
+            <div className="font-medium text-[16px] tracking-tight">Pro</div>
+            <div className="text-[22px] font-bold tracking-tight mt-3">₹{isMonthly ? prices.pro.m : prices.pro.y}/month</div>
             <div className="text-[11px] opacity-60 mt-1">Up to 500 images</div>
             <ul className="text-[12px] mt-5 text-left space-y-1.5 text-white/80"><li>✓ Advanced AI edits</li><li>✓ Batch processing</li><li>✓ Priority support</li></ul>
             <Link href="/get-started?plan=pro" className="block w-full mt-6 py-3 rounded-full bg-[#D4B87A] text-black text-[13px] font-semibold group-hover:bg-white transition-all duration-300">Get Pro</Link>
@@ -142,8 +142,8 @@ export default function HomePage() {
 
           {/* BUSINESS - HOVER ADDED */}
           <div className="group rounded-[24px] border border-black/[0.06] bg-white p-7 text-center shadow-[0_16px_40px_rgba(0,0,0,0.05)] hover:shadow-[0_24px_60px_rgba(0,0,0,0.10)] hover:-translate-y-1.5 hover:border-black/10 transition-all duration-300 cursor-pointer">
-            <div className="font-medium text-[13px] tracking-tight">Business</div>
-            <div className="text-[22px] font-bold tracking-tight mt-3">Rs{isMonthly ? prices.business.m : prices.business.y}/month</div>
+            <div className="font-medium text-[16px] tracking-tight">Business</div>
+            <div className="text-[22px] font-bold tracking-tight mt-3">₹{isMonthly ? prices.business.m : prices.business.y}/month</div>
             <div className="text-[11px] opacity-60 mt-1">Up to 2000 images</div>
             <ul className="text-[12px] mt-5 text-left space-y-1.5 text-black/70"><li>✓ Custom styles</li><li>✓ Team collaboration</li><li>✓ API access</li></ul>
             <Link href="/company" className="block w-full mt-6 py-3 rounded-full border border-black/10 text-[13px] font-semibold bg-white group-hover:bg-black group-hover:text-white transition-all duration-300">Talk to Sales</Link>
@@ -151,7 +151,7 @@ export default function HomePage() {
 
           {/* ENTERPRISE - HOVER ADDED */}
           <div className="group rounded-[24px] border border-black/[0.06] bg-white p-7 text-center shadow-[0_16px_40px_rgba(0,0,0,0.05)] hover:shadow-[0_24px_60px_rgba(0,0,0,0.10)] hover:-translate-y-1.5 hover:border-black/10 transition-all duration-300 cursor-pointer">
-            <div className="font-medium text-[13px] tracking-tight">Enterprise • Custom</div>
+            <div className="font-medium text-[16px] tracking-tight">Enterprise • Custom</div>
             <div className="text-[20px] font-bold tracking-tight mt-3">Custom</div>
             <div className="text-[11px] opacity-60 mt-1">Contact us for volume</div>
             <ul className="text-[12px] mt-5 text-left space-y-1.5 text-black/70"><li>✓ Unlimited images</li><li>✓ Dedicated manager • SLA and security</li><li>✓ Custom integration</li></ul>
