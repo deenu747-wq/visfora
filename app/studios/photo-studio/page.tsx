@@ -41,7 +41,8 @@ export default function PhotoStudio() {
               alt="VISFORA Logo" 
               className="h-8 w-8 object-contain"
             />
-            <span className="text-3xl font-serif tracking-widest text-[#E8DCC6]">VISFORA</span>
+            <span className="text-[36px] tracking-[0.32em] font-light text-White">
+       VIS<span className="font-normal text-[#d6a85a]">FORA</span>
           </div>
           <span className="text-sm text-[#D4A574]/70 mt-1 tracking-wide">Photo Studio • AI Editing</span>
         </div>
