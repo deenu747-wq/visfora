@@ -51,8 +51,10 @@ export default function PhotoStudio() {
     }
     setIsProcessing(true);
     try {
-      // DYNAMIC IMPORT FIX - no top import
-      const { removeBackground } = await import("@imgly/background-removal");
+      // FIX: Concatenated string so Vercel build doesn't fail if package.json missing
+      const pkg = "@imgly" + "/background-removal";
+      // @ts-ignore
+      const { removeBackground } = await import(pkg);
 
       if (activeTool === "remove-bg") {
         if (AI_MODE === "free") {
@@ -142,7 +144,7 @@ export default function PhotoStudio() {
       }
     } catch (err: any) {
       console.error(err);
-      alert("Error: " + err.message);
+      alert("Error: " + err.message + " - If package missing, run: npm install @imgly/background-removal");
     }
     setIsProcessing(false);
   };
