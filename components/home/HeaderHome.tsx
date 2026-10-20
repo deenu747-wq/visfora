@@ -6,7 +6,7 @@ export default function HeaderHome(){
  return (
   <header className="sticky top-0 z-50 w-full bg-[#FFFCF7] border-b border-black/[0.06]">
    <div className="max-w-[1440px] mx-auto h-[80px] px-10 flex items-center justify-between">
-    <Link href="/home" className="flex items-center gap-3">
+    <Link href="/" className="flex items-center gap-3">
      <Image
       src="/Logo.png"
       alt="Visfora"
