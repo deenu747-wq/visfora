@@ -51,7 +51,6 @@ export default function PhotoStudio() {
     }
     setIsProcessing(true);
     try {
-      // FIX: Concatenated string so Vercel build doesn't fail if package.json missing
       const pkg = "@imgly" + "/background-removal";
       // @ts-ignore
       const { removeBackground } = await import(pkg);
@@ -144,12 +143,21 @@ export default function PhotoStudio() {
       }
     } catch (err: any) {
       console.error(err);
-      alert("Error: " + err.message + " - If package missing, run: npm install @imgly/background-removal");
+      alert("Error: " + err.message);
     }
     setIsProcessing(false);
   };
 
   const handleGenerateClick = () => handleProcess();
+
+  // CHIPS WORKING MAPPING
+  const chips = [
+    { chip: "Luxury gold studio", bg: "Luxury Marble • Gold", tool: "ai-bg" },
+    { chip: "Minimal marble", bg: "White Infinity", tool: "ai-bg" },
+    { chip: "Dark moody", bg: "Studio Black", tool: "ai-bg" },
+    { chip: "Outdoor sunlight", bg: "White Infinity", tool: "ai-bg" },
+    { chip: "Neutral grey backdrop", bg: "Minimal Concrete", tool: "ai-bg" },
+  ];
 
   return (
     <div className="min-h-screen bg-[#0A0A0A] text-[#E8DCC6] flex flex-col">
@@ -215,10 +223,26 @@ export default function PhotoStudio() {
         </aside>
       </div>
 
+      {/* BOTTOM WITH WORKING CHIPS */}
       <div className="border-t border-[#D4A574]/30 p-4 bg-[#141414] mx-4 mb-4 rounded-2xl">
         <div className="flex gap-3">
           <div className="flex-1 flex items-center gap-3 bg-[#0F0F0F] border border-[#D4A574]/20 rounded-xl px-4 py-3"><span>✨</span><input value={prompt} onChange={(e) => setPrompt(e.target.value)} placeholder="Describe your edit • e.g., Add golden luxury studio backdrop, soft dramatic shadow, photoreal" className="flex-1 bg-transparent outline-none text-sm placeholder:text-[#E8DCC6]/40" /></div>
           <button onClick={handleGenerateClick} disabled={isProcessing} className="bg-[#D4A574] text-black px-6 py-3 rounded-xl font-medium flex items-center gap-2 hover:bg-[#E8DCC6] transition disabled:opacity-50">{isProcessing ? "Working..." : "✨ Generate"}</button>
+        </div>
+        <div className="flex gap-2 mt-3 overflow-x-auto">
+          {chips.map(({ chip, bg, tool }) => (
+            <button
+              key={chip}
+              onClick={() => {
+                setPrompt(chip);
+                setBgStyle(bg);
+                setActiveTool(tool);
+              }}
+              className="whitespace-nowrap px-4 py-2 rounded-xl text-xs border border-[#D4A574]/30 bg-[#1F1F1F] hover:bg-[#D4A574] hover:text-black transition"
+            >
+              ✨ {chip}
+            </button>
+          ))}
         </div>
       </div>
     </div>
