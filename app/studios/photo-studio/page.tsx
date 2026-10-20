@@ -198,21 +198,41 @@ export default function PhotoStudio() {
 
           <div onDragOver={(e) => e.preventDefault()} onDrop={handleDrop} className="flex-1 border border-dashed border-[#D4A574]/50 rounded-2xl p-4 bg-[#0F0F0F] relative min-h-[480px] flex flex-col">
             <p className="text-center text-sm text-[#E8DCC6]/60 mb-4">Drag & drop to upload<br />or click Upload</p>
-            <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="relative rounded-xl overflow-hidden bg-[#1A1A1A] aspect-[4/3]">
-                <span className="absolute top-3 left-3 text-xs bg-black/50 px-2 py-1 rounded-full">BEFORE</span>
-                {uploadedImage ? <img src={uploadedImage} className="w-full h-full object-cover" alt="before" /> : <div className="w-full h-full flex items-center justify-center bg-[url('https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80')] bg-cover opacity-60" />}
-              </div>
-              <div className="relative rounded-xl overflow-hidden bg-[#1A1A1A] aspect-[4/3] bg-[url('https://upload.wikimedia.org/wikipedia/commons/5/5b/Checkerboard_pattern.png')] bg-repeat">
-                <span className="absolute top-3 left-3 text-xs bg-[#D4A574] text-black px-2 py-1 rounded-full">AFTER</span>
-                {isProcessing ? <div className="w-full h-full flex items-center justify-center text-[#D4A574] animate-pulse">Processing... first time 15s</div> : afterImage ? <img src={afterImage} className="w-full h-full object-contain" alt="after" style={{ filter: `drop-shadow(0 15px ${shadowIntensity/3}px rgba(0,0,0,0.6))` }} /> : uploadedImage ? <img src={uploadedImage} className="w-full h-full object-cover opacity-50" alt="after preview" /> : <div className="w-full h-full flex items-center justify-center bg-[url('https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80')] bg-cover" />}
-              </div>
-            </div>
-            <input ref={fileInputRef} type="file" accept="image/*" hidden onChange={(e) => e.target.files && handleUpload(e.target.files[0])} />
-            {afterImage && <a href={afterImage} download={`visfora-${activeTool}.png`} target="_blank" className="mt-4 mx-auto bg-[#D4A574] text-black px-6 py-2 rounded-xl font-medium">⬇️ Download Result</a>}
-          </div>
-        </main>
+              
+           <div onDragOver={(e) => e.preventDefault()} onDrop={handleDrop} className="flex-1 border border-dashed border-[#D4A574]/50 rounded-2xl p-4 bg-[#0F0F0F] relative min-h-[480px] flex flex-col">
+  <p className="text-center text-sm text-[#E8DCC6]/60 mb-4">Drag & drop to upload<br />or click Upload</p>
+  
+  <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div className="relative rounded-xl overflow-hidden bg-[#1A1A1A] aspect-[4/3]">
+      <span className="absolute top-3 left-3 text-xs bg-black/50 px-2 py-1 rounded-full">BEFORE</span>
+      {uploadedImage ? (
+        <img src={uploadedImage} className="w-full h-full object-cover" alt="before" />
+      ) : (
+        <img src="/sneaker.png" className="w-full h-full object-contain p-6 opacity-70" alt="sneaker" />
+      )}
+    </div>
+    <div className="relative rounded-xl overflow-hidden bg-[#1A1A1A] aspect-[4/3] bg-[url('https://upload.wikimedia.org/wikipedia/commons/5/5b/Checkerboard_pattern.png')] bg-repeat">
+      <span className="absolute top-3 left-3 text-xs bg-[#D4A574] text-black px-2 py-1 rounded-full">AFTER</span>
+      {isProcessing ? (
+        <div className="w-full h-full flex items-center justify-center text-[#D4A574] animate-pulse">Processing... first time 15s</div>
+      ) : afterImage ? (
+        <img src={afterImage} className="w-full h-full object-contain" alt="after" style={{ filter: `drop-shadow(0 15px ${shadowIntensity / 3}px rgba(0,0,0,0.6))` }} />
+      ) : uploadedImage ? (
+        <img src={uploadedImage} className="w-full h-full object-cover opacity-50" alt="after preview" />
+      ) : (
+        <img src="/sneaker.png" className="w-full h-full object-contain p-6" alt="sneaker" />
+      )}
+    </div>
+  </div>
+  <input ref={fileInputRef} type="file" accept="image/*" hidden onChange={(e) => e.target.files && handleUpload(e.target.files[0])} />
+  {afterImage && (
+    <a href={afterImage} download={`visfora-${activeTool}.png`} target="_blank" className="mt-4 mx-auto bg-[#D4A574] text-black px-6 py-2 rounded-xl font-medium">
+      ⬇️ Download Result
+    </a>
+  )}
+        </div>
 
+  </main>
         <aside className="w-full lg:w-[300px] border border-[#D4A574]/30 rounded-2xl p-5 bg-[#141414] h-fit">
           <h3 className="text-[#E8DCC6] font-medium mb-6 flex items-center justify-between">Properties <span>⚙️</span></h3>
           <div className="space-y-6">
