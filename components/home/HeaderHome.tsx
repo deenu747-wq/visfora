@@ -6,7 +6,7 @@ export default function HeaderHome(){
  const studios = [
    { 
      label: "PHOTO STUDIO", 
-     title: "Studio-Grade Photo Enhancement", 
+     title: "Enhance-Grade Photo", 
      sub: "AI Background Removal", 
      href: "/studios/photo-studio", 
      footer: "BEFORE → AFTER | Studio lighting auto-fix",
