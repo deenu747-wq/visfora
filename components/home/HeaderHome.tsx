@@ -30,20 +30,19 @@ export default function HeaderHome(){
          Studios
        </button>
        
-       {/* FIXED: left-0 not center-0 */}
        <div className="fixed left-0 top-[80px] w-screen invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-all duration-300 bg-[#FFFCF7] border-y border-black/[0.06] shadow-[0_30px_80px_rgba(0,0,0,0.12)] z-50">
          <div className="max-w-[1440px] mx-auto px-10 py-8">
            <div className="grid grid-cols-6 gap-4">
              {[
-               { title: "Studio-Grade Photo Enhancement", sub: "AI Background Removal", href: "/studios/photo-studio", footer: "BEFORE → AFTER | Studio lighting auto-fix" },
-               { title: "100 images • 2 min", sub: "BATCH PROCESSING - 100 PRODUCTS", href: "/studios/batch-studio", tags: ["Social Post","Holiday Sale","New Launch","Promo Offer"] },
-               { title: "Instant 3D Templates", sub: "", href: "/studios/3d-studio", tags: ["Text to 3D models","AI texturing","PBR maps","Turn ideas into 3D fast"] },
-               { title: "SVG & Logos", sub: "AI Vector Generation", href: "/studios/vector-studio", tags: ["Logo Maker","Icon Set","SVG Export","Brand Kit"] },
-               { title: "Realistic Mockups", sub: "Place in seconds", href: "/studios/mockup-studio", tags: ["T-Shirt","Bottle","Box","Device"] },
-               { title: "Animate & Video", sub: "AI Motion Studio", href: "/studios/motion-studio", tags: ["Product Video","Reels","Ad Animation","360° Spin"] },
+               { label: "PHOTO STUDIO", title: "Studio-Grade Photo Enhancement", sub: "AI Background Removal", href: "/studios/photo-studio", footer: "BEFORE → AFTER | Studio lighting auto-fix" },
+               { label: "BATCH STUDIO", title: "100 images • 2 min", sub: "BATCH PROCESSING - 100 PRODUCTS", href: "/studios/batch-studio", tags: ["Social Post","Holiday Sale","New Launch","Promo Offer"] },
+               { label: "TEMPLATE STUDIO", title: "Instant 3D Templates", sub: "", href: "/studios/3d-studio", tags: ["Text to 3D models","AI texturing","PBR maps","Turn ideas into 3D fast"] },
+               { label: "VECTOR STUDIO", title: "SVG & Logos", sub: "AI Vector Generation", href: "/studios/vector-studio", tags: ["Logo Maker","Icon Set","SVG Export","Brand Kit"] },
+               { label: "MOCKUP STUDIO", title: "Realistic Mockups", sub: "Place in seconds", href: "/studios/mockup-studio", tags: ["T-Shirt","Bottle","Box","Device"] },
+               { label: "MOTION STUDIO", title: "Animate & Video", sub: "AI Motion Studio", href: "/studios/motion-studio", tags: ["Product Video","Reels","Ad Animation","360° Spin"] },
              ].map((s) => (
-               <Link key={s.title} href={s.href} className="bg-white rounded-[16px] border border-black/[0.06] p-3 hover:border-black/15 hover:shadow-[0_12px_32px_rgba(0,0,0,0.08)] hover:-translate-y-[2px] transition-all duration-200 block">
-                 {/* NUM REMOVED & TEXT CENTERED */}
+               <Link key={s.label} href={s.href} className="bg-white rounded-[16px] border border-black/[0.06] p-3 hover:border-black/15 hover:shadow-[0_12px_32px_rgba(0,0,0,0.08)] hover:-translate-y-[2px] transition-all duration-200 block">
+                 <div className="text-[10px] tracking-[0.2em] text-[#d6a85a] font-bold mb-2 text-center">{s.label}</div>
                  <div className="text-[12px] font-bold leading-[1.3] min-h-[36px] text-black text-center">
                    {s.title}<br/><span className="font-normal text-black/60 text-[11px]">{s.sub}</span>
                  </div>
