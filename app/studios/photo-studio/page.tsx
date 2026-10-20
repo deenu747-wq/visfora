@@ -1,8 +1,7 @@
 "use client";
 import { useState, useRef } from "react";
-import { removeBackground } from "@imgly/background-removal";
 
-const AI_MODE = process.env.NEXT_PUBLIC_AI_MODE || "free"; // free or fal
+const AI_MODE = process.env.NEXT_PUBLIC_AI_MODE || "free";
 
 export default function PhotoStudio() {
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
@@ -17,7 +16,7 @@ export default function PhotoStudio() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const tools = [
-    { id: "remove-bg", label: "Remove Background", icon: "✂️", active: true },
+    { id: "remove-bg", label: "Remove Background", icon: "✂️" },
     { id: "enhance", label: "Enhance", icon: "✨" },
     { id: "ai-bg", label: "AI Backgrounds", icon: "🏔️" },
     { id: "eraser", label: "Magic Eraser", icon: "🧹" },
@@ -45,7 +44,6 @@ export default function PhotoStudio() {
     if (file) handleUpload(file);
   };
 
-  // --- CORE LOGIC FOR ALL 6 STUDIOS ---
   const handleProcess = async () => {
     if (!uploadedFile && !uploadedImage) {
       alert("Please upload image first!");
@@ -53,14 +51,14 @@ export default function PhotoStudio() {
     }
     setIsProcessing(true);
     try {
+      // DYNAMIC IMPORT FIX - no top import
+      const { removeBackground } = await import("@imgly/background-removal");
+
       if (activeTool === "remove-bg") {
-        // FREE MODE
         if (AI_MODE === "free") {
           const blob = await removeBackground(uploadedFile as File);
-          const url = URL.createObjectURL(blob);
-          setAfterImage(url);
+          setAfterImage(URL.createObjectURL(blob));
         } else {
-          // FAL MODE
           const reader = new FileReader();
           const base64 = await new Promise<string>((res) => {
             reader.onload = () => res(reader.result as string);
@@ -78,30 +76,22 @@ export default function PhotoStudio() {
         }
       } 
       else if (activeTool === "ai-bg") {
-        // AI Backgrounds - FREE using canvas
-        let baseImg = afterImage || uploadedImage;
-        if (!baseImg) throw new Error("No image");
-        
-        // Ensure we have transparent cutout first
         let cutoutUrl = afterImage;
-        if (!cutoutUrl) {
+        if (!cutoutUrl && uploadedFile) {
           const blob = await removeBackground(uploadedFile as File);
           cutoutUrl = URL.createObjectURL(blob);
           setAfterImage(cutoutUrl);
         }
-
-        // Create luxury bg
         const canvas = document.createElement("canvas");
         const ctx = canvas.getContext("2d")!;
         const bg = new Image();
         const fg = new Image();
         bg.crossOrigin = "anonymous";
         fg.crossOrigin = "anonymous";
-
         await new Promise<void>((resolve) => {
           bg.onload = () => {
-            canvas.width = bg.width;
-            canvas.height = bg.height;
+            canvas.width = 1000;
+            canvas.height = 1000;
             const bgVal = bgPresets[bgStyle];
             if (bgVal?.startsWith("#")) {
               ctx.fillStyle = bgVal;
@@ -110,7 +100,6 @@ export default function PhotoStudio() {
               ctx.drawImage(bg, 0, 0, canvas.width, canvas.height);
             }
             fg.onload = () => {
-              // center product
               const scale = Math.min(canvas.width / fg.width, canvas.height / fg.height) * 0.7;
               const w = fg.width * scale;
               const h = fg.height * scale;
@@ -124,17 +113,11 @@ export default function PhotoStudio() {
             fg.src = cutoutUrl!;
           };
           const bgVal = bgPresets[bgStyle];
-          if (bgVal?.startsWith("#")) {
-            // solid color
-            bg.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+ip1sAAAAASUVORK5CYII=";
-          } else {
-            bg.src = bgVal;
-          }
+          bg.src = bgVal?.startsWith("#") ? "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+ip1sAAAAASUVORK5CYII=" : bgVal;
         });
         setAfterImage(canvas.toDataURL("image/png"));
       }
       else if (activeTool === "enhance") {
-        // FREE Enhance - 2x upscale via canvas
         const img = new Image();
         img.src = (afterImage || uploadedImage)!;
         await new Promise(r => img.onload = r as any);
@@ -147,17 +130,15 @@ export default function PhotoStudio() {
         setAfterImage(canvas.toDataURL("image/png"));
       }
       else if (activeTool === "shadow") {
-        // Shadow already via CSS, just re-render
         if (afterImage) {
-          // trigger re-render to apply shadowIntensity
-          setAfterImage(afterImage + "?t=" + Date.now());
+          setAfterImage(afterImage.split("?")[0] + "?t=" + Date.now());
         } else if (uploadedFile) {
           const blob = await removeBackground(uploadedFile as File);
           setAfterImage(URL.createObjectURL(blob));
         }
       }
       else {
-        alert(`${activeTool} Premium coming soon! For now use Remove BG + AI Backgrounds + Shadow - these 3 make your luxury shoe photo.`);
+        alert(`${activeTool} Premium coming soon! Use Remove BG + AI Backgrounds + Shadow.`);
       }
     } catch (err: any) {
       console.error(err);
@@ -171,20 +152,16 @@ export default function PhotoStudio() {
   return (
     <div className="min-h-screen bg-[#0A0A0A] text-[#E8DCC6] flex flex-col">
       <header className="border-b border-[#D4A574]/30 px-6 py-4 flex items-center justify-between">
-        <div className="flex flex-col">
-          <div className="flex items-center gap-3">
-            <img src="/Logo.png" alt="VISFORA Logo" className="h-24 w-24 object-contain" />
-            <div className="flex flex-col">
-              <span className="text-[36px] tracking-[0.32em] font-light text-white leading-none">
-                VIS<span className="font-normal text-[#d6a85a]">FORA</span>
-              </span>
-              <span className="text-sm text-[#D4A574]/70 mt-1 tracking-wide">Photo Studio • {AI_MODE === "free" ? "FREE MODE" : "FAL PREMIUM"} {isProcessing && "• Processing..."}</span>
-            </div>
+        <div className="flex items-center gap-3">
+          <img src="/Logo.png" alt="VISFORA Logo" className="h-24 w-24 object-contain" />
+          <div className="flex flex-col">
+            <span className="text-[36px] tracking-[0.32em] font-light text-white leading-none">VIS<span className="font-normal text-[#d6a85a]">FORA</span></span>
+            <span className="text-sm text-[#D4A574]/70 mt-1 tracking-wide">Photo Studio • {AI_MODE === "free" ? "FREE MODE" : "FAL PREMIUM"} {isProcessing && "• Processing..."}</span>
           </div>
         </div>
         <div className="flex items-center gap-4">
-          <span className="text-sm text-[#E8DCC6]/70 hidden md:block">Mode: {AI_MODE} • Drag & drop image</span>
-          <button onClick={() => fileInputRef.current?.click()} className="bg-[#D4A574] text-black px-5 py-2.5 rounded-xl font-medium hover:bg-[#E8DCC6] transition flex items-center gap-2"><span className="text-xl">+</span> Upload New</button>
+          <span className="text-sm text-[#E8DCC6]/70 hidden md:block">Mode: {AI_MODE}</span>
+          <button onClick={() => fileInputRef.current?.click()} className="bg-[#D4A574] text-black px-5 py-2.5 rounded-xl font-medium flex items-center gap-2"><span className="text-xl">+</span> Upload New</button>
         </div>
       </header>
 
@@ -197,7 +174,7 @@ export default function PhotoStudio() {
             ))}
           </div>
           <button onClick={handleProcess} disabled={isProcessing} className="w-full mt-4 bg-white text-black py-3 rounded-xl font-medium disabled:opacity-50">{isProcessing ? "Processing..." : "✨ Run " + tools.find(t=>t.id===activeTool)?.label}</button>
-          <p className="text-xs text-[#E8DCC6]/40 mt-3 text-center">Free mode: no API key needed. Switch to Fal later via 1 env var.</p>
+          <p className="text-xs text-[#E8DCC6]/40 mt-3 text-center">Free mode: no key needed</p>
         </aside>
 
         <main className="flex-1 flex flex-col">
@@ -218,7 +195,7 @@ export default function PhotoStudio() {
               </div>
               <div className="relative rounded-xl overflow-hidden bg-[#1A1A1A] aspect-[4/3] bg-[url('https://upload.wikimedia.org/wikipedia/commons/5/5b/Checkerboard_pattern.png')] bg-repeat">
                 <span className="absolute top-3 left-3 text-xs bg-[#D4A574] text-black px-2 py-1 rounded-full">AFTER</span>
-                {isProcessing ? <div className="w-full h-full flex items-center justify-center text-[#D4A574] animate-pulse">Processing {activeTool}... first time may take 15s (downloading AI model)</div> : afterImage ? <img src={afterImage} className="w-full h-full object-contain" alt="after" style={{ filter: `drop-shadow(0 15px ${shadowIntensity/3}px rgba(0,0,0,0.6))` }} /> : uploadedImage ? <img src={uploadedImage} className="w-full h-full object-cover opacity-50" alt="after preview" /> : <div className="w-full h-full flex items-center justify-center bg-[url('https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80')] bg-cover" />}
+                {isProcessing ? <div className="w-full h-full flex items-center justify-center text-[#D4A574] animate-pulse">Processing... first time 15s</div> : afterImage ? <img src={afterImage} className="w-full h-full object-contain" alt="after" style={{ filter: `drop-shadow(0 15px ${shadowIntensity/3}px rgba(0,0,0,0.6))` }} /> : uploadedImage ? <img src={uploadedImage} className="w-full h-full object-cover opacity-50" alt="after preview" /> : <div className="w-full h-full flex items-center justify-center bg-[url('https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80')] bg-cover" />}
               </div>
             </div>
             <input ref={fileInputRef} type="file" accept="image/*" hidden onChange={(e) => e.target.files && handleUpload(e.target.files[0])} />
