@@ -54,7 +54,6 @@ export default function PhotoStudio() {
       const pkg = "@imgly" + "/background-removal";
       // @ts-ignore
       const { removeBackground } = await import(pkg);
-
       if (activeTool === "remove-bg") {
         if (AI_MODE === "free") {
           const blob = await removeBackground(uploadedFile as File);
@@ -75,8 +74,7 @@ export default function PhotoStudio() {
           if (resultUrl) setAfterImage(resultUrl);
           else alert("Fal error: " + JSON.stringify(data).slice(0,300));
         }
-      } 
-      else if (activeTool === "ai-bg") {
+      } else if (activeTool === "ai-bg") {
         let cutoutUrl = afterImage;
         if (!cutoutUrl && uploadedFile) {
           const blob = await removeBackground(uploadedFile as File);
@@ -117,8 +115,7 @@ export default function PhotoStudio() {
           bg.src = bgVal?.startsWith("#") ? "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+ip1sAAAAASUVORK5CYII=" : bgVal;
         });
         setAfterImage(canvas.toDataURL("image/png"));
-      }
-      else if (activeTool === "enhance") {
+      } else if (activeTool === "enhance") {
         const img = new Image();
         img.src = (afterImage || uploadedImage)!;
         await new Promise(r => img.onload = r as any);
@@ -129,17 +126,15 @@ export default function PhotoStudio() {
         ctx.imageSmoothingQuality = "high";
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
         setAfterImage(canvas.toDataURL("image/png"));
-      }
-      else if (activeTool === "shadow") {
+      } else if (activeTool === "shadow") {
         if (afterImage) {
           setAfterImage(afterImage.split("?")[0] + "?t=" + Date.now());
         } else if (uploadedFile) {
           const blob = await removeBackground(uploadedFile as File);
           setAfterImage(URL.createObjectURL(blob));
         }
-      }
-      else {
-        alert(`${activeTool} Premium coming soon! Use Remove BG + AI Backgrounds + Shadow.`);
+      } else {
+        alert(`${activeTool} Premium coming soon!`);
       }
     } catch (err: any) {
       console.error(err);
@@ -148,9 +143,6 @@ export default function PhotoStudio() {
     setIsProcessing(false);
   };
 
-  const handleGenerateClick = () => handleProcess();
-
-  // CHIPS WORKING MAPPING
   const chips = [
     { chip: "Luxury gold studio", bg: "Luxury Marble • Gold", tool: "ai-bg" },
     { chip: "Minimal marble", bg: "White Infinity", tool: "ai-bg" },
@@ -198,41 +190,37 @@ export default function PhotoStudio() {
 
           <div onDragOver={(e) => e.preventDefault()} onDrop={handleDrop} className="flex-1 border border-dashed border-[#D4A574]/50 rounded-2xl p-4 bg-[#0F0F0F] relative min-h-[480px] flex flex-col">
             <p className="text-center text-sm text-[#E8DCC6]/60 mb-4">Drag & drop to upload<br />or click Upload</p>
-              
-           <div onDragOver={(e) => e.preventDefault()} onDrop={handleDrop} className="flex-1 border border-dashed border-[#D4A574]/50 rounded-2xl p-4 bg-[#0F0F0F] relative min-h-[480px] flex flex-col">
-  <p className="text-center text-sm text-[#E8DCC6]/60 mb-4">Drag & drop to upload<br />or click Upload</p>
-  
-  <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4">
-    <div className="relative rounded-xl overflow-hidden bg-[#1A1A1A] aspect-[4/3]">
-      <span className="absolute top-3 left-3 text-xs bg-black/50 px-2 py-1 rounded-full">BEFORE</span>
-      {uploadedImage ? (
-        <img src={uploadedImage} className="w-full h-full object-cover" alt="before" />
-      ) : (
-        <img src="/sneaker.png" className="w-full h-full object-contain p-6 opacity-70" alt="sneaker" />
-      )}
-    </div>
-    <div className="relative rounded-xl overflow-hidden bg-[#1A1A1A] aspect-[4/3] bg-[url('https://upload.wikimedia.org/wikipedia/commons/5/5b/Checkerboard_pattern.png')] bg-repeat">
-      <span className="absolute top-3 left-3 text-xs bg-[#D4A574] text-black px-2 py-1 rounded-full">AFTER</span>
-      {isProcessing ? (
-        <div className="w-full h-full flex items-center justify-center text-[#D4A574] animate-pulse">Processing... first time 15s</div>
-      ) : afterImage ? (
-        <img src={afterImage} className="w-full h-full object-contain" alt="after" style={{ filter: `drop-shadow(0 15px ${shadowIntensity / 3}px rgba(0,0,0,0.6))` }} />
-      ) : uploadedImage ? (
-        <img src={uploadedImage} className="w-full h-full object-cover opacity-50" alt="after preview" />
-      ) : (
-        <img src="/sneaker.png" className="w-full h-full object-contain p-6" alt="sneaker" />
-      )}
-    </div>
-  </div>
-  <input ref={fileInputRef} type="file" accept="image/*" hidden onChange={(e) => e.target.files && handleUpload(e.target.files[0])} />
-  {afterImage && (
-    <a href={afterImage} download={`visfora-${activeTool}.png`} target="_blank" className="mt-4 mx-auto bg-[#D4A574] text-black px-6 py-2 rounded-xl font-medium">
-      ⬇️ Download Result
-    </a>
-  )}
-        </div>
+            
+            <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="relative rounded-xl overflow-hidden bg-[#1A1A1A] aspect-[4/3]">
+                <span className="absolute top-3 left-3 text-xs bg-black/50 px-2 py-1 rounded-full z-10">BEFORE</span>
+                {uploadedImage ? (
+                  <img src={uploadedImage} className="w-full h-full object-cover" alt="before" />
+                ) : (
+                  <img src="/sneaker.png" className="w-full h-full object-contain p-6 opacity-70" alt="sneaker" />
+                )}
+              </div>
+              <div className="relative rounded-xl overflow-hidden bg-[#1A1A1A] aspect-[4/3] bg-[url('https://upload.wikimedia.org/wikipedia/commons/5/5b/Checkerboard_pattern.png')] bg-repeat">
+                <span className="absolute top-3 left-3 text-xs bg-[#D4A574] text-black px-2 py-1 rounded-full z-10">AFTER</span>
+                {isProcessing ? (
+                  <div className="w-full h-full flex items-center justify-center text-[#D4A574] animate-pulse">Processing... first time 15s</div>
+                ) : afterImage ? (
+                  <img src={afterImage} className="w-full h-full object-contain" alt="after" style={{ filter: `drop-shadow(0 15px ${shadowIntensity / 3}px rgba(0,0,0,0.6))` }} />
+                ) : uploadedImage ? (
+                  <img src={uploadedImage} className="w-full h-full object-cover opacity-50" alt="after preview" />
+                ) : (
+                  <img src="/sneaker.png" className="w-full h-full object-contain p-6" alt="sneaker" />
+                )}
+              </div>
+            </div>
 
-  </main>
+            <input ref={fileInputRef} type="file" accept="image/*" hidden onChange={(e) => e.target.files && handleUpload(e.target.files[0])} />
+            {afterImage && (
+              <a href={afterImage} download={`visfora-${activeTool}.png`} target="_blank" className="mt-4 mx-auto bg-[#D4A574] text-black px-6 py-2 rounded-xl font-medium">⬇️ Download Result</a>
+            )}
+          </div>
+        </main>
+
         <aside className="w-full lg:w-[300px] border border-[#D4A574]/30 rounded-2xl p-5 bg-[#141414] h-fit">
           <h3 className="text-[#E8DCC6] font-medium mb-6 flex items-center justify-between">Properties <span>⚙️</span></h3>
           <div className="space-y-6">
@@ -243,25 +231,14 @@ export default function PhotoStudio() {
         </aside>
       </div>
 
-      {/* BOTTOM WITH WORKING CHIPS */}
       <div className="border-t border-[#D4A574]/30 p-4 bg-[#141414] mx-4 mb-4 rounded-2xl">
         <div className="flex gap-3">
           <div className="flex-1 flex items-center gap-3 bg-[#0F0F0F] border border-[#D4A574]/20 rounded-xl px-4 py-3"><span>✨</span><input value={prompt} onChange={(e) => setPrompt(e.target.value)} placeholder="Describe your edit • e.g., Add golden luxury studio backdrop, soft dramatic shadow, photoreal" className="flex-1 bg-transparent outline-none text-sm placeholder:text-[#E8DCC6]/40" /></div>
-          <button onClick={handleGenerateClick} disabled={isProcessing} className="bg-[#D4A574] text-black px-6 py-3 rounded-xl font-medium flex items-center gap-2 hover:bg-[#E8DCC6] transition disabled:opacity-50">{isProcessing ? "Working..." : "✨ Generate"}</button>
+          <button onClick={handleProcess} disabled={isProcessing} className="bg-[#D4A574] text-black px-6 py-3 rounded-xl font-medium flex items-center gap-2 hover:bg-[#E8DCC6] transition disabled:opacity-50">{isProcessing ? "Working..." : "✨ Generate"}</button>
         </div>
         <div className="flex gap-2 mt-3 overflow-x-auto">
           {chips.map(({ chip, bg, tool }) => (
-            <button
-              key={chip}
-              onClick={() => {
-                setPrompt(chip);
-                setBgStyle(bg);
-                setActiveTool(tool);
-              }}
-              className="whitespace-nowrap px-4 py-2 rounded-xl text-xs border border-[#D4A574]/30 bg-[#1F1F1F] hover:bg-[#D4A574] hover:text-black transition"
-            >
-              ✨ {chip}
-            </button>
+            <button key={chip} onClick={() => { setPrompt(chip); setBgStyle(bg); setActiveTool(tool); }} className="whitespace-nowrap px-4 py-2 rounded-xl text-xs border border-[#D4A574]/30 bg-[#1F1F1F] hover:bg-[#D4A574] hover:text-black transition">✨ {chip}</button>
           ))}
         </div>
       </div>
