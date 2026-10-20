@@ -36,14 +36,14 @@ export default function HeaderHome(){
              {[
                { label: "PHOTO STUDIO", title: "Studio-Grade Photo Enhancement", sub: "AI Background Removal", href: "/studios/photo-studio", footer: "BEFORE → AFTER | Studio lighting auto-fix" },
                { label: "BATCH STUDIO", title: "100 images • 2 min", sub: "BATCH PROCESSING - 100 PRODUCTS", href: "/studios/batch-studio", tags: ["Social Post","Holiday Sale","New Launch","Promo Offer"] },
-               { label: "TEMPLATE STUDIO", title: "Instant 3D Templates", sub: "", href: "/studios/3d-studio", tags: ["Text to 3D models","AI texturing","PBR maps","Turn ideas into 3D fast"] },
+               { label: "TEMPLATE STUDIO", title: "Instant 3D Templates", sub: "AI 3D Model Generator", href: "/studios/3d-studio", tags: ["Text to 3D models","AI texturing","PBR maps","Turn ideas into 3D fast"] },
                { label: "VECTOR STUDIO", title: "SVG & Logos", sub: "AI Vector Generation", href: "/studios/vector-studio", tags: ["Logo Maker","Icon Set","SVG Export","Brand Kit"] },
                { label: "MOCKUP STUDIO", title: "Realistic Mockups", sub: "Place in seconds", href: "/studios/mockup-studio", tags: ["T-Shirt","Bottle","Box","Device"] },
                { label: "MOTION STUDIO", title: "Animate & Video", sub: "AI Motion Studio", href: "/studios/motion-studio", tags: ["Product Video","Reels","Ad Animation","360° Spin"] },
              ].map((s) => (
                <Link key={s.label} href={s.href} className="bg-white rounded-[16px] border border-black/[0.06] p-3 hover:border-black/15 hover:shadow-[0_12px_32px_rgba(0,0,0,0.08)] hover:-translate-y-[2px] transition-all duration-200 block">
-                 <div className="text-[10px] tracking-[0.2em] text-[#d6a85a] font-bold mb-2 text-center">{s.label}</div>
-                 <div className="text-[12px] font-bold leading-[1.3] min-h-[36px] text-black text-center">
+                 <div className="text-[12px] tracking-[0.2em] text-[#d6a85a] font-bold mb-2 text-center">{s.label}</div>
+                 <div className="text-[14px] font-bold leading-[1.3] min-h-[36px] text-black text-center">
                    {s.title}<br/><span className="font-normal text-black/60 text-[11px]">{s.sub}</span>
                  </div>
                  <div className="bg-[#F7F2EB] rounded-[12px] aspect-[4/2.6] my-3 flex items-center justify-center text-[10px] text-black/30">Preview</div>
