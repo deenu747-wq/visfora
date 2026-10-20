@@ -42,8 +42,8 @@ export default function HeaderHome(){
                { label: "MOTION STUDIO", title: "Animate & Video", sub: "AI Motion Studio", href: "/studios/motion-studio", tags: ["Product Video","Reels","Ad Animation","360° Spin"] },
              ].map((s) => (
                <Link key={s.label} href={s.href} className="bg-white rounded-[16px] border border-black/[0.06] p-3 hover:border-black/15 hover:shadow-[0_12px_32px_rgba(0,0,0,0.08)] hover:-translate-y-[2px] transition-all duration-200 block">
-                 <div className="text-[12px] tracking-[0.2em] text-[#d6a85a] font-bold mb-2 text-center">{s.label}</div>
-                 <div className="text-[14px] font-bold leading-[1.3] min-h-[36px] text-black text-center">
+                 <div className="text-[13px] tracking-[0.2em] text-[#d6a85a] font-bold mb-2 text-center">{s.label}</div>
+                 <div className="text-[12px] font-bold leading-[1.3] min-h-[36px] text-black text-center">
                    {s.title}<br/><span className="font-normal text-black/60 text-[11px]">{s.sub}</span>
                  </div>
                  <div className="bg-[#F7F2EB] rounded-[12px] aspect-[4/2.6] my-3 flex items-center justify-center text-[10px] text-black/30">Preview</div>
