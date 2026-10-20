@@ -39,7 +39,7 @@ export default function PhotoStudio() {
             <img 
               src="/Logo.png" 
               alt="VISFORA Logo" 
-              className="h-8 w-8 object-contain"
+              className="h-24 w-24 object-contain"
             />
             <div className="flex flex-col">
               <span className="text-[36px] tracking-[0.32em] font-light text-white leading-none">
