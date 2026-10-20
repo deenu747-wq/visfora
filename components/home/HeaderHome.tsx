@@ -8,14 +8,14 @@ export default function HeaderHome(){
    <div className="max-w-[1440px] mx-auto h-[80px] px-10 flex items-center justify-between">
     <Link href="/home" className="flex items-center gap-3">
      <Image
-    src="/Logo.png"
-    alt="Visfora"
-    width={56}
-    height={56}
-    className="object-contain"
-    priority
-    style={{ width: "56px", height: "56px" }}
-  />
+      src="/Logo.png"
+      alt="Visfora"
+      width={56}
+      height={56}
+      className="object-contain"
+      priority
+      style={{ width: "56px", height: "56px" }}
+     />
      <span className="text-[36px] tracking-[0.32em] font-light text-black">
        VISF<span className="font-light text-[#d6a85a]">ORA</span>
      </span>
@@ -24,35 +24,51 @@ export default function HeaderHome(){
     <nav className="hidden md:flex items-center gap-9 text-[13.5px] tracking-wide text-black/60">
      <Link href="/products" className="hover:text-black transition">Products</Link>
      <Link href="/solutions" className="hover:text-black transition">Solutions</Link>
-     // In your Header.tsx, inside nav
-<div className="relative group">
-  <button className="flex items-center gap-1 py-6 font-medium">
-    Studios <span className="text-[10px] group-hover:rotate-180 transition">▼</span>
-  </button>
-  
-  <div className="absolute left-1/2 -translate-x-1/2 top-full invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-all duration-200 z-50">
-    <div className="bg-white rounded-[24px] shadow-[0_20px_80px_rgba(0,0,0,0.12)] border border-black/5 p-3 flex gap-2 w-[980px]">
-      {[
-        { name: "Photo Studio", desc: "Product photography", href: "/studios/photo-studio" },
-        { name: "Batch Studio", desc: "Process at scale", href: "/studios/batch-studio" },
-        { name: "3D Studio", desc: "Render 3D objects", href: "/studios/3d-studio" },
-        { name: "Vector Studio", desc: "Logos & SVG", href: "/studios/vector-studio" },
-        { name: "Mockup Studio", desc: "Realistic mockups", href: "/studios/mockup-studio" },
-        { name: "Motion Studio", desc: "Animate & video", href: "/studios/motion-studio" },
-      ].map((s) => (
-        <a key={s.name} href={s.href} className="flex-1 rounded-[16px] p-5 hover:bg-[#FFFCF7] transition text-center">
-          <div className="w-10 h-10 mx-auto rounded-[10px] bg-[#F6F0E8] flex items-center justify-center mb-3">✦</div>
-          <div className="text-[14px] font-semibold whitespace-nowrap">{s.name}</div>
-          <div className="text-[11px] opacity-50 mt-1">{s.desc}</div>
-        </a>
-      ))}
-    </div>
-    <div className="bg-[#FFFCF7] mt-3 rounded-[12px] px-5 py-3 flex justify-between text-[12px]">
-      <a href="/studios" className="font-medium hover:underline">Explore all Studios →</a>
-      <span className="opacity-50">New • AI-powered editing</span>
-    </div>
-  </div>
-</div>
+     
+     {/* STUDIOS - FIXED HOVER MEGA MENU */}
+     <div className="relative group">
+       <button className="flex items-center gap-1 py-8 font-medium text-black/60 group-hover:text-black transition">
+         Studios <span className="text-[10px] group-hover:rotate-180 transition-transform duration-200">▼</span>
+       </button>
+       
+       {/* 6 CARDS IN ONE HORIZONTAL LINE */}
+       <div className="fixed left-0 top-[80px] w-screen invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-all duration-300 bg-[#FFFCF7] border-y border-black/[0.06] shadow-[0_30px_80px_rgba(0,0,0,0.12)] z-50">
+         <div className="max-w-[1440px] mx-auto px-10 py-8">
+           <div className="grid grid-cols-6 gap-4">
+             {[
+               { num: "01 PHOTO STUDIO", title: "Studio-Grade Photo Enhancement", sub: "AI Background Removal", href: "/studios/photo-studio", footer: "BEFORE → AFTER | Studio lighting auto-fix" },
+               { num: "02 BATCH STUDIO", title: "100 images • 2 min", sub: "BATCH PROCESSING - 100 PRODUCTS", href: "/studios/batch-studio", tags: ["Social Post","Holiday Sale","New Launch","Promo Offer"] },
+               { num: "03 TEMPLATE STUDIO", title: "Instant 3D Templates", sub: "", href: "/studios/3d-studio", tags: ["Text to 3D models","AI texturing","PBR maps","Turn ideas into 3D fast"] },
+               { num: "04 VECTOR STUDIO", title: "SVG & Logos", sub: "AI Vector Generation", href: "/studios/vector-studio", tags: ["Logo Maker","Icon Set","SVG Export","Brand Kit"] },
+               { num: "05 MOCKUP STUDIO", title: "Realistic Mockups", sub: "Place in seconds", href: "/studios/mockup-studio", tags: ["T-Shirt","Bottle","Box","Device"] },
+               { num: "06 MOTION STUDIO", title: "Animate & Video", sub: "AI Motion Studio", href: "/studios/motion-studio", tags: ["Product Video","Reels","Ad Animation","360° Spin"] },
+             ].map((s) => (
+               <Link key={s.num} href={s.href} className="bg-white rounded-[16px] border border-black/[0.06] p-3 hover:border-black/15 hover:shadow-[0_12px_32px_rgba(0,0,0,0.08)] hover:-translate-y-[2px] transition-all duration-200 block">
+                 <div className="text-[10px] tracking-[0.2em] text-[#d6a85a] font-bold mb-2">{s.num}</div>
+                 <div className="text-[12px] font-bold leading-[1.3] min-h-[36px] text-black">
+                   {s.title}<br/><span className="font-normal text-black/60 text-[11px]">{s.sub}</span>
+                 </div>
+                 <div className="bg-[#F7F2EB] rounded-[12px] aspect-[4/2.6] my-3 flex items-center justify-center text-[10px] text-black/30">Preview</div>
+                 {s.footer ? (
+                   <div className="bg-[#F7F2EB] rounded-full text-[9.5px] py-2 px-3 text-center truncate">{s.footer}</div>
+                 ) : (
+                   <div className="grid grid-cols-2 gap-1.5">
+                     {s.tags!.map((t) => (
+                       <div key={t} className="bg-[#F7F2EB] rounded-full text-[9px] py-[6px] px-2 text-center truncate">{t}</div>
+                     ))}
+                   </div>
+                 )}
+               </Link>
+             ))}
+           </div>
+           <div className="flex justify-between items-center mt-6 text-[12px]">
+             <Link href="/studios" className="font-medium hover:underline">Explore all Studios →</Link>
+             <span className="opacity-50">New • AI-powered editing</span>
+           </div>
+         </div>
+       </div>
+     </div>
+
      <Link href="/assets" className="hover:text-black transition">Assets</Link>
      <Link href="/company" className="hover:text-black transition">Company</Link>
     </nav>
