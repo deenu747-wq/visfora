@@ -1,5 +1,6 @@
 "use client";
 import { useState, useRef } from "react";
+import Link from "next/link";
 
 const AI_MODE = process.env.NEXT_PUBLIC_AI_MODE || "free";
 
@@ -154,13 +155,13 @@ export default function PhotoStudio() {
   return (
     <div className="min-h-screen bg-[#0A0A0A] text-[#E8DCC6] flex flex-col">
       <header className="border-b border-[#D4A574]/30 px-6 py-4 flex items-center justify-between">
-        <div className="flex items-center gap-3">
+        <Link href="/" className="flex items-center gap-3 cursor-pointer">
           <img src="/Logo.png" alt="VISFORA Logo" className="h-24 w-24 object-contain" />
           <div className="flex flex-col">
             <span className="text-[36px] tracking-[0.32em] font-light text-white leading-none">VIS<span className="font-normal text-[#d6a85a]">FORA</span></span>
             <span className="text-sm text-[#D4A574]/70 mt-1 tracking-wide">Photo Studio • {AI_MODE === "free" ? "FREE MODE" : "FAL PREMIUM"} {isProcessing && "• Processing..."}</span>
           </div>
-        </div>
+        </Link>
         <div className="flex items-center gap-4">
           <span className="text-sm text-[#E8DCC6]/70 hidden md:block">Mode: {AI_MODE}</span>
           <button onClick={() => fileInputRef.current?.click()} className="bg-[#D4A574] text-black px-5 py-2.5 rounded-xl font-medium flex items-center gap-2"><span className="text-xl">+</span> Upload New</button>
