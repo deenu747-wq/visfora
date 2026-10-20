@@ -41,10 +41,15 @@ export default function PhotoStudio() {
               alt="VISFORA Logo" 
               className="h-8 w-8 object-contain"
             />
-            <span className="text-[36px] tracking-[0.32em] font-light text-White">
-       VIS<span className="font-normal text-[#d6a85a]">FORA</span>
+            <div className="flex flex-col">
+              <span className="text-[36px] tracking-[0.32em] font-light text-white leading-none">
+                VIS<span className="font-normal text-[#d6a85a]">FORA</span>
+              </span>
+              <span className="text-sm text-[#D4A574]/70 mt-1 tracking-wide">
+                Photo Studio • AI Editing
+              </span>
+            </div>
           </div>
-          <span className="text-sm text-[#D4A574]/70 mt-1 tracking-wide">Photo Studio • AI Editing</span>
         </div>
 
         <div className="flex items-center gap-4">
