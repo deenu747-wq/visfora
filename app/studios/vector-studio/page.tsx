@@ -47,14 +47,13 @@ export default function VectorStudioFinalWorking() {
 
   return (
     <div className="min-h-screen bg-[#070d18] text-white selection:bg-[#5de1ff]/30">
-      {/* HEADER WITH VISFORA LOGO FROM public/Logo/png - SAME SIZE AS PHOTO STUDIO */}
-      <header className="flex justify-between items-center px-6 py-3 border-b border-[#1a2a3f]/80 sticky top-0 bg-[#070d18]/95 backdrop-blur z-10">
-        <div className="flex items-center gap-3 cursor-pointer" onClick={()=>alert('Home - Visfora')}>
-          {/* YOUR LOGO - if file name is different change src */}
-          {/* If your file is at public/Logo.png use src="/Logo.png" */}
-          {/* If at public/Logo/visfora.png use src="/Logo/visfora.png" */}
-          <Link href="/"><Image src="/Logo.png" alt="VISFORA" width={280} height={60} className="h-[42px] w-auto object-contain cursor-pointer" priority unoptimized /></Link>
-          <span className="font-bold text-[20px] ml-2">Vector Studio</span>
+      {/* HEADER - Point 1: DOUBLE SIZE */}
+      <header className="flex justify-between items-center px-6 py-2 border-b border-[#1a2a3f]/80 sticky top-0 bg-[#070d18]/95 backdrop-blur z-10">
+        <div className="flex items-center gap-3">
+          <Link href="/" className="flex items-center gap-3">
+            <Image src="/Logo.png" alt="VISFORA" width={560} height={120} className="h-[84px] w-auto object-contain cursor-pointer" priority unoptimized />
+            <span className="font-bold text-[32px]">Vector Studio</span>
+          </Link>
         </div>
         <nav className="hidden md:flex gap-2">
           {['Dashboard','Projects','Batch','Settings'].map(n=>(
@@ -72,7 +71,6 @@ export default function VectorStudioFinalWorking() {
         <p className="text-[#7a8faa] text-[15px] mt-2">Upload • preview • export</p>
       </div>
 
-      {/* PROMPT METHOD BAR - KEPT */}
       <div className="max-w-[1600px] mx-auto px-4 md:px-6 mt-4">
         <div className="bg-[#0e1626] border border-[#5de1ff]/70 rounded-[16px] px-4 py-3 flex flex-col md:flex-row gap-3 items-center shadow-[0_0_25px_rgba(93,225,255,0.15)]">
           <div className="flex items-center gap-2 shrink-0">
@@ -84,11 +82,11 @@ export default function VectorStudioFinalWorking() {
         </div>
       </div>
 
-      {/* MAIN LAYOUT - LEFT TOOLS | CENTER 2 BIG FRAMES SIDE BY SIDE | RIGHT OUTPUT */}
-      <div className="max-w-[1600px] mx-auto px-4 md:px-6 mt-4 grid grid-cols-1 lg:grid-cols-[260px_1fr_340px] gap-5">
+      {/* MAIN LAYOUT - Point 2: Expand Output & Settings to bottom, align with left tools */}
+      <div className="max-w-[1600px] mx-auto px-4 md:px-6 mt-4 grid grid-cols-1 lg:grid-cols-[260px_1fr_340px] gap-5 items-stretch">
         
-        {/* LEFT - TOOLS / CTAs + VECTOR QUALITY SETTINGS */}
-        <div className="bg-[#111a2a] border border-[#1e2f45] rounded-[16px] p-4 h-fit">
+        {/* LEFT - h-full for alignment */}
+        <div className="bg-[#111a2a] border border-[#1e2f45] rounded-[16px] p-4 flex flex-col h-full self-stretch">
           <h3 className="font-bold text-[16px]">Tools & CTAs</h3>
           <div className="mt-4 space-y-2 text-[13px]">
             <button onClick={()=>alert('Remove Background toggled')} className="w-full text-left bg-[#1a2335] hover:bg-[#1f2e48] px-3 py-2.5 rounded-lg">✂️ Remove Background</button>
@@ -107,24 +105,29 @@ export default function VectorStudioFinalWorking() {
               <div className="flex justify-between items-center"><div><p>Logo Vectorizer Mode</p><p className="text-[10px] text-[#7a8faa]">Optimized for logos • sharp edges</p></div><button onClick={()=>setLogoMode(!logoMode)} className={`w-10 h-5 rounded-full p-0.5 ${logoMode?'bg-[#5de1ff]':'bg-[#2a3a52]'}`}><div className={`w-4 h-4 bg-white rounded-full transition ${logoMode?'translate-x-5':''}`}></div></button></div>
             </div>
           </div>
+          <div className="flex-1"></div>
         </div>
 
-        {/* CENTER - 2 FRAMES IN SAME LINE BIG SIZE */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          {/* Upload Frame BIG */}
-          <div className="bg-[#111a2a] border border-[#1e2f45] rounded-[16px] p-5 flex flex-col min-h-[560px]">
+        {/* CENTER - Point 4: Same frame style + Upload CTA moved down */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 h-full self-stretch">
+          {/* Upload Frame */}
+          <div className="bg-[#111a2a] border border-[#1e2f45] rounded-[16px] p-5 flex flex-col min-h-[600px] h-full">
             <div className="flex items-center gap-2 text-[18px] font-bold"><span className="text-[#5de1ff]">📤</span> Upload JPG / PNG</div>
-            <div onDragOver={e=>e.preventDefault()} onDrop={e=>{e.preventDefault(); handleFiles(e.dataTransfer.files)}} onClick={handleBrowse} className="mt-5 flex-1 border border-dashed border-[#5de1ff]/60 rounded-[16px] bg-[#0a1322] p-8 flex flex-col items-center text-center cursor-pointer hover:border-[#5de1ff] transition justify-center min-h-[460px]">
-              <div className="text-[#5de1ff] text-[60px]">☁️</div>
-              <p className="font-medium mt-4 text-[16px]">Drag & drop your image here<br/>or browse files</p>
-              <p className="text-[13px] text-[#7a8faa] mt-6">Supports JPG • PNG • Max 50MB</p>
-              <button onClick={e=>{e.stopPropagation(); handleBrowse()}} className="mt-6 border border-[#5de1ff] text-white px-8 py-2.5 rounded-lg text-[14px] hover:bg-[#5de1ff]/10">Choose File</button>
+            {/* SAME FRAME as preview: bg-[#090f1c] rounded-xl */}
+            <div className="mt-5 flex-1 bg-[#090f1c] rounded-xl p-6 flex flex-col items-center justify-center min-h-[460px] border border-[#1e2f45]">
+              <div onDragOver={e=>e.preventDefault()} onDrop={e=>{e.preventDefault(); handleFiles(e.dataTransfer.files)}} onClick={handleBrowse} className="flex-1 flex flex-col items-center justify-center text-center cursor-pointer w-full">
+                <div className="text-[#5de1ff] text-[60px]">☁️</div>
+                <p className="font-medium mt-4 text-[16px]">Drag & drop your image here<br/>or browse files</p>
+                <p className="text-[13px] text-[#7a8faa] mt-4">Supports JPG • PNG • Max 50MB</p>
+              </div>
+              {/* CTA MOVED DOWN as per your green mark */}
+              <button onClick={(e)=>{e.stopPropagation(); handleBrowse()}} className="mt-auto border border-[#5de1ff]/60 text-white px-10 py-2.5 rounded-lg text-[14px] hover:bg-[#5de1ff]/10">Upload</button>
             </div>
             <input ref={fileRef} type="file" hidden multiple onChange={e=>handleFiles(e.target.files)} />
           </div>
 
-          {/* Preview Frame BIG */}
-          <div className="bg-[#111a2a] border border-[#1e2f45] rounded-[16px] p-5 flex flex-col min-h-[560px]">
+          {/* Preview Frame - Point 3: Image fix */}
+          <div className="bg-[#111a2a] border border-[#1e2f45] rounded-[16px] p-5 flex flex-col min-h-[600px] h-full">
             <div className="flex justify-between items-center">
               <div className="flex items-center gap-2 text-[18px] font-bold"><span className="text-[#5de1ff]">👁️</span> Preview • SVG Vector</div>
               <div className="flex items-center gap-2 text-[12px]"><span>Wireframe</span><button onClick={()=>setWireframe(!wireframe)} className={`w-10 h-5 rounded-full p-0.5 transition ${wireframe?'bg-[#5de1ff]':'bg-[#2a3a52]'}`}><div className={`w-4 h-4 bg-white rounded-full transition ${wireframe?'translate-x-5':''}`}></div></button></div>
@@ -134,9 +137,20 @@ export default function VectorStudioFinalWorking() {
               <button onClick={()=>alert('Outline toggled')} className="bg-[#1a283e] px-2 py-1 rounded">Outline | Details</button>
               <button onClick={()=>alert('Background removed toggled')} className="bg-[#1a283e] px-2 py-1 rounded border border-[#2a3a52]">Background removed</button>
             </div>
-            <div className="flex-1 bg-[#090f1c] rounded-xl mt-3 p-6 flex items-center justify-center min-h-[400px]">
+            {/* SAME FRAME */}
+            <div className="flex-1 bg-[#090f1c] rounded-xl mt-3 p-6 flex items-center justify-center min-h-[460px] border border-[#1e2f45]">
               <div style={{transform:`scale(${zoom/100})`}} className="transition-transform">
-                <Image src="app/studios/vector-studio/wolf.png" alt="wolf" width={380} height={380} className="w-[340px] h-auto" style={{filter: wireframe ? 'invert(1) hue-rotate(180deg) brightness(1.2) sepia(1) hue-rotate(150deg) saturate(4)':'none'}} priority unoptimized />
+                {/* FIX: Use correct public path + unoptimized - THIS IS WHY NO IMAGE */}
+                <Image 
+                  src="/studios/vector-studio/wolf.png" 
+                  alt="wolf" 
+                  width={380} 
+                  height={380} 
+                  className="w-[340px] h-auto" 
+                  style={{filter: wireframe ? 'invert(1) hue-rotate(180deg) brightness(1.2) sepia(1) hue-rotate(150deg) saturate(4)':'none'}} 
+                  priority 
+                  unoptimized 
+                />
               </div>
             </div>
             <div className="flex justify-between items-center mt-4">
@@ -147,8 +161,8 @@ export default function VectorStudioFinalWorking() {
           </div>
         </div>
 
-        {/* RIGHT - OUTPUT & SETTINGS - KEPT ALL FEATURES */}
-        <div className="bg-[#0f1828] border border-[#1e2f45] rounded-[16px] p-4 h-fit">
+        {/* RIGHT - Point 2: Expand to bottom line */}
+        <div className="bg-[#0f1828] border border-[#1e2f45] rounded-[16px] p-4 flex flex-col h-full self-stretch min-h-[600px]">
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-2"><button onClick={()=>alert('Notifications')} className="text-[#7a8faa]">🔔</button><button onClick={()=>alert('Settings')} className="text-[#7a8faa]">⚙️</button><span className="w-7 h-7 rounded-full bg-[#1a283e] border border-[#5de1ff] text-[#5de1ff] flex items-center justify-center text-[11px] font-bold">JD</span><span className="text-[11px] border border-[#2a3a52] px-2 py-0.5 rounded">PRO • Annual</span><span className="text-[10px] bg-[#0d2a35] border border-[#5de1ff] text-[#5de1ff] px-2 py-0.5 rounded">● Batch 100x Queue • Active</span></div>
           </div>
@@ -181,10 +195,10 @@ export default function VectorStudioFinalWorking() {
             <button onClick={handleExportAll} className="flex-1 bg-[#5de1ff] hover:bg-[#7ae8ff] text-black font-bold py-2.5 rounded-lg text-[14px]">Export All</button>
             <button onClick={()=>handleDownload('ZIP')} className="flex-1 border border-[#2a3a52] text-white py-2.5 rounded-lg text-[14px] hover:border-[#5de1ff]">Download ZIP</button>
           </div>
+          <div className="flex-1"></div>
         </div>
       </div>
 
-      {/* AI BAR - ALWAYS KEPT - FIXED: Only animates after prompt/file */}
       <div className="max-w-[1600px] mx-auto px-4 md:px-6 mt-5">
         <div className="bg-[#111a2a] border border-[#5de1ff]/60 rounded-[14px] px-4 py-3 flex flex-col md:flex-row gap-4 items-center shadow-[0_0_20px_rgba(93,225,255,0.15)]">
           <div className="flex items-center gap-6 flex-1 w-full">
@@ -195,7 +209,6 @@ export default function VectorStudioFinalWorking() {
         </div>
       </div>
 
-      {/* FOOTER - KEPT */}
       <div className="mt-5 border-t border-[#1a2a3f] bg-[#0e1623] py-3 flex flex-wrap justify-center gap-12 md:gap-32 px-4 text-[13px]">
         <button onClick={()=>alert('Today completed')} className="flex items-center gap-2 hover:text-[#5de1ff]"><span className="text-[#5de1ff]">◈</span> Completed today: <b>312</b></button>
         <button onClick={()=>alert('Processing speed')} className="flex items-center gap-2 hover:text-[#5de1ff]"><span className="text-[#5de1ff]">◷</span> Avg processing: <b>1.2s</b></button>
