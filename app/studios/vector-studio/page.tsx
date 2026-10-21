@@ -2,213 +2,179 @@
 import { useState, useRef, useEffect } from "react"
 import Image from "next/image"
 
-export default function VectorStudioSame() {
+export default function VectorStudioFinalWorking() {
   const [prompt, setPrompt] = useState("")
   const [progress, setProgress] = useState(68)
-  const [isGenerating, setIsGenerating] = useState(true)
-  const [zoom, setZoom] = useState(100)
-  const [showGrid, setShowGrid] = useState(false)
-  const [scale2x, setScale2x] = useState(true)
-  const [format, setFormat] = useState("SVG Vector")
-  const [quality, setQuality] = useState("High (Precision)")
-  const [queue, setQueue] = useState([
-    { id: 1, name: "batch_07.png", status: "Queued" },
-    { id: 2, name: "batch_08.jpg", status: "Queued" },
-  ])
-  const [uploadedFiles, setUploadedFiles] = useState<File[]>([])
-  const fileInputRef = useRef<HTMLInputElement>(null)
+  const [batchProgress, setBatchProgress] = useState(98)
+  const [isGen, setIsGen] = useState(true)
+  const [isPaused, setIsPaused] = useState(false)
+  const [zoom, setZoom] = useState(120)
+  const [wireframe, setWireframe] = useState(true)
+  const [detail, setDetail] = useState(80)
+  const [colorCount, setColorCount] = useState(16)
+  const [smoothing, setSmoothing] = useState(0.75)
+  const [lineArt, setLineArt] = useState(true)
+  const [logoMode, setLogoMode] = useState(true)
+  const [formats, setFormats] = useState({ SVG:true, EPS:true, AI:true, PDF:false, CDR:false, PNG:false })
+  const fileRef = useRef<HTMLInputElement>(null)
 
-  // AI generating animation
   useEffect(() => {
-    if (!isGenerating) return
-    const id = setInterval(() => {
-      setProgress(p => p >= 100 ? 0 : p + 1)
-    }, 120)
-    return () => clearInterval(id)
-  }, [isGenerating])
+    if(!isGen || isPaused) return
+    const t = setInterval(()=> {
+      setProgress(p=> p>=100?0:p+1)
+      setBatchProgress(p=> p>=100?0:p+0.5)
+    }, 200)
+    return ()=> clearInterval(t)
+  }, [isGen, isPaused])
 
+  const handleBrowse = () => fileRef.current?.click()
+  const handleDownload = (type: string) => alert(`${type} downloading... wolf_wireframe_final.svg`)
+  const handleExportAll = () => alert('Exporting All 100 items as ZIP... Batch 100x queue active')
   const handleGenerate = () => {
-    if (!prompt.trim()) { alert("Enter prompt first! e.g. minimal geometric wolf head"); return }
-    setIsGenerating(true)
-    setProgress(0)
+    if(!prompt.trim()){ alert('Enter prompt: e.g. minimal geometric wolf head, neon cyan wireframe'); return }
+    setIsGen(true); setIsPaused(false); setProgress(0); alert(`Generating: ${prompt}`)
   }
 
-  const handleBrowse = () => fileInputRef.current?.click()
-  
-  const handleFiles = (files: FileList | null) => {
-    if (!files) return
-    const arr = Array.from(files)
-    setUploadedFiles(arr)
-    setQueue(prev => [...prev, ...arr.map((f,i) => ({id: Date.now()+i, name: f.name, status: "Queued"}))])
-    alert(`${arr.length} files added to queue`)
-  }
-
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault()
-    handleFiles(e.dataTransfer.files)
-  }
-
-  const handleExport = () => {
-    setIsGenerating(true)
-    alert("Batch Export Started! 12 files exporting to SVG...")
-  }
+  const toggleFormat = (key: keyof typeof formats) => setFormats(f=>({...f, [key]:!f[key]}))
 
   return (
-    <div className="min-h-screen bg-[#05070d] p-2 md:p-4 flex justify-center">
-      <div className="w-full max-w-[1580px] bg-[#0a0e18] border border-[#1e2f44] rounded-[18px] p-4 md:p-5 shadow-[0_0_80px_rgba(0,0,0,0.9),inset_0_1px_0_rgba(93,225,255,0.1)]">
-        
-        {/* HEADER */}
-        <div className="flex justify-between items-center mb-4">
-          <h1 className="flex items-center gap-2 text-[20px] font-bold text-white">
-            <span className="text-[18px]">🪄</span> Text to Vector Prompt
-          </h1>
-          <div className="flex items-center gap-2">
-            <button onClick={() => alert("Settings opened")} className="w-9 h-9 rounded-[10px] bg-[#111a28] border border-[#2a3d55] flex items-center justify-center hover:border-[#5de1ff] transition">⚙️</button>
-            <button onClick={() => alert("Scale settings")} className="w-9 h-9 rounded-[10px] bg-[#111a28] border border-[#2a3d55] flex items-center justify-center hover:border-[#5de1ff] transition">⚖️</button>
-            <button onClick={() => alert("AI Tools")} className="w-9 h-9 rounded-[10px] bg-[#111a28] border border-[#2a3d55] flex items-center justify-center hover:border-[#5de1ff] transition">✨</button>
-            <div className="flex gap-1 ml-2">
-              <button onClick={() => alert("Notifications")} className="w-8 h-8 flex items-center justify-center opacity-70 hover:opacity-100">🔔</button>
-              <button onClick={() => alert("Notifications")} className="w-8 h-8 flex items-center justify-center opacity-70 hover:opacity-100">🔔</button>
-            </div>
-          </div>
+    <div className="min-h-screen bg-[#070d18] text-white selection:bg-[#5de1ff]/30">
+      {/* HEADER */}
+      <header className="flex justify-between items-center px-6 py-4 border-b border-[#1a2a3f]/80 sticky top-0 bg-[#070d18]/95 backdrop-blur z-10">
+        <div className="flex items-center gap-3 cursor-pointer" onClick={()=>alert('Home - Vector Studio')}>
+          <div className="text-[#5de1ff] text-[36px] leading-none">✦◭</div>
+          <span className="font-bold text-[22px] leading-none">Vector Studio</span>
         </div>
-
-        {/* PROMPT BAR */}
-        <div className="bg-[#0d1420] border border-[#5de1ff]/70 rounded-[12px] px-4 py-3 flex items-center gap-3 mb-4 shadow-[0_0_18px_rgba(93,225,255,0.18),inset_0_1px_0_rgba(93,225,255,0.15)]">
-          <div className="flex-1 flex items-center gap-4 min-w-0">
-            <span className="text-[#5de1ff] font-bold text-[13px] whitespace-nowrap hidden lg:block">Describe your vector... e.g. minimal geometric wolf head, neon cyan wireframe, clean lines</span>
-            <input
-              value={prompt}
-              onChange={(e) => setPrompt(e.target.value)}
-              placeholder="e.g. minimal geometric wolf head, neon cyan wireframe, clean lines"
-              className="flex-1 bg-transparent outline-none text-white/90 text-[13px] placeholder:text-[#6b7d93] min-w-0"
-            />
-          </div>
-          <button onClick={handleGenerate} className="shrink-0 bg-[#6fe2ff] hover:bg-[#8ce8ff] text-black font-bold text-[13px] px-5 py-2 rounded-[9px] flex items-center gap-1.5 shadow-[0_0_12px_rgba(111,226,255,0.6)] transition">
-            ✨ Generate
-          </button>
-        </div>
-
-        {/* 3 CARDS */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
-          
-          {/* Upload */}
-          <div className="bg-[#101725] border border-[#1e334d]/80 rounded-[12px] p-4 flex flex-col min-h-[420px]">
-            <div className="flex items-center gap-2.5 mb-4">
-              <div className="w-8 h-8 rounded-[8px] bg-[#0d1525] border border-[#2a4566] flex items-center justify-center">📤</div>
-              <h3 className="font-bold text-[14px] text-white">Upload JPG PNG</h3>
-            </div>
-            <p className="text-[11px] text-[#7a8da3] mb-3">Drag & drop your files here</p>
-            <div
-              onDragOver={(e) => e.preventDefault()}
-              onDrop={handleDrop}
-              onClick={handleBrowse}
-              className="flex-1 border border-dashed border-[#3a5a7a] rounded-[10px] bg-[#0a1220] flex flex-col items-center justify-center py-16 cursor-pointer hover:border-[#5de1ff]/60 transition"
-            >
-              <div className="flex items-center gap-2 text-[#7a8da3]">
-                <div className="w-8 h-8 border border-[#4a6585] rounded-[4px] flex items-center justify-center text-[8px]">JPG</div>
-                <div className="text-[11px] leading-[1.2] text-left">JPG, PNG<br/>up to 50MB</div>
-              </div>
-            </div>
-            <input ref={fileInputRef} type="file" multiple accept=".jpg,.png,.jpeg" className="hidden" onChange={(e) => handleFiles(e.target.files)} />
-            <button onClick={handleBrowse} className="mt-4 w-full border border-[#4a7a9a] text-[#5de1ff] text-[13px] font-medium py-2.5 rounded-[8px] hover:bg-[#5de1ff]/10 transition">Browse Files</button>
-          </div>
-
-          {/* Preview */}
-          <div className="bg-[#101725] border border-[#1e334d]/80 rounded-[12px] p-4 flex flex-col min-h-[420px]">
-            <div className="flex items-center gap-2.5 mb-4">
-              <div className="w-8 h-8 rounded-[8px] bg-[#0d1525] border border-[#2a4566] flex items-center justify-center">〰️</div>
-              <h3 className="font-bold text-[14px] text-white">Preview SVG Vector</h3>
-            </div>
-            <div className={`relative bg-[#080e1a] rounded-[10px] border border-[#1a2d45] overflow-hidden flex-1 flex items-center justify-center p-2 ${showGrid ? 'bg-[linear-gradient(#1a2d45_1px,transparent_1px),linear-gradient(90deg,#1a2d45_1px,transparent_1px)] bg-[size:20px_20px]' : ''}`}>
-              <div style={{ transform: `scale(${zoom/100})` }} className="transition-transform duration-200">
-                <Image
-                  src="/studios/vector-studio/wolf.jpg"
-                  alt="wolf wireframe"
-                  width={500}
-                  height={350}
-                  className="max-w-full h-auto object-contain"
-                  priority
-                  onError={() => console.log("wolf.jpg not found, checking /public/wolf.png")}
-                />
-              </div>
-            </div>
-            <p className="text-center text-[#5de1ff] text-[11px] font-semibold mt-3">wolf_wireframe_final.svg</p>
-            <div className="flex justify-center mt-2">
-              <span className="bg-[#1a2638] text-[#7a8da3] text-[10px] px-2.5 py-1 rounded-[6px]">SVG • 24.6 KB • 1200x1200</span>
-            </div>
-            <div className="flex gap-2 mt-3 justify-center">
-              <button onClick={() => setZoom(z => z === 100 ? 150 : z === 150 ? 75 : 100)} className="bg-[#0d1525] border border-[#2a3d55] px-2.5 py-1 rounded-[6px] text-[11px] text-[#a0b3c7] hover:border-[#5de1ff]">› Zoom: {zoom}%</button>
-              <button onClick={() => setShowGrid(!showGrid)} className={`border px-2.5 py-1 rounded-[6px] text-[11px] transition ${showGrid ? 'bg-[#5de1ff]/20 border-[#5de1ff] text-[#5de1ff]' : 'bg-[#0d1525] border-[#2a3d55] text-[#a0b3c7] hover:border-[#5de1ff]'}`}>⊞ Toggle Grid</button>
-            </div>
-          </div>
-
-          {/* Output */}
-          <div className="bg-[#101725] border border-[#1e334d]/80 rounded-[12px] p-4 flex flex-col min-h-[420px]">
-            <div className="flex items-center gap-2.5 mb-5">
-              <div className="w-8 h-8 rounded-[8px] bg-[#0d1525] border border-[#2a4566] flex items-center justify-center">⚙️</div>
-              <h3 className="font-bold text-[14px] text-white">Output Settings</h3>
-            </div>
-            <h4 className="font-bold text-[13px] mb-4 text-white">Batch Queue</h4>
-            <div className="space-y-3 text-[11px] mb-4">
-              <div className="flex justify-between items-center"><span className="text-[#7a8da3]">Format:</span><button onClick={() => setFormat(f => f === "SVG Vector" ? "PNG" : "SVG Vector")} className="text-white font-medium flex items-center gap-1 hover:text-[#5de1ff]">{format} <span className="text-[#5de1ff] text-[10px]">⌄</span></button></div>
-              <div className="flex justify-between items-center"><span className="text-[#7a8da3]">Quality:</span><button onClick={() => setQuality(q => q === "High (Precision)" ? "Standard" : "High (Precision)")} className="text-white font-medium flex items-center gap-1 hover:text-[#5de1ff]">{quality} <span className="text-[#5de1ff] text-[10px]">✓</span></button></div>
-              <div className="flex justify-between items-center"><span className="text-[#7a8da3]">Scale:</span><span className="text-white font-bold">2x Resize</span><button onClick={() => setScale2x(!scale2x)} className={`w-9 h-5 rounded-full p-0.5 transition ${scale2x ? 'bg-[#5de1ff]' : 'bg-[#2a3d55]'}`}><div className={`w-4 h-4 bg-white rounded-full transition ${scale2x ? 'translate-x-4' : ''}`}></div></button></div>
-              <div className="flex justify-between"><span className="text-[#7a8da3]">Queue:</span><span className="text-[#7a8da3]">{queue.length} files pending</span></div>
-            </div>
-            <div className="space-y-2 mb-4">
-              {queue.slice(0,2).map(f => (
-                <div key={f.id} className="bg-[#0a1220] rounded-[6px] px-2.5 py-2 flex justify-between items-center text-[10px] text-[#7a8da3]">
-                  <span>≡ {f.name} — {f.status}</span><button onClick={() => setQueue(q => q.filter(x => x.id !== f.id))} className="hover:text-white">◉</button>
-                </div>
-              ))}
-            </div>
-            <button onClick={handleExport} className="mt-auto w-full bg-[#6fe2ff] hover:bg-[#8ce8ff] text-black font-bold text-[13px] py-3 rounded-[9px] shadow-[0_0_15px_rgba(111,226,255,0.4)] transition">Run Batch Export</button>
-          </div>
-        </div>
-
-        {/* AI BAR */}
-        <div className="bg-[#101725] border border-[#1e334d]/80 rounded-[12px] px-3 py-3 flex flex-col md:flex-row items-center gap-3 mb-5">
-          <div className="flex items-center gap-3 flex-1 w-full">
-            <div className="w-10 h-10 rounded-[10px] bg-[#0d1525] border border-[#2a4566] flex items-center justify-center text-[16px]">🧠</div>
-            <div>
-              <p className="text-[#5de1ff] font-bold text-[13px]">AI is generating vectors... {progress}%</p>
-              <p className="text-[#6b7d93] text-[10px] mt-0.5">— Cleaning edges — Removing background — Optimizing paths</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-3 w-full md:w-[60%]">
-            <div className="flex-1 h-[14px] bg-[#080e1a] rounded-full border border-[#1a2d45] p-1">
-              <div className="h-full bg-[#5de1ff] rounded-full shadow-[0_0_10px_#5de1ff] transition-all duration-100" style={{width: `${progress}%`}}></div>
-            </div>
-            <div className="text-right leading-none">
-              <p className="text-[#5de1ff]/70 text-[10px]">68/100 processing</p>
-              <button onClick={() => setIsGenerating(!isGenerating)} className="text-[#5de1ff] text-[14px] hover:rotate-180 transition-transform">↻</button>
-            </div>
-          </div>
-        </div>
-
-        {/* STATS */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 divide-x divide-[#1e334d]/40">
-          {[
-            { label: "Files Processed", value: "1,247", sub: "+84 today", color: "text-[#4ade80]" },
-            { label: "Time Saved", value: "14.2h", sub: "≈ 3.5h this week" },
-            { label: "Accuracy", value: "98.7%", sub: "Vector precision" },
-            { label: "Storage Used", value: "2.4GB / 10GB", sub: "24%" },
-          ].map((s,i) => (
-            <div key={i} className="px-2 py-2 text-center">
-              <p className="text-[#8a9bb0] text-[11px] font-medium">{s.label}</p>
-              <p className="text-[#5de1ff] text-[26px] font-bold leading-none mt-2">{s.value}</p>
-              <div className="mt-2 flex justify-center">
-                <span className="bg-[#1a2638] text-[10px] px-2 py-1 rounded-[6px] text-[#7a8da3] flex items-center gap-1">
-                  {s.label === "Files Processed" && <span className={s.color}>↗ {s.sub}</span>}
-                  {s.label !== "Files Processed" && s.sub}
-                  {s.label === "Storage Used" && <span className="ml-1 text-[#5de1ff]">▮▮▮</span>}
-                </span>
-              </div>
-            </div>
+        <nav className="hidden md:flex gap-2">
+          {['Dashboard','Projects','Batch','Settings'].map(n=>(
+            <button key={n} onClick={()=>alert(`${n} clicked`)} className={`px-5 py-2 rounded-lg text-[15px] font-medium transition ${n==='Dashboard'?'bg-transparent text-white border-b-2 border-[#5de1ff] rounded-none pb-1':'bg-[#2a3548] text-[#9ab0c7] hover:text-white'}`}>{n}</button>
           ))}
+        </nav>
+        <div className="flex items-center gap-3">
+          <button onClick={()=>alert('Notifications')} className="text-[20px] text-[#7a8faa] hover:text-white">🔔</button>
+          <button onClick={()=>alert('Profile JD')} className="w-8 h-8 rounded-full bg-[#1a2536] border border-[#5de1ff] text-[#5de1ff] font-bold text-[13px]">JD</button>
+        </div>
+      </header>
+
+      {/* TITLE */}
+      <div className="text-center px-4 pt-6">
+        <h1 className="text-[30px] md:text-[36px] font-bold leading-tight">Turn any image into a clean scalable vector in seconds</h1>
+        <p className="text-[#7a8faa] text-[15px] mt-2">Upload • preview • export</p>
+      </div>
+
+      {/* PROMPT METHOD BAR */}
+      <div className="max-w-[1450px] mx-auto px-4 md:px-8 mt-4">
+        <div className="bg-[#0e1626] border border-[#5de1ff]/70 rounded-[16px] px-4 py-3 flex flex-col md:flex-row gap-3 items-center shadow-[0_0_25px_rgba(93,225,255,0.15)]">
+          <div className="flex items-center gap-2 shrink-0">
+            <span className="bg-[#1a2d40] text-[#5de1ff] text-[11px] px-2 py-1 rounded-md">Prompt Method</span>
+            <span className="text-[#5de1ff] font-bold text-[16px] flex items-center gap-1">✦ Text to Vector Prompt</span>
+          </div>
+          <input value={prompt} onChange={e=>setPrompt(e.target.value)} placeholder="Describe your vector • e.g. minimal geometric wolf head, neon cyan wireframe, clean lines" className="flex-1 bg-[#1a2335] border border-[#2a3a52] rounded-lg px-4 py-2.5 text-[13px] w-full outline-none focus:border-[#5de1ff] text-white placeholder:text-[#6a8099]" />
+          <button onClick={handleGenerate} className="bg-[#5de1ff] hover:bg-[#7ae8ff] text-black font-bold px-8 py-2.5 rounded-xl text-[15px] flex items-center gap-1 shadow-[0_0_12px_#5de1ff]">✦ Generate</button>
+        </div>
+      </div>
+
+      {/* 3 COLUMNS */}
+      <div className="max-w-[1450px] mx-auto px-4 md:px-8 mt-4 grid grid-cols-1 lg:grid-cols-[1fr_1.2fr_1fr] gap-5">
+        
+        {/* Upload */}
+        <div className="bg-[#111a2a] border border-[#1e2f45] rounded-[16px] p-5 flex flex-col">
+          <div className="flex items-center gap-2 text-[18px] font-bold"><span className="text-[#5de1ff]">📤</span> Upload JPG / PNG</div>
+          <div onDragOver={e=>e.preventDefault()} onDrop={e=>{e.preventDefault(); alert('Files dropped - processing...')}} onClick={handleBrowse} className="mt-5 border border-dashed border-[#5de1ff]/60 rounded-[16px] bg-[#0a1322] p-8 flex flex-col items-center text-center cursor-pointer hover:border-[#5de1ff] transition min-h-[280px] justify-center">
+            <div className="text-[#5de1ff] text-[50px]">☁️</div>
+            <p className="font-medium mt-4">Drag & drop your image here<br/>or browse files</p>
+            <p className="text-[13px] text-[#7a8faa] mt-6">Supports JPG • PNG • Max 50MB</p>
+            <button onClick={e=>{e.stopPropagation(); handleBrowse()}} className="mt-5 border border-[#5de1ff] text-white px-6 py-2 rounded-lg text-[14px] hover:bg-[#5de1ff]/10">Choose File</button>
+          </div>
+          <input ref={fileRef} type="file" hidden multiple onChange={e=>{if(e.target.files) alert(`${e.target.files.length} files selected` )}} />
         </div>
 
+        {/* Preview */}
+        <div className="bg-[#111a2a] border border-[#1e2f45] rounded-[16px] p-5 flex flex-col">
+          <div className="flex justify-between items-center">
+            <div className="flex items-center gap-2 text-[18px] font-bold"><span className="text-[#5de1ff]">👁️</span> Preview • SVG Vector</div>
+            <div className="flex items-center gap-2 text-[12px]"><span>Wireframe</span><button onClick={()=>setWireframe(!wireframe)} className={`w-10 h-5 rounded-full p-0.5 transition ${wireframe?'bg-[#5de1ff]':'bg-[#2a3a52]'}`}><div className={`w-4 h-4 bg-white rounded-full transition ${wireframe?'translate-x-5':''}`}></div></button></div>
+          </div>
+          <div className="flex gap-2 mt-3 text-[11px] flex-wrap">
+            <span className="bg-[#1a283e] px-2 py-1 rounded">Layers:</span>
+            <button onClick={()=>alert('Outline toggled')} className="bg-[#1a283e] px-2 py-1 rounded">Outline | Details</button>
+            <button onClick={()=>alert('Background removed toggled')} className="bg-[#1a283e] px-2 py-1 rounded border border-[#2a3a52]">Background removed</button>
+          </div>
+          <div className="flex-1 bg-[#090f1c] rounded-xl mt-3 p-6 flex items-center justify-center min-h-[320px]">
+            <div style={{transform:`scale(${zoom/100})`}} className="transition-transform">
+              <Image src="/studios/vector-studio/wolf.jpg" alt="wolf" width={380} height={380} className="w-[340px] h-auto" style={{filter: wireframe ? 'invert(1) hue-rotate(180deg) brightness(1.2) sepia(1) hue-rotate(150deg) saturate(4)':'none'}} priority />
+            </div>
+          </div>
+          <div className="flex justify-between items-center mt-4">
+            <div className="flex items-center gap-2 text-[14px]"><button onClick={()=>setZoom(z=>Math.max(50,z-10))} className="text-[#5de1ff]">Q</button>Zoom {zoom}%<button onClick={()=>setZoom(z=>Math.min(200,z+10))} className="text-[#5de1ff]">+</button></div>
+            <button onClick={()=>handleDownload('SVG')} className="bg-[#5de1ff] text-black font-bold px-5 py-2 rounded-lg text-[14px]">⬇ Download SVG</button>
+          </div>
+          <p className="text-[12px] text-[#7a8faa] mt-2 text-center">Processing {progress}/100 • Est 1m 23s</p>
+        </div>
+
+        {/* Output & Settings - YOUR NEW SCREENSHOT */}
+        <div className="bg-[#0f1828] border border-[#1e2f45] rounded-[16px] p-4">
+          <div className="flex justify-between items-center">
+            <div className="flex items-center gap-2"><button onClick={()=>alert('Notifications')} className="text-[#7a8faa]">🔔</button><button onClick={()=>alert('Settings')} className="text-[#7a8faa]">⚙️</button><span className="w-7 h-7 rounded-full bg-[#1a283e] border border-[#5de1ff] text-[#5de1ff] flex items-center justify-center text-[11px] font-bold">JD</span><span className="text-[11px] border border-[#2a3a52] px-2 py-0.5 rounded">PRO • Annual</span><span className="text-[10px] bg-[#0d2a35] border border-[#5de1ff] text-[#5de1ff] px-2 py-0.5 rounded">● Batch 100x Queue • Active</span></div>
+          </div>
+          <h3 className="font-bold text-[18px] mt-4 flex justify-between">Output & Settings <span className="text-[#5de1ff]">✦</span></h3>
+          <p className="font-bold text-[14px] mt-3">Output Formats</p>
+          <div className="mt-2 space-y-1.5 text-[12px]">
+            {[
+              {k:'SVG', label:'Scalable Vector Graphic', rec:true},
+              {k:'EPS', label:'Encapsulated PostScript'},
+              {k:'AI', label:'Adobe Illustrator'},
+              {k:'PDF', label:'Portable Document Format'},
+              {k:'CDR', label:'CorelDRAW'},
+              {k:'PNG', label:'Raster Export'},
+            ].map((f:any)=>(
+              <label key={f.k} className="flex items-center gap-2 cursor-pointer hover:text-[#5de1ff]">
+                <input type="checkbox" checked={formats[f.k as keyof typeof formats]} onChange={()=>toggleFormat(f.k)} className="accent-[#5de1ff] w-4 h-4" />
+                <span className="font-bold w-8">{f.k}</span><span className="text-[#9ab0c7] flex-1">{f.label}</span>
+                {f.rec && <span className="text-[10px] bg-[#1a3a4a] text-[#5de1ff] px-2 py-0.5 rounded">recommended</span>}
+                {f.k==='PNG' && <button onClick={()=>alert('Raster settings')} className="ml-auto text-[#7a8faa]">⚙️</button>}
+              </label>
+            ))}
+          </div>
+          <div className="mt-4">
+            <p className="font-bold text-[14px]">Batch 100x Queue</p>
+            <p className="text-[12px] text-[#9ab0c7] mt-1">100 / 100 queued • ~12s remaining</p>
+            <div className="mt-2 h-1.5 bg-[#0a1322] rounded-full overflow-hidden flex"><div className="h-full bg-[#5de1ff] transition-all" style={{width:`${batchProgress}%`}}></div><span className="ml-2 text-[11px] text-[#5de1ff] -mt-1">{Math.round(batchProgress)}%</span></div>
+            <p className="text-[11px] text-[#7a8faa] mt-1">Completed: 98 • Failed: 0</p>
+          </div>
+          <div className="mt-4">
+            <p className="font-bold text-[14px]">Vector Quality Settings</p>
+            <div className="mt-3 space-y-3 text-[12px]">
+              <div className="flex items-center gap-3"><span className="w-28">Detail Level:</span><span className="w-12">High</span><input type="range" min={0} max={100} value={detail} onChange={e=>setDetail(Number(e.target.value))} className="flex-1 accent-[#5de1ff]" /></div>
+              <div className="flex items-center gap-3"><span className="w-28">Color Count:</span><span className="w-12">{colorCount}</span><input type="range" min={1} max={64} value={colorCount} onChange={e=>setColorCount(Number(e.target.value))} className="flex-1 accent-[#5de1ff]" /><span className="text-[10px] border border-[#2a3a52] px-2 py-0.5 rounded">16 colors</span></div>
+              <div className="flex items-center gap-3"><span className="w-28">Path Smoothing:</span><span className="w-12">{smoothing}</span><input type="range" min={0} max={1} step={0.01} value={smoothing} onChange={e=>setSmoothing(Number(e.target.value))} className="flex-1 accent-[#5de1ff]" /></div>
+              <div className="flex justify-between items-center"><div><p>Line Art Mode</p><p className="text-[10px] text-[#7a8faa]">Clean monochrome line art output</p></div><button onClick={()=>setLineArt(!lineArt)} className={`w-10 h-5 rounded-full p-0.5 ${lineArt?'bg-[#5de1ff]':'bg-[#2a3a52]'}`}><div className={`w-4 h-4 bg-white rounded-full transition ${lineArt?'translate-x-5':''}`}></div></button></div>
+              <div className="flex justify-between items-center"><div><p>Logo Vectorizer Mode</p><p className="text-[10px] text-[#7a8faa]">Optimized for logos • sharp edges • minimal nodes</p></div><button onClick={()=>setLogoMode(!logoMode)} className={`w-10 h-5 rounded-full p-0.5 ${logoMode?'bg-[#5de1ff]':'bg-[#2a3a52]'}`}><div className={`w-4 h-4 bg-white rounded-full transition ${logoMode?'translate-x-5':''}`}></div></button></div>
+            </div>
+          </div>
+          <div className="flex gap-3 mt-5">
+            <button onClick={handleExportAll} className="flex-1 bg-[#5de1ff] hover:bg-[#7ae8ff] text-black font-bold py-2.5 rounded-lg text-[14px]">Export All</button>
+            <button onClick={()=>handleDownload('ZIP')} className="flex-1 border border-[#2a3a52] text-white py-2.5 rounded-lg text-[14px] hover:border-[#5de1ff]">Download ZIP</button>
+          </div>
+        </div>
+      </div>
+
+      {/* AI BAR */}
+      <div className="max-w-[1450px] mx-auto px-4 md:px-8 mt-5">
+        <div className="bg-[#111a2a] border border-[#5de1ff]/60 rounded-[14px] px-4 py-3 flex flex-col md:flex-row gap-4 items-center shadow-[0_0_20px_rgba(93,225,255,0.15)]">
+          <div className="flex items-center gap-6 flex-1 w-full">
+            <span className="text-[#5de1ff] font-bold text-[14px] flex items-center gap-1">AI✦ AI is generating vectors — {progress}%</span>
+            <div className="hidden md:flex gap-6 text-[12px]"><span className="flex items-center gap-1"><span className="w-5 h-5 rounded-full bg-[#1a2d40] text-[#5de1ff] flex items-center justify-center">✓</span> Cleaning edges</span><span className="flex items-center gap-1"><span className="w-5 h-5 rounded-full bg-[#1a2d40] text-[#5de1ff] flex items-center justify-center">✓</span> Removing background</span><span className="flex items-center gap-1"><span className="w-5 h-5 rounded-full bg-[#1a2d40] text-[#5de1ff] flex items-center justify-center">✓</span> Optimizing paths</span></div>
+          </div>
+          <div className="flex items-center gap-3 w-full md:w-[35%]"><span className="text-[#5de1ff] text-[14px] font-bold">{progress}%</span><div className="flex-1 h-1.5 bg-[#0a1322] rounded-full overflow-hidden"><div className="h-full bg-[#5de1ff] transition-all" style={{width:`${progress}%`}}></div></div><span className="text-[11px] text-[#7a8faa]">{progress}/100 processing</span></div>
+        </div>
+      </div>
+
+      {/* FOOTER */}
+      <div className="mt-5 border-t border-[#1a2a3f] bg-[#0e1623] py-3 flex flex-wrap justify-center gap-12 md:gap-32 px-4 text-[13px]">
+        <button onClick={()=>alert('Today completed')} className="flex items-center gap-2 hover:text-[#5de1ff]"><span className="text-[#5de1ff]">◈</span> Completed today: <b>312</b></button>
+        <button onClick={()=>alert('Processing speed')} className="flex items-center gap-2 hover:text-[#5de1ff]"><span className="text-[#5de1ff]">◷</span> Avg processing: <b>1.2s</b></button>
+        <button onClick={()=>alert('Credits')} className="flex items-center gap-2 hover:text-[#5de1ff]"><span className="text-[#5de1ff]">▭</span> Credits remaining: <b>2450</b></button>
       </div>
     </div>
   )
