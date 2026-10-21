@@ -1,5 +1,6 @@
 "use client"
 import { useState, useRef, useEffect } from "react"
+import Link from "next/link"
 import Image from "next/image"
 
 export default function VectorStudioFinalWorking() {
@@ -52,7 +53,7 @@ export default function VectorStudioFinalWorking() {
           {/* YOUR LOGO - if file name is different change src */}
           {/* If your file is at public/Logo.png use src="/Logo.png" */}
           {/* If at public/Logo/visfora.png use src="/Logo/visfora.png" */}
-          <Image src="/Logo.png" alt="VISFORA" width={170} height={38} className="h-[34px] w-auto object-contain" priority unoptimized />
+          <Link href="/"><Image src="/Logo.png" alt="VISFORA" width={280} height={60} className="h-[42px] w-auto object-contain cursor-pointer" priority unoptimized /></Link>
           <span className="font-bold text-[20px] ml-2">Vector Studio</span>
         </div>
         <nav className="hidden md:flex gap-2">
