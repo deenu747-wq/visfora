@@ -68,7 +68,7 @@ export default function Studio3D() {
               <button className="border border-white/10 rounded-lg px-2 py-1 hover:bg-white/5 cursor-pointer">Fullscreen</button>
             </div>
           </div>
-          <div className="flex-1 relative min-h-[520px] flex items-center justify-center bg-[#12121a]">
+          <div className="flex-1 relative min-h-[400px] flex items-center justify-center bg-[#12121a]">
             <Image src="/helmet.png" alt="helmet" width={800} height={800} className="w-[700px] h-auto relative z-10" priority />
             <div className="absolute bottom-12 left-1/2 -translate-x-1/2 bg-black/50 px-3 py-1 rounded-full text-[11px] text-white z-20">Model: helmet_v02 • 12.4k polygons • 1 material</div>
           </div>
