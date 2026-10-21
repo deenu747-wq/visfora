@@ -75,7 +75,7 @@ export default function VectorStudioFinalWorking() {
         </div>
       </div>
 
-      <div className="max-w-[1600px] mx-auto px-4 md:px-6 mt-4 grid grid-cols-1 lg:grid-cols-[260px_1fr_340px] gap-5 items-stretch">
+      <div className="max-w-[1600px] mx-auto px-4 md:px-6 mt-4 grid grid-cols-1 lg:grid-cols-[260px_1fr_340px] gap-5 items-start">
         
         <div className="bg-[#111a2a] border border-[#1e2f45] rounded-[16px] p-4 flex flex-col h-full min-h-[700px] self-stretch">
           <h3 className="font-bold text-[16px]">Tools & CTAs</h3>
@@ -103,15 +103,18 @@ export default function VectorStudioFinalWorking() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 h-full self-stretch">
-          <div className="bg-[#111a2a] border border-[#1e2f45] rounded-[16px] p-5 flex flex-col h-full min-h-[700px]">
+        {/* MIDDLE - 1:1 SQUARE AS MARKED */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 self-start">
+          <div className="bg-[#111a2a] border border-[#1e2f45] rounded-[16px] p-5 flex flex-col">
             <div className="flex items-center gap-2 text-[18px] font-bold"><span className="text-[#5de1ff]">📤</span> Upload JPG / PNG</div>
-            <div className="mt-3 flex-1 bg-[#090f1c] border border-[#1e2f45] rounded-xl flex flex-col overflow-hidden">
-              <div onDragOver={e=>e.preventDefault()} onDrop={e=>{e.preventDefault(); handleFiles(e.dataTransfer.files)}} onClick={handleBrowse} className="flex-1 p-6 flex flex-col items-center justify-center text-center cursor-pointer min-h-[500px]">
+            <div className="mt-3 bg-[#090f1c] border border-[#1e2f45] rounded-xl flex flex-col overflow-hidden">
+              {/* TOP-LINE START - 1:1 SQUARE */}
+              <div onDragOver={e=>e.preventDefault()} onDrop={e=>{e.preventDefault(); handleFiles(e.dataTransfer.files)}} onClick={handleBrowse} className="aspect-square w-full flex flex-col items-center justify-center text-center cursor-pointer">
                 <div className="text-[#5de1ff] text-[60px]">☁️</div>
                 <p className="font-medium mt-4 text-[16px]">Drag & drop your image here<br/>or browse files</p>
                 <p className="text-[13px] text-[#7a8faa] mt-4">Supports JPG • PNG • Max 50MB</p>
               </div>
+              {/* BOTTOM-LINE END - Same for both */}
               <div className="border-t border-[#1e2f45] p-4 bg-[#0c1424] flex justify-center">
                 <button onClick={(e)=>{e.stopPropagation(); handleBrowse()}} className="border border-[#2a3a52] text-white px-10 py-2.5 rounded-lg text-[14px] hover:border-[#5de1ff] cursor-pointer">Upload</button>
               </div>
@@ -119,7 +122,7 @@ export default function VectorStudioFinalWorking() {
             <input ref={fileRef} type="file" hidden multiple onChange={e=>handleFiles(e.target.files)} />
           </div>
 
-          <div className="bg-[#111a2a] border border-[#1e2f45] rounded-[16px] p-5 flex flex-col h-full min-h-[700px]">
+          <div className="bg-[#111a2a] border border-[#1e2f45] rounded-[16px] p-5 flex flex-col">
             <div className="flex justify-between items-center">
               <div className="flex items-center gap-2 text-[18px] font-bold"><span className="text-[#5de1ff]">👁️</span> Preview • SVG Vector</div>
               <div className="flex items-center gap-2 text-[12px]"><span>Wireframe</span><button onClick={()=>setWireframe(!wireframe)} className={`w-10 h-5 rounded-full p-0.5 transition cursor-pointer ${wireframe?'bg-[#5de1ff]':'bg-[#2a3a52]'}`}><div className={`w-4 h-4 bg-white rounded-full transition ${wireframe?'translate-x-5':''}`}></div></button></div>
@@ -129,12 +132,14 @@ export default function VectorStudioFinalWorking() {
               <button onClick={()=>alert('Outline toggled')} className="bg-[#1a283e] px-2 py-1 rounded cursor-pointer">Outline | Details</button>
               <button onClick={()=>alert('Background removed toggled')} className="bg-[#1a283e] px-2 py-1 rounded border border-[#2a3a52] cursor-pointer">Background removed</button>
             </div>
-            <div className="mt-3 flex-1 bg-[#090f1c] border border-[#1e2f45] rounded-xl flex flex-col overflow-hidden">
-              <div className="flex-1 bg-[#e8f6ff] flex items-center justify-center p-6 min-h-[500px]">
+            <div className="mt-3 bg-[#090f1c] border border-[#1e2f45] rounded-xl flex flex-col overflow-hidden">
+              {/* TOP-LINE START - 1:1 SQUARE - SAME */}
+              <div className="aspect-square w-full bg-[#e8f6ff] flex items-center justify-center p-6 overflow-hidden">
                 <div style={{transform:`scale(${zoom/100})`}} className="transition-transform">
                   <Image src="/studios/vector-studio/wolf.png" alt="wolf" width={380} height={380} className="w-[340px] h-auto" style={{filter: wireframe ? 'invert(1) hue-rotate(180deg) brightness(1.2) sepia(1) hue-rotate(150deg) saturate(4)':'none'}} priority unoptimized />
                 </div>
               </div>
+              {/* BOTTOM-LINE END - Buttons start after */}
               <div className="border-t border-[#1e2f45] p-4 bg-[#0c1424]">
                 <div className="flex justify-between items-center">
                   <div className="flex items-center gap-2 text-[14px]"><button onClick={()=>setZoom(z=>Math.max(50,z-10))} className="text-[#5de1ff] cursor-pointer">Q</button>Zoom {zoom}%<button onClick={()=>setZoom(z=>Math.min(200,z+10))} className="text-[#5de1ff] cursor-pointer">+</button></div>
