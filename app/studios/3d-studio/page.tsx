@@ -1,153 +1,139 @@
 "use client";
+import Link from "next/link";
 import { useState } from "react";
 
 export default function Studio3D() {
-  const [generating] = useState(62);
+  const [activeTab, setActiveTab] = useState("Studio");
+  const [genOption, setGenOption] = useState("Text to 3D Prompt");
+  const [genType, setGenType] = useState("Image to 3D");
+  const [isGenerating, setIsGenerating] = useState(true);
+  const [showDropdown, setShowDropdown] = useState(false);
+
+  const handleAction = (msg: string) => {
+    console.log(msg);
+    // replace with toast if you have
+    alert(msg);
+  };
 
   return (
-    <div className="min-h-screen bg-[#2a2a35] text-white p-4 font-sans">
-      {/* TOP NAV */}
+    <div className="min-h-screen bg-[#2a2a35] p-4 text-white select-none">
+      {/* TOP NAV - VF LOGO BIGGER */}
       <div className="flex items-center justify-between bg-[#1e1e28] rounded-xl px-6 py-3 mb-4 border border-white/5">
         <div className="flex items-center gap-10">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-cyan-400/20 border border-cyan-400 rounded flex items-center justify-center">⬢</div>
-            <span className="text-xl font-bold"><span className="text-cyan-400">3D</span> Studio</span>
-          </div>
-          <div className="flex gap-6 text-sm">
+          <Link href="/" className="flex items-center gap-2.5 cursor-pointer hover:opacity-80 transition-opacity">
+            <span className="text-[#ffbe0b] font-black text-[32px] leading-none">VF</span>
+            <span className="text-[20px] font-bold"><span className="text-[#ffbe0b]">3D</span><span className="text-[#c7b5b5] ml-1.5">Studio</span></span>
+          </Link>
+          <div className="flex items-center gap-6 text-[14px] font-medium">
             {["Project","Studio","Assets","Scene","Render","Settings"].map(t=>(
-              <button key={t} className={`pb-1 ${t==="Studio" ? "text-white border-b-2 border-cyan-400 text-cyan-300" : "text-white/60 hover:text-white"} cursor-pointer`}>
-                {t}
-              </button>
+              <button key={t} onClick={()=>setActiveTab(t)} className={`pb-1 border-b-2 transition-all cursor-pointer ${activeTab===t ? "text-white border-[#7ee8ff]" : "text-white/60 border-transparent hover:text-white"}`}>{t}</button>
             ))}
           </div>
         </div>
-        <div className="flex items-center gap-4">
-          <button className="w-8 h-8 rounded-full border border-cyan-400/50 flex items-center justify-center cursor-pointer">U</button>
-          <button className="cursor-pointer">🔔</button>
-          <button className="cursor-pointer">⚙️</button>
+        <div className="flex items-center gap-2">
+          <button onClick={()=>handleAction("Profile clicked")} className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center border border-white/20 cursor-pointer hover:bg-white/20">U</button>
+          <button onClick={()=>handleAction("Notifications")} className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center cursor-pointer hover:bg-white/20">🔔</button>
+          <button onClick={()=>handleAction("Settings clicked")} className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center cursor-pointer hover:bg-white/20">⚙️</button>
         </div>
       </div>
 
-      {/* PROMPT BAR */}
-      <div className="flex items-center gap-3 bg-[#1e1e28] rounded-xl px-4 py-3 mb-4 border border-white/5">
-        <span className="text-sm text-white/60 whitespace-nowrap">Generation Mode:</span>
-        <button className="bg-[#2a2a35] border border-cyan-400 text-cyan-300 px-3 py-1.5 rounded-lg text-sm flex items-center gap-1 cursor-pointer">
-          Text to 3D Prompt ▼
-        </button>
-        <input
-          className="flex-1 bg-[#2a2a35] border border-white/10 rounded-lg px-4 py-2 text-sm placeholder-white/40 outline-none focus:border-cyan-400"
-          placeholder="Describe your 3D model e.g. minimal low poly fox, neon cyan wireframe"
-        />
-        <button className="bg-[#7dd8ff] hover:bg-[#6bc8ef] text-black font-bold px-5 py-2 rounded-lg flex items-center gap-2 cursor-pointer">
-          ⚡ Generate
-        </button>
+      {/* GENERATION MODE */}
+      <div className="flex items-center gap-3 bg-[#1e1e28] rounded-xl px-4 py-3 mb-4 border border-white/5 relative">
+        <span className="text-[13px] text-white/60">Generation Mode:</span>
+        <div className="relative">
+          <button onClick={()=>setShowDropdown(!showDropdown)} className="px-3 py-1.5 rounded-lg border border-[#7ee8ff] text-[#7ee8ff] text-[13px] cursor-pointer">{genOption} ▾</button>
+          {showDropdown && (
+            <div className="absolute top-9 left-0 bg-[#2a2a35] border border-white/10 rounded-lg z-10 w-[180px] overflow-hidden">
+              {["Text to 3D Prompt","Image to 3D Prompt","Multi-Image Prompt"].map(o=>(
+                <button key={o} onClick={()=>{setGenOption(o); setShowDropdown(false);}} className="w-full text-left px-3 py-2 text-[12px] hover:bg-white/10 cursor-pointer">{o}</button>
+              ))}
+            </div>
+          )}
+        </div>
+        <input placeholder="Describe your 3D model e.g. minimal low poly fox, neon cyan wireframe" className="flex-1 bg-[#2a2a35] border border-white/10 rounded-lg px-4 py-2 text-[13px] text-white/70 outline-none focus:border-[#7ee8ff]/50" />
+        <button onClick={()=>{setIsGenerating(true); handleAction("Generating 3D Model...");}} className="bg-[#7ee8ff] text-black px-5 py-2 rounded-lg text-[13px] font-bold cursor-pointer hover:bg-[#6dd8ee] active:scale-95 transition-all">⚡ Generate</button>
       </div>
 
-      {/* MAIN GRID */}
-      <div className="grid grid-cols-12 gap-4">
+      <div className="grid grid-cols-[220px_1fr_260px] gap-4">
         {/* LEFT */}
-        <div className="col-span-2 flex flex-col gap-4">
+        <div className="space-y-4">
           <div className="bg-[#1e1e28] rounded-xl p-3 border border-white/5">
-            <div className="text-[11px] bg-white/10 rounded px-2 py-1 w-fit mb-3 font-bold tracking-wider">GENERATE</div>
-            {[
-              {l:"Image to 3D",a:true, i:"🖼️"},
-              {l:"Multi-Image", i:"🗂️"},
-              {l:"Text to 3D", i:"〒"},
-              {l:"Remesh", i:"⬢"},
-              {l:"Rig", i:"🧍"},
-              {l:"Animate", i:"🏃"},
-            ].map(b=>(
-              <button key={b.l} className={`w-full text-left px-3 py-2.5 rounded-lg mb-2 text-sm border flex items-center gap-2 cursor-pointer ${b.a ? "bg-[#7dd8ff] text-black border-cyan-300 font-semibold" : "bg-[#15151e] border-white/10 hover:bg-white/5 text-white/80"}`}>
-                <span>{b.i}</span> {b.l}
-              </button>
-            ))}
-          </div>
-          <div className="bg-[#1e1e28] rounded-xl p-3 border border-white/5">
-            <div className="text-[11px] bg-white/10 rounded px-2 py-1 w-fit mb-3 font-bold tracking-wider">UPLOAD</div>
-            <div className="border border-dashed border-white/30 rounded-xl p-4 text-center">
-              <div className="text-cyan-300 text-2xl mb-2">☁️</div>
-              <div className="text-sm font-medium">Drag & drop image here</div>
-              <div className="text-[11px] text-white/50 mt-1">or click to browse • PNG, JPG</div>
-            </div>
-            <button className="mt-3 w-[110px] mx-auto block border border-cyan-400/50 rounded-lg py-1.5 text-xs hover:bg-white/5 cursor-pointer">Upload Image</button>
-          </div>
-        </div>
-
-        {/* CENTER */}
-        <div className="col-span-7 bg-[#12121a] rounded-xl border border-white/5 flex flex-col">
-          <div className="flex items-center justify-between px-4 py-2.5 border-b border-white/5">
-            <h2 className="font-bold">3D Model Viewer</h2>
-            <div className="flex items-center gap-2 text-[11px]">
-              <span className="text-cyan-300 flex items-center gap-1">⬢ Three.js • Orbit Controls</span>
-              <button className="border border-white/10 rounded-lg px-2 py-1 hover:bg-white/5 cursor-pointer">↻ Reset View</button>
-              <button className="border border-white/10 rounded-lg px-2 py-1 hover:bg-white/5 cursor-pointer">Fullscreen</button>
-              <button className="border border-white/10 rounded-lg px-2 py-1 cursor-pointer">[ ]</button>
-            </div>
-          </div>
-          <div className="flex-1 relative min-h-[520px] bg-gradient-to-b from-[#1a1a28] to-[#12121a] flex items-center justify-center">
-            {/* Grid floor */}
-            <div className="absolute inset-0 opacity-20" style={{backgroundImage:"linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)", backgroundSize:"40px 40px"}}></div>
-            <img src="https://i.imgur.com/8Km9tLL.png" alt="helmet wireframe" className="w-[340px] opacity-90 relative z-10 mix-blend-screen invert" />
-            {/* Orbit icon */}
-            <div className="absolute bottom-24 right-24 w-20 h-20 rounded-full border border-white/30 flex items-center justify-center text-[10px] text-white/60 z-10">
-              ↻<br/>Orbit
-            </div>
-            <div className="absolute bottom-12 left-1/2 -translate-x-1/2 bg-black/50 px-3 py-1 rounded-full text-[11px] z-10">
-              Model: helmet_v02 • 12.4k polygons • 1 material
-            </div>
-          </div>
-          <div className="px-4 py-2 text-center text-xs text-green-300 border-t border-white/5">
-            • Ready • Loaded in 1.2s
-          </div>
-        </div>
-
-        {/* RIGHT */}
-        <div className="col-span-3 bg-[#1e1e28] rounded-xl p-4 border border-white/5 flex flex-col gap-5">
-          <div>
-            <div className="text-[11px] bg-white/10 rounded px-2 py-1 w-fit mb-3 font-bold tracking-wider">EXPORT & VIEW</div>
-            <div className="text-xs font-bold mb-3 tracking-wider">DOWNLOAD FORMATS</div>
-            <div className="grid grid-cols-2 gap-2">
-              {[".GLB",".OBJ",".FBX",".STL",".USDZ",".BLEND"].map(f=>(
-                <button key={f} className="border border-white/20 rounded-lg py-2.5 text-xs flex items-center justify-center gap-1 hover:bg-white/5 cursor-pointer">
-                  <span className="text-cyan-300">⬇</span> {f}
+            <div className="text-[11px] font-bold text-white/50 px-2 py-1 bg-white/10 rounded w-fit mb-3">GENERATE</div>
+            <div className="space-y-2">
+              {[
+                {id:"Image to 3D", icon:"🖼️"},
+                {id:"Multi-Image", icon:"📚"},
+                {id:"Text to 3D", icon:"✒️"},
+                {id:"Remesh", icon:"🧊"},
+                {id:"Rig", icon:"🦴"},
+                {id:"Animate", icon:"🏃"},
+              ].map(item=>(
+                <button key={item.id} onClick={()=>setGenType(item.id)} className={`w-full text-left rounded-lg px-3 py-2.5 text-[13px] font-medium flex items-center gap-2 cursor-pointer transition-all ${genType===item.id ? "bg-[#7ee8ff] text-black" : "bg-[#2a2a35] border border-white/10 text-white/70 hover:border-white/20 hover:text-white"}`}>
+                  {item.icon} {item.id}
                 </button>
               ))}
             </div>
           </div>
-          <div className="border-t border-white/10 pt-4">
-            <div className="text-[11px] bg-white/10 rounded px-2 py-1 w-fit mb-3 font-bold tracking-wider">AR VIEW</div>
-            <button className="w-full bg-[#7dd8ff] text-black font-semibold py-2.5 rounded-lg text-sm flex items-center justify-center gap-2 cursor-pointer">
-              👓 Launch AR View
+
+          <div className="bg-[#1e1e28] rounded-xl p-3 border border-white/5">
+            <div className="text-[11px] font-bold text-white/50 px-2 py-1 bg-white/10 rounded w-fit mb-3">UPLOAD</div>
+            <button onClick={()=>handleAction("Upload dialog opened")} className="w-full border border-dashed border-white/20 rounded-xl p-4 text-center cursor-pointer hover:border-[#7ee8ff]/50 transition-colors group">
+              <div className="text-[12px] text-white font-medium group-hover:text-[#7ee8ff]">Drag & drop image here</div>
+              <div className="text-[11px] text-white/40">or click to browse • PNG, JPG</div>
             </button>
-            <div className="text-[11px] text-white/50 mt-2">View in augmented reality on mobile</div>
+            <button onClick={()=>handleAction("Image Uploaded!")} className="mt-3 w-full border border-[#7ee8ff] text-white rounded-lg py-1.5 text-[12px] cursor-pointer hover:bg-[#7ee8ff] hover:text-black transition-all active:scale-95">Upload Image</button>
           </div>
-          <div className="border-t border-white/10 pt-4">
-            <div className="text-xs font-bold mb-3">EXPORT OPTIONS</div>
-            <div className="flex gap-2">
-              <button className="bg-[#7dd8ff]/20 border border-cyan-400/30 text-cyan-200 text-[11px] px-2 py-1 rounded-full cursor-pointer">☑ Include Textures</button>
-              <button className="border border-white/10 text-[11px] px-2 py-1 rounded-full hover:bg-white/5 cursor-pointer">Compressed</button>
+        </div>
+
+        {/* CENTER VIEWER */}
+        <div className="bg-[#1e1e28] rounded-xl border border-white/5 overflow-hidden flex flex-col">
+          <div className="flex items-center justify-between px-4 py-3 border-b border-white/5">
+            <span className="font-bold text-[14px]">3D Model Viewer</span>
+            <div className="flex items-center gap-2 text-[11px]">
+              <span className="text-[#7ee8ff]">Three.js • Orbit Controls</span>
+              <button onClick={()=>handleAction("View Reset")} className="bg-[#2a2a35] border border-white/10 px-2 py-1 rounded cursor-pointer hover:bg-white/10">↻ Reset View</button>
+              <button onClick={()=>handleAction("Fullscreen Mode")} className="bg-[#2a2a35] border border-white/10 px-2 py-1 rounded cursor-pointer hover:bg-white/10">Fullscreen</button>
+              <button onClick={()=>handleAction("Expand Viewer")} className="bg-[#2a2a35] border border-white/10 px-2 py-1 rounded cursor-pointer">⛶</button>
             </div>
-            <button className="w-full mt-4 border border-white/20 rounded-lg py-2.5 text-sm flex items-center justify-center gap-2 hover:bg-white/5 cursor-pointer">
-              ⬇ Export All Formats
-            </button>
           </div>
+          <div className="h-[520px] bg-[#15151d] flex flex-col items-center justify-center relative group">
+            <div className="w-[260px] h-[260px] rounded-full border border-white/10 flex items-center justify-center bg-gradient-to-b from-white/5 to-transparent cursor-grab active:cursor-grabbing" onClick={()=>handleAction("Orbit: Drag to rotate model")}>
+              <span className="text-[100px] opacity-30">◍</span>
+            </div>
+            <div className="absolute bottom-10 text-[11px] bg-black/50 px-3 py-1 rounded-full">Model: helmet_v02 • 12.4k polygons • 1 material</div>
+            <div className="absolute bottom-3 text-[12px] text-green-300">• Ready • Loaded in 1.2s</div>
+          </div>
+        </div>
+
+        {/* RIGHT */}
+        <div className="bg-[#1e1e28] rounded-xl p-3 border border-white/5">
+          <div className="text-[11px] font-bold text-white/50 px-2 py-1 bg-white/10 rounded w-fit mb-3">EXPORT & VIEW</div>
+          <div className="text-[12px] font-bold mb-2">DOWNLOAD FORMATS</div>
+          <div className="grid grid-cols-2 gap-2 mb-4">
+            {[".GLB",".OBJ",".FBX",".STL",".USDZ",".BLEND"].map(f=>(
+              <button key={f} onClick={()=>handleAction(`Downloading ${f}`)} className="bg-[#2a2a35] border border-white/10 rounded-lg px-3 py-2 text-[12px] text-left cursor-pointer hover:border-[#7ee8ff]/50 hover:text-[#7ee8ff] active:scale-95 transition-all">↓ {f}</button>
+            ))}
+          </div>
+          <div className="text-[11px] font-bold text-white/50 px-2 py-1 bg-white/10 rounded w-fit mb-3">AR VIEW</div>
+          <button onClick={()=>handleAction("Launching AR View on mobile")} className="w-full bg-[#7ee8ff] text-black rounded-lg px-3 py-2.5 text-[13px] font-bold mb-1 cursor-pointer hover:bg-[#6dd8ee] active:scale-95 transition-all">👓 Launch AR View</button>
+          <div className="text-[10px] text-white/40 mb-4">View in augmented reality on mobile</div>
+          <div className="text-[12px] font-bold mb-2">EXPORT OPTIONS</div>
+          <div className="flex gap-2 mb-3">
+            <button onClick={()=>handleAction("Include Textures toggled")} className="bg-[#7ee8ff] text-black text-[10px] px-2 py-1 rounded-full cursor-pointer">✓ Include Textures</button>
+            <button onClick={()=>handleAction("Compressed toggled")} className="border border-white/20 text-[10px] px-2 py-1 rounded-full cursor-pointer hover:border-white/40">Compressed</button>
+          </div>
+          <button onClick={()=>handleAction("Exporting All Formats")} className="w-full bg-[#2a2a35] border border-white/10 rounded-lg px-3 py-2 text-[12px] text-center cursor-pointer hover:bg-white/10 active:scale-95 transition-all">↓ Export All Formats</button>
         </div>
       </div>
 
-      {/* BOTTOM AI NAV BAR */}
-      <div className="mt-4 bg-[#1e1e28] rounded-xl px-4 py-3 flex items-center justify-between border border-white/5">
-        <div className="flex items-center gap-3 flex-1">
-          <span className="text-sm text-cyan-300">● ● AI generating 62%</span>
-          <div className="w-[240px] h-1.5 bg-white/10 rounded-full overflow-hidden">
-            <div className="h-full bg-cyan-400" style={{width:`${generating}%`}}></div>
-          </div>
-          <span className="text-sm text-white/70 ml-2">Estimated 18s remaining</span>
-        </div>
-        <div className="flex items-center gap-6 text-xs text-white/60 border-l border-white/10 pl-6">
-          <div>Completed today <span className="text-white font-bold">14</span></div>
-          <div className="border-l border-white/10 pl-6">Avg processing <span className="text-white font-bold">22s</span></div>
-          <div className="border-l border-white/10 pl-6 flex items-center gap-1">💳 Credits remaining <span className="text-white font-bold">187</span></div>
-        </div>
+      {/* BOTTOM STATUS */}
+      <div className="mt-4 flex items-center gap-4 bg-[#1e1e28] rounded-xl px-4 py-2.5 border border-white/5 text-[12px]">
+        <button onClick={()=>setIsGenerating(!isGenerating)} className="flex items-center gap-2 cursor-pointer hover:text-[#7ee8ff]">
+          <span className={`w-2 h-2 rounded-full ${isGenerating ? "bg-[#7ee8ff] animate-pulse" : "bg-green-400"}`}></span> AI generating {isGenerating ? "62%" : "100%"}
+        </button>
+        <div className="flex-1 h-2 bg-white/10 rounded-full overflow-hidden cursor-pointer"><div className="w-[62%] h-full bg-[#7ee8ff] rounded-full"></div></div>
+        <span>Estimated 18s remaining</span>
+        <span className="ml-auto text-white/60">Completed today 14 | Avg processing 22s | Credits remaining 187</span>
       </div>
     </div>
   );
