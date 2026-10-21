@@ -1,141 +1,166 @@
-"use client";
-import { useState } from "react";
+"use client"
+import { useState } from "react"
+import Image from "next/image"
 
-export default function VectorStudio() {
+export default function VectorStudioFinal() {
+  const [prompt, setPrompt] = useState("")
+
   return (
-    <div className="min-h-screen bg-[#080c13] text-white font-sans">
-      {/* HEADER */}
-      <header className="flex items-center justify-between px-6 md:px-10 h-[72px] border-b border-white/[0.08] bg-[#0a0f18]">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-[#5de1ff] flex items-center justify-center">
-            <div className="w-7 h-7 bg-[#0a0f18] rounded-md" style={{clipPath:'polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%)'}}></div>
-          </div>
-          <div className="leading-none">
-            <div className="font-bold text-[22px] -mb-1">Vector</div>
-            <div className="font-bold text-[22px]">Studio</div>
-          </div>
-        </div>
-        <nav className="hidden md:flex gap-8 text-[15px] text-white/60">
-          <span>Dashboard</span>
-          <span>Projects</span>
-          <span className="text-[#5de1ff] border-b-2 border-[#5de1ff] pb-1">Batch</span>
-          <span>Settings</span>
-        </nav>
-        <div className="flex items-center gap-5">
-          <div className="w-6 h-6 rounded-full border border-white/20" />
-          <div className="w-6 h-6 rounded-full bg-white/10" />
-          <div className="w-8 h-8 rounded-full border border-[#5de1ff] flex items-center justify-center text-[#5de1ff] text-sm font-bold">VS</div>
-        </div>
-      </header>
-
-      {/* HERO TEXT */}
-      <div className="text-center pt-12 pb-10 px-4">
-        <h1 className="text-[28px] md:text-[36px] font-bold tracking-tight">
-          Turn any image into a clean <span className="text-white drop-shadow-[0_0_12px_rgba(93,225,255,0.8)]">scalable vector</span> in seconds
-        </h1>
-        <p className="text-white/60 mt-3 text-[14px] md:text-[16px]">
-          Upload, preview, and export production-ready SVGs with batch processing — fast, accurate, and scalable.
-        </p>
-      </div>
-
-      {/* 3 CARDS */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 px-6 md:px-10 pb-16 max-w-[1400px] mx-auto">
+    <div className="min-h-screen bg-[#050a12] text-white p-3 md:p-6 font-sans">
+      <div className="max-w-[1600px] mx-auto bg-[#080c13] rounded-2xl border border-[#1a2a3a] p-4 md:p-6 shadow-[0_0_60px_rgba(0,0,0,0.8)]">
         
-        {/* CARD 1 - UPLOAD */}
-        <div className="rounded-[16px] border border-white/[0.08] bg-[#111722]/80 p-5 backdrop-blur">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="w-12 h-12 rounded-xl bg-white/[0.06] border border-white/10 flex items-center justify-center text-[#5de1ff]">☁️</div>
-            <div>
-              <div className="font-bold text-[18px]">Upload JPG PNG</div>
-              <div className="text-[#5de1ff] text-[13px]">drag & drop</div>
-            </div>
+        {/* HEADER */}
+        <div className="flex justify-between items-center mb-6">
+          <div className="flex items-center gap-3">
+            <div className="text-[#5de1ff] text-2xl">🪄</div>
+            <h1 className="text-[28px] font-bold tracking-tight">Text to Vector Prompt</h1>
           </div>
-
-          <div className="rounded-[16px] border-2 border-dashed border-[#5de1ff]/60 p-8 text-center">
-            <div className="text-[#5de1ff] text-4xl mb-4">☁️↑</div>
-            <div className="font-semibold">Drag & drop your image here</div>
-            <div className="mt-2 text-sm">or <span className="text-[#5de1ff] border-b border-[#5de1ff]">browse files</span></div>
-            <div className="mt-6 text-[12px] text-white/50">Supports JPG, PNG · Max 50MB</div>
-          </div>
-
-          <button className="mt-6 w-full h-[48px] rounded-lg bg-[#5de1ff] text-black font-bold text-[16px]">Choose File</button>
-          <div className="mt-3 text-[12px] text-white/60 flex items-center gap-2">
-            <span className="w-4 h-4 rounded-full bg-[#5de1ff] flex items-center justify-center text-black text-[10px]">✓</span>
-            Secure · Processed locally · No data stored
-          </div>
-        </div>
-
-        {/* CARD 2 - PREVIEW */}
-        <div className="rounded-[16px] border border-white/[0.08] bg-[#111722]/80 p-5">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="w-12 h-12 rounded-xl bg-white/[0.06] border border-white/10 flex items-center justify-center text-[#5de1ff]">◧</div>
-            <div>
-              <div className="font-bold text-[18px]">Preview SVG Vector</div>
-              <div className="text-[#5de1ff] text-[13px]">wolf wireframe</div>
-            </div>
-          </div>
-
-          <div className="flex items-center justify-between bg-black/40 rounded-lg px-3 py-2 text-[11px] mb-3">
-            <span className="bg-white/10 px-2 py-1 rounded">Wireframe</span>
-            <span className="text-white/50">Layers: Outline · Details · Background removed</span>
-            <span className="w-8 h-4 bg-[#5de1ff] rounded-full"></span>
-          </div>
-
-          <div className="h-[300px] rounded-xl bg-[#0d121c] flex items-center justify-center">
-            <img src="/studios/vector-studio-hero.png" alt="wolf" className="w-[80%] h-auto opacity-90" />
-          </div>
-
-          <div className="flex items-center justify-between mt-4">
-            <div className="flex items-center gap-3 bg-white/[0.05] px-3 py-2 rounded-lg text-sm">
-              <span>—</span> Zoom 120% <span>+</span>
-            </div>
-            <button className="border border-[#5de1ff] text-[#5de1ff] px-4 py-2 rounded-lg text-sm">Download SVG ↓</button>
-          </div>
-        </div>
-
-        {/* CARD 3 - OUTPUT */}
-        <div className="rounded-[16px] border border-white/[0.08] bg-[#111722]/80 p-5">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="w-12 h-12 rounded-xl bg-white/[0.06] border border-white/10 flex items-center justify-center text-[#5de1ff]">⚙️</div>
-            <div>
-              <div className="font-bold text-[18px]">Output Settings</div>
-              <div className="text-[#5de1ff] text-[13px]">batch 100x queue active</div>
-            </div>
-          </div>
-
-          <div className="space-y-3 text-sm">
-            <div className="flex justify-between items-center"><span>Scale:</span><span className="border border-[#5de1ff]/50 px-4 py-1.5 rounded-md w-[120px]">2x</span></div>
-            <div className="flex justify-between items-center"><span>Detail:</span><span className="border border-[#5de1ff]/50 px-4 py-1.5 rounded-md w-[120px]">High</span></div>
-            <div className="flex justify-between items-center"><span>Background:</span><span className="border border-[#5de1ff]/50 px-4 py-1.5 rounded-md w-[120px]">Transparent</span></div>
-          </div>
-
-          <div className="mt-6">
-            <div className="flex justify-between items-center">
-              <div className="font-bold text-[18px]">Batch Queue</div>
-              <div className="bg-[#5de1ff] text-black text-[12px] px-3 py-1 rounded-md font-bold">100 items active</div>
-            </div>
-            <div className="w-full h-3 bg-white/10 rounded-full mt-4 overflow-hidden">
-              <div className="h-full w-[68%] bg-[#5de1ff] rounded-full"></div>
-            </div>
-            <div className="flex justify-between text-[13px] mt-3">
-              <span>Processing...</span><span>68/100</span>
-            </div>
-            <div className="text-[12px] text-white/50 mt-1">Est. 1m 23s remaining · 32 completed</div>
-
-            <div className="grid grid-cols-2 gap-3 mt-6">
-              <button className="border border-[#5de1ff] text-[#5de1ff] h-[40px] rounded-lg text-sm">Pause Queue</button>
-              <button className="bg-white/10 text-white/30 h-[40px] rounded-lg text-sm">Export All</button>
+          <div className="flex items-center gap-3">
+            <button className="w-10 h-10 rounded-lg bg-[#0f1a29] border border-[#5de1ff]/30 flex items-center justify-center text-[#5de1ff]">⚙️</button>
+            <button className="w-10 h-10 rounded-lg bg-[#0f1a29] border border-[#5de1ff]/30 flex items-center justify-center text-[#5de1ff]">⚖️</button>
+            <button className="w-10 h-10 rounded-lg bg-[#0f1a29] border border-[#5de1ff]/30 flex items-center justify-center text-[#5de1ff]">✨</button>
+            <div className="flex gap-2 ml-4">
+              <span className="text-xl opacity-60">🔔</span>
+              <span className="text-xl opacity-60">🔔</span>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* FOOTER STATS */}
-      <div className="border-t border-white/[0.06] bg-[#0a0f18] py-4 flex justify-center gap-10 md:gap-20 text-sm">
-        <div className="flex items-center gap-2"><span className="text-[#5de1ff]">✓</span> Completed today: <b className="text-[18px]">312</b></div>
-        <div className="flex items-center gap-2"><span className="text-[#5de1ff]">⚡</span> Avg processing: <b className="text-[18px]">1.2s</b></div>
-        <div className="flex items-center gap-2"><span className="text-[#5de1ff]">$</span> Credits remaining: <b className="text-[18px]">2,450</b></div>
+        {/* PROMPT BAR - WHERE PROMPT IS INSERTED */}
+        <div className="relative mb-6">
+          <div className="flex items-center bg-[#0a121e] border border-[#5de1ff]/60 rounded-xl px-5 py-4 shadow-[0_0_20px_rgba(93,225,255,0.15),inset_0_0_20px_rgba(93,225,255,0.05)]">
+            <input
+              value={prompt}
+              onChange={(e) => setPrompt(e.target.value)}
+              placeholder="Describe your vector... e.g. minimal geometric wolf head, neon cyan wireframe, clean lines"
+              className="flex-1 bg-transparent outline-none text-[16px] text-white placeholder:text-[#5de1ff] placeholder:font-semibold"
+            />
+            <span className="text-[#8a9bb0] text-[16px] ml-2 hidden md:inline"> e.g. minimal geometric wolf head, neon cyan wireframe, clean lines</span>
+            <button className="ml-4 bg-[#5de1ff] hover:bg-[#7de8ff] text-black font-bold px-6 py-2.5 rounded-lg flex items-center gap-2 shadow-[0_0_15px_rgba(93,225,255,0.6)] transition-all">
+              <span>✨</span> Generate
+            </button>
+          </div>
+        </div>
+
+        {/* 3 CARDS */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-6">
+          
+          {/* Card 1 - Upload */}
+          <div className="bg-[#0c141f] border border-[#5de1ff]/20 rounded-xl p-5 flex flex-col">
+            <div className="flex items-center gap-3 mb-5">
+              <div className="w-11 h-11 rounded-lg bg-[#0a121e] border border-[#5de1ff]/50 flex items-center justify-center">
+                <span className="text-[#5de1ff] text-xl">📤</span>
+              </div>
+              <h3 className="font-bold text-[18px]">Upload JPG PNG</h3>
+            </div>
+            <p className="text-[#8a9bb0] text-[14px] mb-4">Drag & drop your files here</p>
+            <div className="border border-dashed border-[#5de1ff]/60 rounded-lg flex-1 flex flex-col items-center justify-center py-10 mb-4 bg-[#080f1a]">
+              <div className="flex items-center gap-3 text-[#8a9bb0]">
+                <div className="w-8 h-10 border rounded flex items-center justify-center text-[10px]">JPG</div>
+                <div className="text-left text-[14px] leading-tight">
+                  JPG, PNG<br/>up to 50MB
+                </div>
+              </div>
+            </div>
+            <button className="w-full border border-[#5de1ff] text-[#5de1ff] py-2.5 rounded-lg font-medium hover:bg-[#5de1ff]/10">Browse Files</button>
+          </div>
+
+          {/* Card 2 - Preview - USING YOUR wolf.jpg */}
+          <div className="bg-[#0c141f] border border-[#5de1ff]/20 rounded-xl p-5 flex flex-col">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-11 h-11 rounded-lg bg-[#0a121e] border border-[#5de1ff]/50 flex items-center justify-center">
+                <span className="text-[#5de1ff] text-xl">〰️</span>
+              </div>
+              <h3 className="font-bold text-[18px]">Preview SVG Vector</h3>
+            </div>
+            <div className="bg-[#080f1a] rounded-lg border border-[#1a2a3a] p-2 flex-1 flex items-center justify-center">
+              <Image
+                src="/studios/vector-studio/wolf.jpg"
+                alt="wolf wireframe"
+                width={600}
+                height={400}
+                className="w-full h-auto object-contain rounded"
+                priority
+              />
+            </div>
+            <p className="text-center text-[#5de1ff] text-[14px] font-medium mt-3">wolf_wireframe_final.svg</p>
+            <div className="flex justify-center mt-2">
+              <span className="bg-[#1a2a3a] text-[#8a9bb0] text-[13px] px-3 py-1 rounded-lg">SVG • 24.6 KB • 1200x1200</span>
+            </div>
+            <div className="flex gap-3 mt-4 justify-center">
+              <span className="flex items-center gap-1 bg-[#0a121e] border border-[#2a3a4a] px-3 py-1.5 rounded-lg text-[13px]"><span className="text-[#5de1ff]">›</span> Zoom: 100%</span>
+              <span className="flex items-center gap-1 bg-[#0a121e] border border-[#2a3a4a] px-3 py-1.5 rounded-lg text-[13px]"><span className="text-[#5de1ff]">⊞</span> Toggle Grid</span>
+            </div>
+          </div>
+
+          {/* Card 3 - Output */}
+          <div className="bg-[#0c141f] border border-[#5de1ff]/20 rounded-xl p-5 flex flex-col">
+            <div className="flex items-center gap-3 mb-5">
+              <div className="w-11 h-11 rounded-lg bg-[#0a121e] border border-[#5de1ff]/50 flex items-center justify-center">
+                <span className="text-[#5de1ff] text-xl">⚙️</span>
+              </div>
+              <h3 className="font-bold text-[18px]">Output Settings</h3>
+            </div>
+            <h4 className="font-bold text-[17px] mb-4">Batch Queue</h4>
+            <div className="space-y-3 text-[14px] mb-3">
+              <div className="flex justify-between"><span className="text-[#8a9bb0]">Format:</span><span className="font-medium">SVG Vector <span className="text-[#5de1ff] ml-6">⌄</span></span></div>
+              <div className="flex justify-between"><span className="text-[#8a9bb0]">Quality:</span><span className="font-medium">High (Precision) <span className="text-[#5de1ff] ml-2">✓</span></span></div>
+              <div className="flex justify-between items-center"><span className="text-[#8a9bb0]">Scale:</span><span className="font-bold">2x Resize</span><div className="w-10 h-5 bg-[#5de1ff] rounded-full relative"><div className="absolute right-0.5 top-0.5 w-4 h-4 bg-white/30 rounded-full"></div></div></div>
+              <div className="flex justify-between"><span className="text-[#8a9bb0]">Queue:</span><span className="text-[#8a9bb0]">12 files pending</span></div>
+            </div>
+            <div className="space-y-2 mb-4">
+              <div className="bg-[#0a121e] rounded px-3 py-2 flex justify-between text-[13px] text-[#8a9bb0]"><span>≡ batch_07.png — Queued</span><span>🕒</span></div>
+              <div className="bg-[#0a121e] rounded px-3 py-2 flex justify-between text-[13px] text-[#8a9bb0]"><span>≡ batch_08.jpg — Queued</span><span>🕒</span></div>
+            </div>
+            <button className="w-full bg-[#5de1ff] hover:bg-[#7de8ff] text-black font-bold py-3 rounded-lg mt-auto">Run Batch Export</button>
+          </div>
+        </div>
+
+        {/* AI GENERATING BAR */}
+        <div className="bg-[#0c141f] border border-[#5de1ff]/40 rounded-xl px-4 py-3.5 flex flex-col md:flex-row items-center gap-4 mb-6 shadow-[0_0_20px_rgba(93,225,255,0.1)]">
+          <div className="flex items-center gap-4 flex-1 w-full">
+            <div className="w-14 h-14 rounded-xl bg-[#0a121e] border border-[#5de1ff]/50 flex items-center justify-center text-[#5de1ff] text-2xl shadow-[0_0_15px_rgba(93,225,255,0.3)]">🧠</div>
+            <div className="flex-1">
+              <p className="text-[#5de1ff] font-bold text-[18px]">AI is generating vectors... 68%</p>
+              <p className="text-[#8a9bb0] text-[13px] mt-1">— Cleaning edges — Removing background — Optimizing paths</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-3 w-full md:w-[55%]">
+            <div className="flex-1 h-4 bg-[#050a12] rounded-full border border-[#1a2a3a] p-1">
+              <div className="h-full bg-gradient-to-r from-[#0a3a4a] to-[#5de1ff] rounded-full shadow-[0_0_15px_#5de1ff]" style={{width: '68%'}}></div>
+            </div>
+            <div className="text-right">
+              <p className="text-[#5de1ff]/80 text-[13px]">68/100 processing</p>
+              <span className="text-[#5de1ff] text-lg">↻</span>
+            </div>
+          </div>
+        </div>
+
+        {/* STATS FOOTER */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 divide-x divide-[#1a2a3a]/50">
+          <div className="px-4 text-center py-2">
+            <p className="text-[#c0cbd8] text-[14px] font-medium">Files Processed</p>
+            <p className="text-[#5de1ff] text-[32px] font-bold leading-none mt-2">1,247</p>
+            <span className="inline-flex items-center gap-1 bg-[#1a2a3a] text-[12px] px-2.5 py-1 rounded-lg mt-2 text-[#8a9bb0]"><span className="text-[#4ade80]">↗ +84</span> today</span>
+          </div>
+          <div className="px-4 text-center py-2">
+            <p className="text-[#c0cbd8] text-[14px] font-medium">Time Saved</p>
+            <p className="text-[#5de1ff] text-[32px] font-bold leading-none mt-2">14.2h</p>
+            <span className="inline-flex bg-[#1a2a3a] text-[12px] px-2.5 py-1 rounded-lg mt-2 text-[#8a9bb0]">≈ 3.5h this week</span>
+          </div>
+          <div className="px-4 text-center py-2">
+            <p className="text-[#c0cbd8] text-[14px] font-medium">Accuracy</p>
+            <p className="text-[#5de1ff] text-[32px] font-bold leading-none mt-2">98.7%</p>
+            <span className="inline-flex bg-[#1a2a3a] text-[12px] px-2.5 py-1 rounded-lg mt-2 text-[#8a9bb0]">Vector precision</span>
+          </div>
+          <div className="px-4 text-center py-2">
+            <p className="text-[#c0cbd8] text-[14px] font-medium">Storage Used</p>
+            <p className="text-[#5de1ff] text-[26px] font-bold leading-none mt-2">2.4GB / 10GB</p>
+            <span className="inline-flex items-center gap-2 bg-[#1a2a3a] text-[12px] px-2.5 py-1 rounded-lg mt-2 text-[#8a9bb0]"><span className="text-[#5de1ff]">▮▮▮</span> 24%</span>
+          </div>
+        </div>
+
       </div>
     </div>
-  );
+  )
 }
