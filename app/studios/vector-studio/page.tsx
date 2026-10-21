@@ -136,7 +136,7 @@ export default function VectorStudioFinalWorking() {
             </div>
             <div className="flex-1 bg-[#090f1c] rounded-xl mt-3 p-6 flex items-center justify-center min-h-[400px]">
               <div style={{transform:`scale(${zoom/100})`}} className="transition-transform">
-                <Image src="/studios/vector-studio/wolf.png" alt="wolf" width={380} height={380} className="w-[340px] h-auto" style={{filter: wireframe ? 'invert(1) hue-rotate(180deg) brightness(1.2) sepia(1) hue-rotate(150deg) saturate(4)':'none'}} priority unoptimized />
+                <Image src="app/studios/vector-studio/wolf.png" alt="wolf" width={380} height={380} className="w-[340px] h-auto" style={{filter: wireframe ? 'invert(1) hue-rotate(180deg) brightness(1.2) sepia(1) hue-rotate(150deg) saturate(4)':'none'}} priority unoptimized />
               </div>
             </div>
             <div className="flex justify-between items-center mt-4">
