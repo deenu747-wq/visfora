@@ -69,7 +69,7 @@ export default function Studio3D() {
             </div>
           </div>
           <div className="flex-1 relative min-h-[520px] flex items-center justify-center bg-[#12121a]">
-            <Image src="/helmet.png" alt="helmet" width={600} height={600} className="w-[380px] h-auto relative z-10" priority />
+            <Image src="/helmet.png" alt="helmet" width={1000} height={1000} className="w-[380px] h-auto relative z-10" priority />
             <div className="absolute bottom-12 left-1/2 -translate-x-1/2 bg-black/50 px-3 py-1 rounded-full text-[11px] text-white z-20">Model: helmet_v02 • 12.4k polygons • 1 material</div>
           </div>
           <div className="px-4 py-2 text-center text-xs text-green-300 border-t border-white/5">• Ready • Loaded in 1.2s</div>
