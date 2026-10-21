@@ -52,7 +52,7 @@ export default function VectorStudioFinalWorking() {
           {/* YOUR LOGO - if file name is different change src */}
           {/* If your file is at public/Logo.png use src="/Logo.png" */}
           {/* If at public/Logo/visfora.png use src="/Logo/visfora.png" */}
-          <Image src="/Logo.png" alt="VISFORA" width={170} height={38} className="h-[34px] w-auto object-contain" priority />
+          <Image src="/Logo.png" alt="VISFORA" width={170} height={38} className="h-[34px] w-auto object-contain" priority unoptimized />
           <span className="font-bold text-[20px] ml-2">Vector Studio</span>
         </div>
         <nav className="hidden md:flex gap-2">
@@ -135,7 +135,7 @@ export default function VectorStudioFinalWorking() {
             </div>
             <div className="flex-1 bg-[#090f1c] rounded-xl mt-3 p-6 flex items-center justify-center min-h-[400px]">
               <div style={{transform:`scale(${zoom/100})`}} className="transition-transform">
-                <Image src="/studios/vector-studio/wolf.jpg" alt="wolf" width={380} height={380} className="w-[340px] h-auto" style={{filter: wireframe ? 'invert(1) hue-rotate(180deg) brightness(1.2) sepia(1) hue-rotate(150deg) saturate(4)':'none'}} priority />
+                <Image src="/studios/vector-studio/wolf.png" alt="wolf" width={380} height={380} className="w-[340px] h-auto" style={{filter: wireframe ? 'invert(1) hue-rotate(180deg) brightness(1.2) sepia(1) hue-rotate(150deg) saturate(4)':'none'}} priority unoptimized />
               </div>
             </div>
             <div className="flex justify-between items-center mt-4">
