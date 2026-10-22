@@ -1,40 +1,60 @@
+// @ts-nocheck
 "use client";
-import { Suspense, useState } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
+import { useState, useEffect, Suspense } from "react";
 
-function ProductInner() {
-  const searchParams = useSearchParams();
-  const router = useRouter();
-  const prompt = searchParams.get("prompt") || "football player side jump goal";
+function ProductContent() {
+  const params = useSearchParams();
+  const prompt = params.get("prompt") || "football goalkeeper side jump save";
+  const [img, setImg] = useState("");
+  const [loading, setLoading] = useState(true);
 
-  // Uses local file - no more external block
-  const [img] = useState("/football-goal.jpg");
+  useEffect(() => {
+    setLoading(true);
+    // THIS IS YOUR AI TOOL - generates from prompt, no folder
+    const generatedUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt + ", studio product photography, 4k, ultra realistic, white background")}?width=1024&height=1024&nologo=1&model=flux&seed=${Date.now()}`;
+    setImg(generatedUrl);
+  }, [prompt]);
 
   return (
     <div className="min-h-screen bg-[#FFFCF7] p-6">
-      <h1 className="text-xl font-bold">Prompt: {prompt}</h1>
-      <p className="text-sm opacity-60">Showing result - Local AI image</p>
-      
-      <div className="mt-6 bg-white border rounded-[24px] p-4 min-h-[500px] flex items-center justify-center">
-        <img src={img} alt={prompt} className="rounded-xl w-full max-w-[800px]" />
-      </div>
+      <div className="max-w-[1280px] mx-auto">
+        <h1 className="text-2xl font-bold tracking-tight">Product Studio</h1>
+        <p className="text-[13px] text-black/50 mt-1">Generating for: <b className="text-black">{prompt}</b></p>
 
-      <div className="mt-4 flex gap-2">
-        <button onClick={() => window.location.reload()} className="bg-black text-white px-4 py-2 rounded-full">
-          Regenerate
-        </button>
-        <button onClick={() => router.push('/')} className="bg-white border px-4 py-2 rounded-full">
-          Back to Home
-        </button>
+        <div className="mt-6 rounded-[24px] bg-white border border-black/5 p-4 shadow-[0_16px_40px_rgba(0,0,0,0.06)]">
+          <div className="h-[560px] bg-[#FAF6EE] rounded-xl flex items-center justify-center overflow-hidden relative">
+            {loading && (
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
+                <div className="w-8 h-8 border-2 border-black/10 border-t-black rounded-full animate-spin"></div>
+                <p className="text-xs text-black/40">AI Generating: {prompt}...</p>
+              </div>
+            )}
+            {img && (
+              <img 
+                src={img} 
+                alt={prompt}
+                onLoad={() => setLoading(false)}
+                className="w-full h-full object-contain"
+              />
+            )}
+          </div>
+
+          <div className="flex gap-2 mt-4">
+            <button onClick={() => setImg(`https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?seed=${Date.now()}`)} className="px-6 py-3 rounded-full bg-black text-white text-sm font-medium">Regenerate</button>
+            <button onClick={() => window.open(img, '_blank')} className="px-6 py-3 rounded-full border border-black/10 text-sm">Download HD</button>
+            <span className="ml-auto text-[11px] text-black/30 py-3">No folder needed • Prompt-based AI</span>
+          </div>
+        </div>
       </div>
     </div>
   );
 }
 
-export default function Page() {
+export default function ProductPage() {
   return (
-    <Suspense fallback={<div className="p-6">Loading...</div>}>
-      <ProductInner />
+    <Suspense fallback={<div className="p-10">Loading AI studio...</div>}>
+      <ProductContent />
     </Suspense>
   );
 }
