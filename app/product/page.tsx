@@ -1,49 +1,57 @@
 // @ts-nocheck
 "use client";
 import { useSearchParams } from "next/navigation";
-import { useState, useEffect, Suspense } from "react";
+import { useState, Suspense } from "react";
 
 function ProductContent() {
   const params = useSearchParams();
-  const prompt = params.get("prompt") || "football goalkeeper side jump save";
-  const [img, setImg] = useState("");
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    setLoading(true);
-    // THIS IS YOUR AI TOOL - generates from prompt, no folder
-    const generatedUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt + ", studio product photography, 4k, ultra realistic, white background")}?width=1024&height=1024&nologo=1&model=flux&seed=${Date.now()}`;
-    setImg(generatedUrl);
-  }, [prompt]);
+  let raw = params.get("prompt") || "football player side jump";
+  
+  // Force clean - block git commands
+  if (raw.includes("del ") || raw.includes("git ") || raw.includes("public") || raw.length > 100) {
+    raw = "football player side jump goal";
+  }
+  
+  const [prompt, setPrompt] = useState(raw);
+  const [attempt, setAttempt] = useState(0);
+  
+  // 3 Sources - if 1 fails, 2nd works
+  const sources = [
+    `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt + " ultra realistic photo")}?width=1024&height=1024&nologo=true&seed=${attempt}`,
+    `https://picsum.photos/seed/${encodeURIComponent(prompt)}/1024/1024`,
+    `https://loremflickr.com/1024/1024/${encodeURIComponent(prompt.split(" ")[0])}?lock=${attempt}`
+  ];
+  
+  const [srcIndex, setSrcIndex] = useState(0);
 
   return (
     <div className="min-h-screen bg-[#FFFCF7] p-6">
       <div className="max-w-[1280px] mx-auto">
-        <h1 className="text-2xl font-bold tracking-tight">Product Studio</h1>
-        <p className="text-[13px] text-black/50 mt-1">Generating for: <b className="text-black">{prompt}</b></p>
+        <div className="flex gap-2 mb-4">
+          <input 
+            value={prompt} 
+            onChange={e => setPrompt(e.target.value)}
+            className="flex-1 px-4 py-2 rounded-full border bg-white text-sm"
+            placeholder="football player side jump"
+          />
+          <button onClick={() => { setAttempt(Date.now()); setSrcIndex(0); }} className="px-6 py-2 rounded-full bg-black text-white text-sm">Generate</button>
+        </div>
+        <p className="text-xs text-black/40 mb-2">Prompt: {prompt} • Source: {srcIndex + 1}/3</p>
 
-        <div className="mt-6 rounded-[24px] bg-white border border-black/5 p-4 shadow-[0_16px_40px_rgba(0,0,0,0.06)]">
-          <div className="h-[560px] bg-[#FAF6EE] rounded-xl flex items-center justify-center overflow-hidden relative">
-            {loading && (
-              <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
-                <div className="w-8 h-8 border-2 border-black/10 border-t-black rounded-full animate-spin"></div>
-                <p className="text-xs text-black/40">AI Generating: {prompt}...</p>
-              </div>
-            )}
-            {img && (
-              <img 
-                src={img} 
-                alt={prompt}
-                onLoad={() => setLoading(false)}
-                className="w-full h-full object-contain"
-              />
-            )}
+        <div className="rounded-[24px] bg-white border p-4 shadow">
+          <div className="h-[560px] bg-[#FAF6EE] rounded-xl overflow-hidden flex items-center justify-center">
+            <img 
+              src={sources[srcIndex]} 
+              alt={prompt}
+              className="w-full h-full object-contain"
+              onError={() => {
+                if (srcIndex < 2) setSrcIndex(srcIndex + 1);
+              }}
+            />
           </div>
-
           <div className="flex gap-2 mt-4">
-            <button onClick={() => setImg(`https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?seed=${Date.now()}`)} className="px-6 py-3 rounded-full bg-black text-white text-sm font-medium">Regenerate</button>
-            <button onClick={() => window.open(img, '_blank')} className="px-6 py-3 rounded-full border border-black/10 text-sm">Download HD</button>
-            <span className="ml-auto text-[11px] text-black/30 py-3">No folder needed • Prompt-based AI</span>
+            <button onClick={() => { setAttempt(Date.now()); setSrcIndex(0); }} className="px-6 py-3 rounded-full bg-black text-white text-sm">Regenerate (AI)</button>
+            <button onClick={() => setSrcIndex((srcIndex + 1) % 3)} className="px-6 py-3 rounded-full border text-sm">Switch Source</button>
           </div>
         </div>
       </div>
@@ -52,9 +60,5 @@ function ProductContent() {
 }
 
 export default function ProductPage() {
-  return (
-    <Suspense fallback={<div className="p-10">Loading AI studio...</div>}>
-      <ProductContent />
-    </Suspense>
-  );
+  return <Suspense fallback={<div className="p-10">Loading...</div>}><ProductContent /></Suspense>;
 }
