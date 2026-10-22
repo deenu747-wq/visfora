@@ -59,23 +59,23 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 3 FEATURED STUDIOS + VIEW ALL 6 */}
+      {/* 3 FEATURED STUDIOS - FIXED: CAPS KEPT, CENTERED, NO NUMBERING */}
       <section id="studios" className="max-w-[1280px] mx-auto px-6 mt-16 text-center">
         <h2 className="text-[32px] md:text-[44px] font-bold tracking-[-0.03em]">All-in-One Studio <span className="font-serif italic font-medium text-black/60">for Sellers</span></h2>
         <p className="mt-2 text-[14px] text-black/40">3 featured • 6 total studios</p>
 
-        <div className="grid md:grid-cols-3 gap-6 mt-8 text-left">
+        <div className="grid md:grid-cols-3 gap-6 mt-8 text-center">
           <Link href="/photo-studio" className="group rounded-[24px] border-2 border-[#D4B87A] bg-white overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.12)] hover:-translate-y-2 transition-all relative">
-            <div className="absolute top-4 left-4 text-[10px] bg-black text-white px-3 py-1 rounded-full font-bold tracking-widest z-10">MOST POPULAR</div>
-            <div className="p-6 pb-3"><div className="text-[12px] font-bold tracking-[0.14em] uppercase text-[#C9A86A] mt-6">01 Photo Studio</div><div className="font-bold mt-2 text-[16px]">Amazon-Ready Photos • AI Background Removal</div></div>
+            <div className="absolute top-4 left-1/2 -translate-x-1/2 text-[10px] bg-black text-white px-3 py-1 rounded-full font-bold tracking-widest z-10">MOST POPULAR</div>
+            <div className="p-6 pb-3 pt-10 text-center"><div className="text-[12px] font-bold tracking-[0.14em] uppercase text-[#C9A86A]">PHOTO STUDIO</div><div className="font-bold mt-2 text-[16px]">Amazon-Ready Photos • AI Background Removal</div></div>
             <div className="bg-[#FAF6EE] aspect-[16/10] flex items-center justify-center text-[12px] text-black/30">Photo Studio Preview</div>
           </Link>
-          <Link href="/vector-studio" className="group rounded-[24px] border border-black/[0.06] bg-white overflow-hidden shadow-[0_16px_40px_rgba(0,0,0,0.06)] hover:-translate-y-1.5 transition-all">
-            <div className="p-6 pb-3"><div className="text-[12px] font-bold tracking-[0.14em] uppercase text-[#C9A86A]">02 Vector Studio</div><div className="font-bold mt-2 text-[16px]">Logo to Vector • SVG Instant</div></div>
+          <Link href="/vector-studio" className="group rounded-[24px] border border-black/[0.06] bg-white overflow-hidden shadow-[0_16px_40px_rgba(0,0,0,0.06)] hover:-translate-y-1.5 transition-all text-center">
+            <div className="p-6 pb-3 text-center"><div className="text-[12px] font-bold tracking-[0.14em] uppercase text-[#C9A86A]">VECTOR STUDIO</div><div className="font-bold mt-2 text-[16px]">Logo to Vector • SVG Instant</div></div>
             <div className="bg-[#FAF6EE] aspect-[16/10] flex items-center justify-center text-[12px] text-black/30">Vector Studio Preview</div>
           </Link>
-          <Link href="/3d-studio" className="group rounded-[24px] border border-black/[0.06] bg-white overflow-hidden shadow-[0_16px_40px_rgba(0,0,0,0.06)] hover:-translate-y-1.5 transition-all">
-            <div className="p-6 pb-3"><div className="text-[12px] font-bold tracking-[0.14em] uppercase text-[#C9A86A]">03 3D Studio</div><div className="font-bold mt-2 text-[16px]">Text to 3D • 360° Views</div></div>
+          <Link href="/3d-studio" className="group rounded-[24px] border border-black/[0.06] bg-white overflow-hidden shadow-[0_16px_40px_rgba(0,0,0,0.06)] hover:-translate-y-1.5 transition-all text-center">
+            <div className="p-6 pb-3 text-center"><div className="text-[12px] font-bold tracking-[0.14em] uppercase text-[#C9A86A]">3D STUDIO</div><div className="font-bold mt-2 text-[16px]">Text to 3D • 360° Views</div></div>
             <div className="bg-[#FAF6EE] aspect-[16/10] flex items-center justify-center text-[12px] text-black/30">3D Studio Preview</div>
           </Link>
         </div>
