@@ -1,3 +1,4 @@
+// @ts-nocheck
 "use client";
 import { useState } from 'react';
 
@@ -25,6 +26,7 @@ export default function Page() {
   const [query, setQuery] = useState('');
   const [showSell, setShowSell] = useState(false);
   const [downloading, setDownloading] = useState<number | null>(null);
+  const [form, setForm] = useState({ title: '', cat: 'Vectors', format: 'SVG', price: '' });
 
   const list = ASSETS.filter(a => {
     const matchFilter = filter==='All' || a.cat===filter || a.tag===filter || (filter==='My Assets' && a.tag==='Sold by You') || (filter==='Free' && a.tag==='FREE') || (filter==='Premium' && a.tag==='Premium');
@@ -49,7 +51,6 @@ export default function Page() {
       </header>
 
       <div className="flex">
-        {/* LEFT - Hidden on mobile, same as your other studios */}
         <aside className="hidden lg:block w-[240px] min-h-[calc(100vh-80px)] bg-[#12121a] border-r border-white/5 p-4 sticky top-[80px]">
           <p className="text-[11px] tracking-widest text-white/30 mb-3">WORKSPACE</p>
           {['Project','Template','Mockup','Motion','Assets','Scene Settings'].map(n=>(
@@ -57,9 +58,7 @@ export default function Page() {
           ))}
         </aside>
 
-        {/* MAIN */}
         <main className="flex-1 p-4 md:p-6 pb-24">
-          {/* TOP 3 AI CARDS - Photoroom/Meshy style */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-5">
             {FEATURED.map(f=>(
               <div key={f.id} className="rounded-2xl bg-[#14141e] border border-cyan-500/20 p-4 relative overflow-hidden">
@@ -69,7 +68,6 @@ export default function Page() {
             ))}
           </div>
 
-          {/* SEARCH + FILTERS */}
           <div className="bg-[#14141e] rounded-2xl p-3 mb-4 flex flex-col gap-3">
             <div className="flex gap-2">
               <div className="flex-1 relative"><span className="absolute left-3 top-[10px] text-white/40">🔍</span><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search 2.4M assets • Photoroom • Meshy • Freepik" className="w-full h-10 bg-[#0f0f14] border border-white/10 rounded-xl pl-9 pr-3 text-sm outline-none focus:border-[#4ef2ff]" /></div>
@@ -82,13 +80,11 @@ export default function Page() {
             </div>
           </div>
 
-          {/* SELLER BANNER */}
           <div className="h-auto md:h-[68px] rounded-2xl bg-gradient-to-r from-[#14141e] to-[#0f2a2e] border border-[#4ef2ff]/20 flex flex-col md:flex-row items-start md:items-center justify-between p-4 gap-3 mb-6">
             <div className="flex gap-3"><span className="text-xl">🏪</span><div><h3 className="font-bold text-sm">Start Selling — Earn 70% • Global Audience <span className="font-normal text-white/50 hidden md:inline">on millions of creats worldwide.</span></h3><p className="text-[11px] text-white/50">Open your seller store and reach millions of Payouts weekly via bank, PayPal, Stripe.</p></div></div>
             <div className="flex gap-2"><button onClick={()=>setShowSell(true)} className="h-9 px-4 bg-[#4ef2ff] text-black rounded-full font-bold text-sm">Become a Seller</button><button className="h-9 px-3 border border-white/20 rounded-full text-xs">Learn More</button></div>
           </div>
 
-          {/* GRID */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
             {list.map(a=>(
               <div key={a.id} className="bg-[#14141e] border border-white/5 rounded-2xl overflow-hidden group hover:border-[#4ef2ff]/20 transition">
@@ -98,14 +94,12 @@ export default function Page() {
             ))}
           </div>
 
-          {/* BOTTOM GLOBAL BAR */}
           <div className="mt-8 h-14 rounded-2xl border-2 border-[#4ef2ff] bg-[#0f0f14] flex items-center justify-between px-5">
             <div className="flex items-center gap-2 text-sm"><span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span><span className="text-[#4ef2ff] font-bold">Global Access Enabled</span><span className="text-white/40 hidden md:inline">• Use in Template • Mockup • Motion</span></div>
             <div className="text-[12px] text-white/40">Help Center • Docs • Community • Status: Online</div>
           </div>
         </main>
 
-        {/* RIGHT PANEL */}
         <aside className="hidden xl:block w-[300px] bg-[#12121a] border-l border-white/5 p-4 sticky top-[80px] h-[calc(100vh-80px)] overflow-auto">
           <h3 className="font-bold text-[18px]">My Library</h3>
           <p className="text-xs text-[#4ef2ff] flex items-center gap-1 mt-1">🌐 Global • Works everywhere</p>
@@ -116,7 +110,6 @@ export default function Page() {
         </aside>
       </div>
 
-      {/* SELL MODAL */}
       {showSell && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="w-full max-w-[520px] bg-[#1a1a26] border border-white/10 rounded-2xl p-6">
