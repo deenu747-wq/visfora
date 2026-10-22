@@ -21,7 +21,7 @@ export default function HomePage() {
 
   const handleGenerate = () => {
     const q = encodeURIComponent(prompt.trim());
-    router.push(q ? `/photo-studio?prompt=${q}` : `/photo-studio`);
+    router.push(q ? `/studios/photo-studio?prompt=${q}` : `/studios/photo-studio`);
   };
 
   return (
@@ -53,68 +53,59 @@ export default function HomePage() {
           </button>
         </div>
         <div className="flex justify-center gap-3 mt-4">
-          <button onClick={() => router.push('/photo-studio')} className="px-8 py-3 rounded-full bg-[#D4B87A] text-black text-sm font-bold">⬆ Upload Your Product Photo</button>
+          <button onClick={() => router.push('/studios/photo-studio')} className="px-8 py-3 rounded-full bg-[#D4B87A] text-black text-sm font-bold">⬆ Upload Your Product Photo</button>
           <button onClick={() => document.getElementById("studios")?.scrollIntoView({ behavior: "smooth" })} className="px-6 py-3 rounded-full border border-black/10 bg-white text-sm">View Studios</button>
         </div>
       </section>
 
-      {/* 3 FEATURED STUDIOS - FIXED AS PER YOUR 4 POINTS */}
+      {/* 3 FEATURED STUDIOS - LINKED CORRECTLY */}
       <section id="studios" className="max-w-[1280px] mx-auto px-6 mt-16 text-center">
         <h2 className="text-[32px] md:text-[44px] font-bold tracking-[-0.03em]">All-in-One Studio <span className="font-serif italic font-medium text-black/60">for Sellers</span></h2>
         <p className="mt-2 text-[14px] text-black/40">3 featured • 6 total studios</p>
 
         <div className="grid md:grid-cols-3 gap-6 mt-8 text-center">
-          {/* PHOTO STUDIO */}
-          <div className="group rounded-[24px] border-2 border-[#D4B87A] bg-white overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.12)] hover:-translate-y-2 transition-all relative flex flex-col">
-            <Link href="/photo-studio" className="flex flex-col flex-1">
-              <div className="p-6 pb-4 text-center">
-                <div className="text-[15px] font-bold tracking-[0.14em] uppercase text-[#C9A86A]">PHOTO STUDIO</div>
-                <div className="font-bold mt-2 text-[16px]">Amazon-Ready Photos • AI Background Removal</div>
-              </div>
-              <div className="bg-[#FAF6EE] aspect-[16/10] w-full flex items-center justify-center text-[12px] text-black/30">Photo Studio Preview</div>
-              <div className="p-4 h-[44px] relative">
-                <span className="absolute bottom-3 right-4 font-serif italic text-[13px] text-black/60 group-hover:text-black underline underline-offset-4">explore →</span>
-              </div>
-            </Link>
-            {/* 1. MOVED TO BOTTOM EDGE */}
-            <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 text-[10px] bg-black text-white px-4 py-1 rounded-full font-bold tracking-widest z-10 shadow-lg">MOST POPULAR</div>
-          </div>
+          
+          {/* PHOTO STUDIO - TOP BADGE, LINKED, BOTTOM CLEAN */}
+          <Link href="/studios/photo-studio" className="group rounded-[24px] border-2 border-[#D4B87A] bg-white overflow-visible shadow-[0_20px_60px_rgba(0,0,0,0.12)] hover:-translate-y-2 transition-all relative flex flex-col text-center">
+            {/* TOP EDGE BADGE */}
+            <div className="absolute -top-3 left-1/2 -translate-x-1/2 text-[10px] bg-black text-white px-4 py-1 rounded-full font-bold tracking-widest z-20 shadow-lg whitespace-nowrap">MOST POPULAR</div>
+            <div className="p-6 pb-4 pt-8">
+              <div className="text-[15px] font-bold tracking-[0.14em] uppercase text-[#C9A86A]">PHOTO STUDIO</div>
+              <div className="font-bold mt-2 text-[16px]">Amazon-Ready Photos • AI Background Removal</div>
+            </div>
+            <div className="bg-[#FAF6EE] aspect-[16/10] w-full flex items-center justify-center text-[12px] text-black/30">Photo Studio Preview</div>
+            <div className="bg-white h-[48px] w-full rounded-b-[24px]"></div>
+          </Link>
 
-          {/* VECTOR STUDIO */}
-          <div className="group rounded-[24px] border border-black/[0.06] bg-white overflow-hidden shadow-[0_16px_40px_rgba(0,0,0,0.06)] hover:shadow-[0_24px_60px_rgba(0,0,0,0.10)] hover:-translate-y-1.5 transition-all relative flex flex-col">
-            <Link href="/vector-studio" className="flex flex-col flex-1">
-              <div className="p-6 pb-4 text-center">
-                <div className="text-[15px] font-bold tracking-[0.14em] uppercase text-[#C9A86A]">VECTOR STUDIO</div>
-                <div className="font-bold mt-2 text-[16px]">Logo to Vector • SVG Instant</div>
-              </div>
-              <div className="bg-[#FAF6EE] aspect-[16/10] w-full flex items-center justify-center text-[12px] text-black/30">Vector Studio Preview</div>
-              <div className="p-4 h-[44px] relative">
-                <span className="absolute bottom-3 right-4 font-serif italic text-[13px] text-black/60 group-hover:text-black underline underline-offset-4">explore →</span>
-              </div>
-            </Link>
-          </div>
+          {/* VECTOR STUDIO - LINKED, BOTTOM CLEAN */}
+          <Link href="/studios/vector-studio" className="group rounded-[24px] border border-black/[0.06] bg-white overflow-hidden shadow-[0_16px_40px_rgba(0,0,0,0.06)] hover:shadow-[0_24px_60px_rgba(0,0,0,0.10)] hover:-translate-y-1.5 transition-all relative flex flex-col text-center">
+            <div className="p-6 pb-4 pt-8">
+              <div className="text-[15px] font-bold tracking-[0.14em] uppercase text-[#C9A86A]">VECTOR STUDIO</div>
+              <div className="font-bold mt-2 text-[16px]">Logo to Vector • SVG Instant</div>
+            </div>
+            <div className="bg-[#FAF6EE] aspect-[16/10] w-full flex items-center justify-center text-[12px] text-black/30">Vector Studio Preview</div>
+            <div className="bg-white h-[48px] w-full"></div>
+          </Link>
 
-          {/* 3D STUDIO */}
-          <div className="group rounded-[24px] border border-black/[0.06] bg-white overflow-hidden shadow-[0_16px_40px_rgba(0,0,0,0.06)] hover:shadow-[0_24px_60px_rgba(0,0,0,0.10)] hover:-translate-y-1.5 transition-all relative flex flex-col">
-            <Link href="/3d-studio" className="flex flex-col flex-1">
-              <div className="p-6 pb-4 text-center">
-                <div className="text-[15px] font-bold tracking-[0.14em] uppercase text-[#C9A86A]">3D STUDIO</div>
-                <div className="font-bold mt-2 text-[16px]">Text to 3D • 360° Views</div>
-              </div>
-              <div className="bg-[#FAF6EE] aspect-[16/10] w-full flex items-center justify-center text-[12px] text-black/30">3D Studio Preview</div>
-              <div className="p-4 h-[44px] relative">
-                <span className="absolute bottom-3 right-4 font-serif italic text-[13px] text-black/60 group-hover:text-black underline underline-offset-4">explore →</span>
-              </div>
-            </Link>
-          </div>
+          {/* 3D STUDIO - LINKED, BOTTOM CLEAN */}
+          <Link href="/studios/3d-studio" className="group rounded-[24px] border border-black/[0.06] bg-white overflow-hidden shadow-[0_16px_40px_rgba(0,0,0,0.06)] hover:shadow-[0_24px_60px_rgba(0,0,0,0.10)] hover:-translate-y-1.5 transition-all relative flex flex-col text-center">
+            <div className="p-6 pb-4 pt-8">
+              <div className="text-[15px] font-bold tracking-[0.14em] uppercase text-[#C9A86A]">3D STUDIO</div>
+              <div className="font-bold mt-2 text-[16px]">Text to 3D • 360° Views</div>
+            </div>
+            <div className="bg-[#FAF6EE] aspect-[16/10] w-full flex items-center justify-center text-[12px] text-black/30">3D Studio Preview</div>
+            <div className="bg-white h-[48px] w-full"></div>
+          </Link>
+
         </div>
 
+        {/* THIS IS YOUR ONLY CTA FOR ALL 6 - KEEPING AS YOU SAID */}
         <Link href="/studios" className="inline-flex mt-12 px-8 py-3 rounded-full bg-black text-white text-[13px] font-semibold hover:bg-[#D4B87A] hover:text-black transition-all">
           View All 6 Studios → Template, Mockup, Motion included
         </Link>
       </section>
 
-      {/* PRICING */}
+      {/* PRICING SECTION - SAME */}
       <section id="pricing" className="max-w-[1280px] mx-auto px-6 mt-20 pb-16">
         <div className="text-center">
           <h2 className="font-serif font-[900] tracking-[-0.04em] text-[26px] md:text-[42px] leading-[0.9]">Pricing</h2>
