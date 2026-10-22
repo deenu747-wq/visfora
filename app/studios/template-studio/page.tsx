@@ -30,8 +30,7 @@ export default function TemplateStudio() {
               alt="Visfora" 
               className="w-[80px] h-[80px] object-contain drop-shadow-[0_0_20px_rgba(34,211,238,0.5)]"
             />
-            <span className="text-[18px] text-[#8a8a95] font-medium">Visfora</span>
-          </Link>
+             </Link>
           <h1 className="text-[42px] font-black text-[#22d3ee] tracking-tight ml-4">Template Studio</h1>
         </div>
         
