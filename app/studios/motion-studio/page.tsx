@@ -35,7 +35,6 @@ export default function MotionStudio() {
         <div className="flex items-center gap-6">
           <Link href="/" className="flex items-center gap-3 cursor-pointer hover:opacity-80">
             <img src="/Logo.png" alt="Visfora" className="w-[80px] h-[80px] object-contain drop-shadow-[0_0_20px_rgba(34,211,238,0.5)]" />
-            <span className="text-[18px] text-[#8a8a95] font-medium">Visfora</span>
           </Link>
           <h1 className="text-[42px] font-black text-[#22d3ee] tracking-tight ml-4">Motion Studio</h1>
         </div>
