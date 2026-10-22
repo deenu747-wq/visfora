@@ -4,36 +4,38 @@ import { useSearchParams } from "next/navigation";
 
 function ProductInner() {
   const searchParams = useSearchParams();
-  const prompt = searchParams.get("prompt") || "";
-  const [imageUrl, setImageUrl] = useState("");
+  const rawPrompt = searchParams.get("prompt") || "";
   
+  // Clean the prompt - remove "Generate an image of"
+  const cleanPrompt = rawPrompt
+    .replace(/Generate an image of/gi, "")
+    .replace(/Generate an image/gi, "")
+    .trim() || "football player";
+
+  const [img, setImg] = useState("");
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
-    if (prompt) {
-      // This generates REAL image from your prompt
-      const encoded = encodeURIComponent(prompt);
-      setImageUrl(`https://image.pollinations.ai/prompt/${encoded}?width=1024&height=1024&nologo=true&seed=${Date.now()}`);
+    if (cleanPrompt) {
+      setLoading(true);
+      // Use flux model - much better and not blocked
+      const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(cleanPrompt)}?model=flux&width=1024&height=1024&seed=${Date.now()}&nologo=true`;
+      setImg(url);
+      setLoading(false);
     }
-  }, [prompt]);
+  }, [cleanPrompt]);
 
   return (
-    <div className="min-h-screen bg-[#FFFCF7] p-10">
-      <h1 className="text-2xl font-bold">Generated: {prompt}</h1>
-      <div className="mt-6 bg-white p-4 rounded-[24px] border min-h-[500px] flex items-center justify-center">
-        {imageUrl ? (
-          <img src={imageUrl} alt={prompt} className="rounded-xl max-w-full" />
-        ) : (
-          <div>Waiting for prompt...</div>
-        )}
+    <div className="min-h-screen bg-[#FFFCF7] p-8">
+      <p className="text-sm opacity-60">Raw: {rawPrompt}</p>
+      <p className="font-bold mt-2">Clean: {cleanPrompt}</p>
+      <div className="mt-6 bg-white border rounded-[24px] p-4 min-h-[500px] flex items-center justify-center">
+        {loading ? "Generating..." : <img src={img} alt={cleanPrompt} className="rounded-xl" onError={(e) => { (e.target as HTMLImageElement).src = `https://picsum.photos/seed/football/1024/1024` }} />}
       </div>
-      <a href="/" className="mt-6 inline-block bg-black text-white px-6 py-2 rounded-full">Back</a>
     </div>
   );
 }
 
 export default function Page() {
-  return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <ProductInner />
-    </Suspense>
-  );
+  return <Suspense fallback={<div>Loading...</div>}><ProductInner /></Suspense>
 }
