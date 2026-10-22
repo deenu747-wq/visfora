@@ -1,5 +1,5 @@
 ﻿"use client";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import HeaderHome from "@/components/home/HeaderHome";
@@ -9,6 +9,7 @@ export default function HomePage() {
   const [billing, setBilling] = useState<"monthly" | "yearly">("monthly");
   const [prompt, setPrompt] = useState("");
   const router = useRouter();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const prices = {
     starter: { m: 499, y: 399 },
@@ -22,6 +23,19 @@ export default function HomePage() {
   const handleGenerate = () => {
     const q = encodeURIComponent(prompt.trim());
     router.push(q ? `/studios/photo-studio?prompt=${q}` : `/studios/photo-studio`);
+  };
+
+  const handleUploadClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // Store for photo-studio page if needed
+      // localStorage.setItem('tempFile', file.name);
+      window.location.href = `/studios/photo-studio?upload=1`;
+    }
   };
 
   return (
@@ -52,23 +66,23 @@ export default function HomePage() {
             Generate →
           </button>
         </div>
+
+        {/* HIDDEN INPUT + FIXED CTA */}
+        <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
         <div className="flex justify-center gap-3 mt-4">
-          <button onClick={() => router.push('/studios/photo-studio')} className="px-8 py-3 rounded-full bg-[#D4B87A] text-black text-sm font-bold">⬆ Upload Your Product Photo</button>
-          <button onClick={() => document.getElementById("studios")?.scrollIntoView({ behavior: "smooth" })} className="px-6 py-3 rounded-full border border-black/10 bg-white text-sm">View Studios</button>
+          <button onClick={handleUploadClick} className="px-8 py-3 rounded-full bg-[#D4B87A] text-black text-sm font-bold cursor-pointer hover:bg-black hover:text-white transition-all active:scale-95">⬆ Upload Your Product Photo</button>
+          <button onClick={() => document.getElementById("studios")?.scrollIntoView({ behavior: "smooth" })} className="px-6 py-3 rounded-full border border-black/10 bg-white text-sm cursor-pointer">View Studios</button>
         </div>
       </section>
 
-      {/* 3 FEATURED STUDIOS - LINKED CORRECTLY */}
+      {/* 3 FEATURED STUDIOS - LINKED TO YOUR FOLDERS */}
       <section id="studios" className="max-w-[1280px] mx-auto px-6 mt-16 text-center">
         <h2 className="text-[32px] md:text-[44px] font-bold tracking-[-0.03em]">All-in-One Studio <span className="font-serif italic font-medium text-black/60">for Sellers</span></h2>
         <p className="mt-2 text-[14px] text-black/40">3 featured • 6 total studios</p>
 
         <div className="grid md:grid-cols-3 gap-6 mt-8 text-center">
-          
-          {/* PHOTO STUDIO - TOP BADGE, LINKED, BOTTOM CLEAN */}
           <Link href="/studios/photo-studio" className="group rounded-[24px] border-2 border-[#D4B87A] bg-white overflow-visible shadow-[0_20px_60px_rgba(0,0,0,0.12)] hover:-translate-y-2 transition-all relative flex flex-col text-center">
-            {/* TOP EDGE BADGE */}
-            <div className="absolute -top-3 left-1/2 -translate-x-1/2 text-[10px] bg-black text-white px-4 py-1 rounded-full font-bold tracking-widest z-20 shadow-lg whitespace-nowrap">MOST POPULAR</div>
+            <div className="absolute -top-3 left-1/2 -translate-x-1/2 text-[10px] bg-black text-white px-4 py-1 rounded-full font-bold tracking-widest z-20 shadow-lg">MOST POPULAR</div>
             <div className="p-6 pb-4 pt-8">
               <div className="text-[15px] font-bold tracking-[0.14em] uppercase text-[#C9A86A]">PHOTO STUDIO</div>
               <div className="font-bold mt-2 text-[16px]">Amazon-Ready Photos • AI Background Removal</div>
@@ -77,8 +91,7 @@ export default function HomePage() {
             <div className="bg-white h-[48px] w-full rounded-b-[24px]"></div>
           </Link>
 
-          {/* VECTOR STUDIO - LINKED, BOTTOM CLEAN */}
-          <Link href="/studios/vector-studio" className="group rounded-[24px] border border-black/[0.06] bg-white overflow-hidden shadow-[0_16px_40px_rgba(0,0,0,0.06)] hover:shadow-[0_24px_60px_rgba(0,0,0,0.10)] hover:-translate-y-1.5 transition-all relative flex flex-col text-center">
+          <Link href="/studios/vector-studio" className="group rounded-[24px] border border-black/[0.06] bg-white overflow-hidden shadow-[0_16px_40px_rgba(0,0,0,0.06)] hover:-translate-y-1.5 transition-all relative flex flex-col text-center">
             <div className="p-6 pb-4 pt-8">
               <div className="text-[15px] font-bold tracking-[0.14em] uppercase text-[#C9A86A]">VECTOR STUDIO</div>
               <div className="font-bold mt-2 text-[16px]">Logo to Vector • SVG Instant</div>
@@ -87,8 +100,7 @@ export default function HomePage() {
             <div className="bg-white h-[48px] w-full"></div>
           </Link>
 
-          {/* 3D STUDIO - LINKED, BOTTOM CLEAN */}
-          <Link href="/studios/3d-studio" className="group rounded-[24px] border border-black/[0.06] bg-white overflow-hidden shadow-[0_16px_40px_rgba(0,0,0,0.06)] hover:shadow-[0_24px_60px_rgba(0,0,0,0.10)] hover:-translate-y-1.5 transition-all relative flex flex-col text-center">
+          <Link href="/studios/3d-studio" className="group rounded-[24px] border border-black/[0.06] bg-white overflow-hidden shadow-[0_16px_40px_rgba(0,0,0,0.06)] hover:-translate-y-1.5 transition-all relative flex flex-col text-center">
             <div className="p-6 pb-4 pt-8">
               <div className="text-[15px] font-bold tracking-[0.14em] uppercase text-[#C9A86A]">3D STUDIO</div>
               <div className="font-bold mt-2 text-[16px]">Text to 3D • 360° Views</div>
@@ -96,16 +108,14 @@ export default function HomePage() {
             <div className="bg-[#FAF6EE] aspect-[16/10] w-full flex items-center justify-center text-[12px] text-black/30">3D Studio Preview</div>
             <div className="bg-white h-[48px] w-full"></div>
           </Link>
-
         </div>
 
-        {/* THIS IS YOUR ONLY CTA FOR ALL 6 - KEEPING AS YOU SAID */}
         <Link href="/studios" className="inline-flex mt-12 px-8 py-3 rounded-full bg-black text-white text-[13px] font-semibold hover:bg-[#D4B87A] hover:text-black transition-all">
           View All 6 Studios → Template, Mockup, Motion included
         </Link>
       </section>
 
-      {/* PRICING SECTION - SAME */}
+      {/* PRICING */}
       <section id="pricing" className="max-w-[1280px] mx-auto px-6 mt-20 pb-16">
         <div className="text-center">
           <h2 className="font-serif font-[900] tracking-[-0.04em] text-[26px] md:text-[42px] leading-[0.9]">Pricing</h2>
