@@ -21,14 +21,15 @@ export default function TemplateStudio() {
 
   return (
     <div className="min-h-screen bg-[#1a1a23] text-white flex flex-col">
-      {/* HEADER - Double Logo Same Size */}
+      {/* HEADER - YOUR LOGO public/Logo.png Same Double Size */}
       <header className="h-[80px] bg-[#1a1a23] border-b border-[#2a2a35] flex items-center justify-between px-8 sticky top-0 z-50">
         <div className="flex items-center gap-6">
-          {/* YOUR LOGO - Same Double Size 80px */}
           <Link href="/" className="flex items-center gap-3 cursor-pointer">
-            <div className="w-[80px] h-[80px] bg-gradient-to-br from-[#22d3ee] to-[#06b6d4] rounded-[16px] flex items-center justify-center shadow-[0_0_20px_rgba(34,211,238,0.5)]">
-              <span className="text-[42px] font-black text-[#1a1a23]">VF</span>
-            </div>
+            <img 
+              src="/Logo.png" 
+              alt="Visfora" 
+              className="w-[80px] h-[80px] object-contain drop-shadow-[0_0_20px_rgba(34,211,238,0.5)]"
+            />
             <span className="text-[18px] text-[#8a8a95] font-medium">Visfora</span>
           </Link>
           <h1 className="text-[42px] font-black text-[#22d3ee] tracking-tight ml-4">Template Studio</h1>
@@ -51,7 +52,7 @@ export default function TemplateStudio() {
       </header>
 
       <div className="flex flex-1">
-        {/* SIDEBAR - Tabs Left Bigger */}
+        {/* SIDEBAR - Tabs Left Bigger - All Clickable */}
         <aside className="w-[240px] bg-[#1e1e26] border-r border-[#2a2a35] p-6 flex flex-col justify-between">
           <div className="space-y-2">
             <p className="text-[12px] text-[#22d3ee] bg-[#22d3ee]/10 px-3 py-1 rounded-full w-fit mb-6 font-bold tracking-widest">WORKSPACE</p>
