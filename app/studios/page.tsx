@@ -1,109 +1,125 @@
 "use client";
-import Link from "next/link";
-import { useState } from "react";
+import Link from 'next/link'
+import HeaderHome from "@/components/home/HeaderHome"
+import FooterHome from "@/components/home/FooterHome"
 
 const studios = [
   {
     slug: "photo-studio",
-    name: "Photo Studio",
-    desc: "Text to professional product photos. 8K, shadow, lighting control.",
-    tag: "Most Popular",
-    color: "#111",
-  },
-  {
-    slug: "batch-studio",
-    name: "Batch Studio",
-    desc: "Generate 100+ variations in one click. Bulk workflow for teams.",
-    tag: "For Teams",
-    color: "#111",
-  },
-  {
-    slug: "3d-studio",
-    name: "3D Studio",
-    desc: "Template engine reimagined. Build 3D-ready templates in seconds.",
-    tag: "New",
-    color: "#111",
+    title: "Photo Studio",
+    highlight: "Studio",
+    color: "#8B5CF6",
+    desc: "Turn your photos into stunning visuals with powerful editing tools, filters and effects.",
+    features: [
+      { icon: "◫", label: "Edit" },
+      { icon: "✦", label: "Enhance" },
+      { icon: "◎", label: "Filter" },
+      { icon: "⤢", label: "Transform" },
+    ],
+    gradient: "from-[#1E1B4B] via-[#1E1B3A] to-[#0F0A2A]",
   },
   {
     slug: "vector-studio",
-    name: "Vector Studio",
-    desc: "Image to clean SVG vectors. Logo, icons, illustrations.",
-    tag: "AI Vector",
-    color: "#111",
+    title: "Vector Studio",
+    highlight: "Studio",
+    color: "#10B981",
+    desc: "Create crisp, scalable vector graphics for logos, icons, illustrations and more.",
+    features: [
+      { icon: "◐", label: "Logos" },
+      { icon: "★", label: "Icons" },
+      { icon: "▭", label: "Illustrations" },
+      { icon: "⤢", label: "Scalable" },
+    ],
+    gradient: "from-[#022C22] via-[#0A2E1E] to-[#0B3320]",
   },
   {
-    slug: "mockup-studio",
-    name: "Mockup Studio",
-    desc: "Instant mockups for packaging, apparel, and devices.",
-    tag: "E-com",
-    color: "#111",
+    slug: "3d-studio",
+    title: "3D Studio",
+    highlight: "Studio",
+    color: "#3B82F6",
+    desc: "Bring your ideas to life with stunning 3D models, characters and scenes.",
+    features: [
+      { icon: "⬢", label: "3D Models" },
+      { icon: "◍", label: "Characters" },
+      { icon: "⛰", label: "Scenes" },
+      { icon: "◆", label: "High Quality" },
+    ],
+    gradient: "from-[#0C1A3A] via-[#0F1D40] to-[#101A35]",
   },
   {
     slug: "motion-studio",
-    name: "Motion Studio",
-    desc: "Static to motion. Product reels, ads, and animations.",
-    tag: "Video",
-    color: "#111",
+    title: "Motion Studio",
+    highlight: "Studio",
+    color: "#F97316",
+    desc: "Create dynamic videos and animations that bring your stories to life.",
+    features: [
+      { icon: "▶", label: "Animation" },
+      { icon: "⇄", label: "Transitions" },
+      { icon: "✦", label: "Effects" },
+      { icon: "⤓", label: "Export" },
+    ],
+    gradient: "from-[#2A1205] via-[#1A0F05] to-[#1A1205]",
+  },
+  {
+    slug: "mockup-studio",
+    title: "Mockup Studio",
+    highlight: "Studio",
+    color: "#A855F7",
+    desc: "Showcase your designs in realistic mockups and professional scenes.",
+    features: [
+      { icon: "◫", label: "Devices" },
+      { icon: "⧉", label: "Packaging" },
+      { icon: "T", label: "Apparel" },
+      { icon: "◑", label: "Branding" },
+    ],
+    gradient: "from-[#1A1030] via-[#1E1435] to-[#19102E]",
+  },
+  {
+    slug: "template-maker",
+    title: "Template Maker",
+    highlight: "Maker",
+    color: "#3B82F6",
+    desc: "Design beautiful layouts and ready-to-use templates in minutes.",
+    features: [
+      { icon: "◫", label: "Social Media" },
+      { icon: "▭", label: "Presentations" },
+      { icon: "▭", label: "Posters" },
+      { icon: "▭", label: "Documents" },
+    ],
+    gradient: "from-[#0A122A] via-[#0F1A30] to-[#0C1530]",
   },
 ];
 
-export default function StudiosPage() {
-  return (
-    <div className="min-h-screen bg-[#FFFCF7] text-black">
-      {/* Header spacer - uses your main header */}
-      <div className="max-w-[1280px] mx-auto px-6 pt-32 pb-20">
-        <div className="mb-16">
-          <p className="text-[12px] tracking-[0.2em] uppercase opacity-50 mb-4">VISFORA STUDIOS</p>
-          <h1 className="text-[56px] leading-[0.95] font-[700] tracking-[-0.03em] max-w-[600px]">
-            Six studios.
-            <br />
-            <span className="font-[400] italic">One creative OS.</span>
-          </h1>
-          <p className="mt-6 text-[16px] opacity-60 max-w-[420px] leading-relaxed">
-            Each studio is purpose-built for real production workflows. Not toys. Tools you ship with.
-          </p>
-        </div>
+export default function StudiosPage(){
+ return (
+  <div className="min-h-screen bg-[#080716] text-white">
+   <HeaderHome />
+   <div className="max-w-[1440px] mx-auto px-4 md:px-10 py-10">
+     <div className="grid grid-cols-1 md:grid-cols-3 border-white/10 rounded-[20px] overflow-hidden">
+       {studios.map((s) => (
+         <Link key={s.slug} href={`/studios/${s.slug}`} className={`relative p-7 bg-gradient-to-br ${s.gradient} border-b md:border-b border-r border-white/10 hover:brightness-110 transition group`}>
+           <div className="flex items-center gap-2">
+             <h2 className="text-[28px] font-black leading-none tracking-tight">
+               {s.title.split(' ')[0]} <span style={{color: s.color}}>{s.highlight}</span>
+             </h2>
+           </div>
+           <p className="mt-2 text-[12px] leading-[1.5] text-white/70 line-clamp-2">{s.desc}</p>
+           
+           <div className="mt-4 flex flex-wrap gap-3">
+             {s.features.map(f => (
+               <span key={f.label} className="text-[11px] text-white/80 flex items-center gap-1.5"><span className="w-5 h-5 rounded-full bg-white/10 grid place-items-center text-[10px]">{f.icon}</span> {f.label}</span>
+             ))}
+           </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {studios.map((s) => (
-            <Link
-              key={s.slug}
-              href={`/studios/${s.slug}`}
-              className="group relative bg-white border border-black/[0.06] rounded-[24px] p-7 flex flex-col justify-between min-h-[320px] hover:shadow-[0_20px_60px_rgba(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300"
-            >
-              <div>
-                <div className="flex justify-between items-start mb-10">
-                  <div className="w-12 h-12 rounded-full bg-[#FFFCF7] border border-black/5 flex items-center justify-center text-[18px]">
-                    ✦
-                  </div>
-                  <span className="text-[10px] tracking-widest uppercase px-3 py-1.5 rounded-full bg-black text-white">
-                    {s.tag}
-                  </span>
-                </div>
-                <h3 className="text-[26px] font-semibold tracking-tight mb-3 group-hover:tracking-[-0.01em] transition-all">
-                  {s.name}
-                </h3>
-                <p className="text-[14px] leading-[1.5] opacity-60 max-w-[240px]">{s.desc}</p>
-              </div>
-              <div className="flex items-center gap-2 text-[13px] font-medium mt-10">
-                <span>Open Studio</span>
-                <span className="group-hover:translate-x-1 transition-transform">→</span>
-              </div>
-            </Link>
-          ))}
-        </div>
-
-        {/* Bottom note about API */}
-        <div className="mt-10 rounded-[24px] bg-black text-white p-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <div>
-            <h4 className="text-[18px] font-medium">MCP Server + API</h4>
-            <p className="text-[13px] opacity-60 mt-1">Automate all 6 studios. For developers.</p>
-          </div>
-          <Link href="/get-started" className="px-5 py-2.5 rounded-full bg-white text-black text-[13px] font-medium">
-            View Docs →
-          </Link>
-        </div>
-      </div>
-    </div>
-  );
+           {/* Visual Placeholder — replace with your Image */}
+           <div className="mt-6 h-[220px] rounded-[14px] bg-black/30 border border-white/5 flex items-center justify-center text-white/20 text-[12px]">
+             {s.title} Visual
+           </div>
+         </Link>
+       ))}
+     </div>
+   </div>
+   <FooterHome />
+  </div>
+ )
 }
