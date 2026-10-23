@@ -63,7 +63,7 @@ export default function HomePage() {
         )}
         <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
         <div className="flex justify-center gap-3 mt-4">
-          <button onClick={handleUploadClick} className="px-8 py-3 rounded-full bg-[#D4B87A] text-black text-sm font-bold cursor-pointer hover:bg-[#c5a866] hover:shadow-md transition-all">⬆ Upload Your Product Photo</button>
+          <button onClick={handleUploadClick} className="px-8 py-3 rounded-full bg-[#D4B87A] text-black text-sm font-bold cursor-pointer hover:bg-[#c5a866] hover:shadow-md transition-all">Upload Your Product Photo</button>
           {hasResult ? <button onClick={handleDownload} className="px-8 py-3 rounded-full bg-black text-white text-sm font-bold cursor-pointer hover:bg-zinc-800 hover:shadow-md transition-all">⬇ Download File</button> : <button onClick={() => document.getElementById("studios")?.scrollIntoView({ behavior: "smooth" })} className="px-6 py-3 rounded-full border border-black/10 bg-white text-sm cursor-pointer hover:bg-black hover:text-white transition-all">View Studios</button>}
         </div>
       </section>
@@ -98,7 +98,7 @@ export default function HomePage() {
           </Link>
         </div>
 
-        <Link href="/studios" className="inline-flex mt-12 px-8 py-3 rounded-full bg-black text-white text-[13px] font-semibold">View All 6 Studios → Template, Mockup, Motion included</Link>
+        <Link href="/studios" className="inline-flex mt-12 px-8 py-3 rounded-full bg-white text-black text-[13px] font-semibold border border-black/10 cursor-pointer hover:bg-black hover:text-white transition-all">View All 6 Studios → Template, Mockup, Motion included</Link>
       </section>
 
       <section id="pricing" className="max-w-[1280px] mx-auto px-6 mt-24 pb-20">
