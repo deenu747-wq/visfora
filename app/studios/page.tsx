@@ -1,7 +1,5 @@
 "use client";
 import Link from 'next/link'
-import HeaderHome from "@/components/home/HeaderHome"
-import FooterHome from "@/components/home/FooterHome"
 
 const studios = [
   {
@@ -68,10 +66,7 @@ const studios = [
 
 export default function StudiosPage(){
  return (
-  <>
-   <HeaderHome />
-   <div className="min-h-screen bg-[#FFFBF0] text-[#111]">
-     {/* FIX 1: CENTERED */}
+   <div className="min-h-screen bg-[#FFFBF0]">
      <div className="max-w-[1400px] mx-auto px-6 md:px-10 pt-10 md:pt-16 pb-8 text-center">
        <h1 className="text-[42px] md:text-[56px] font-black tracking-tight leading-none text-[#111]">Studios</h1>
        <p className="mt-3 text-[14px] md:text-[16px] text-black/60 max-w-[620px] mx-auto">
@@ -80,21 +75,17 @@ export default function StudiosPage(){
      </div>
 
      <div className="max-w-[1400px] mx-auto px-4 md:px-10 pb-20">
-       {/* FIX 2: SEPARATED WITH GAP */}
        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
          {studios.map((s) => (
            <Link 
              key={s.slug} 
              href={`/studios/${s.slug}`} 
-             className={`${s.bg} p-6 md:p-7 rounded-[20px] border border-white/5 shadow-lg
-               hover:scale-[1.02] hover:shadow-2xl hover:brightness-110 
-               transition-all duration-300 group cursor-pointer`}
+             className={`${s.bg} p-6 md:p-7 rounded-[20px] border border-white/5 shadow-lg hover:scale-[1.02] hover:shadow-2xl hover:brightness-110 transition-all duration-300 group`}
            >
              <h2 className="text-[18px] font-bold tracking-tight text-white">
                {s.title} <span style={{color: s.color}}>{s.highlight}</span>
              </h2>
              <p className="mt-2 text-[11px] leading-[1.5] text-white/60">{s.desc}</p>
-             
              <div className="mt-3 flex flex-wrap gap-2">
                {s.features.map(f => (
                  <span key={f} className="text-[10px] text-white/50 flex items-center gap-1.5">
@@ -102,7 +93,6 @@ export default function StudiosPage(){
                  </span>
                ))}
              </div>
-
              <div className={`mt-5 h-[185px] rounded-[12px] ${s.inner} border border-white/5 flex items-center justify-center text-white/20 text-[11px] group-hover:border-white/20 transition`}>
                {s.title} {s.highlight} Visual
              </div>
@@ -111,7 +101,5 @@ export default function StudiosPage(){
        </div>
      </div>
    </div>
-   <FooterHome />
-  </>
  )
 }
