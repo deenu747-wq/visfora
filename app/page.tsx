@@ -77,7 +77,7 @@ export default function HomePage() {
           {/* CARD 1 - FIXED OVERFLOW */}
           <Link href="/studios/photo-studio" className="group relative rounded-[24px] border-2 border-[#D4B87A] bg-white shadow-[0_20px_60px_rgba(0,0,0,0.12)] hover:-translate-y-2 transition-all flex flex-col pt-2 overflow-visible">
             <div className="absolute -top-3 left-1/2 -translate-x-1/2 text-[10px] bg-black text-white px-4 py-1 rounded-full font-bold tracking-widest z-30 shadow-lg whitespace-nowrap">MOST POPULAR</div>
-            <div className="p-6 pb-4 pt-6"><div className="text-[15px] font-bold tracking-[0.14em] uppercase text-[#C9A86A]">PHOTO STUDIO</div><div className="font-bold mt-2 text-[16px] leading-tight">Amazon-Ready Photos • AI Background Removal</div></div>
+            <div className="p-6 pb-4 pt-6"><div className="text-[15px] font-bold tracking-[0.14em] uppercase text-[#C9A86A]">PHOTO STUDIO</div><div className="font-bold mt-2 text-[16px] leading-tight">Amazon-Ready Photos • AI BG Removal</div></div>
             <div className="w-full aspect-[16/10] bg-[#FAF6EE] overflow-hidden rounded-b-[22px]">
               <img src="/studios/ps.jpg" alt="Photo Studio" className="w-full h-full object-cover scale-[1.02] group-hover:scale-[1.08] transition-transform duration-500" />
             </div>
