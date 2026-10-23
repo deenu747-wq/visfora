@@ -77,43 +77,43 @@ export default function HeaderHome(){
      <Link href="/solutions" className="hover:text-black transition">Solutions</Link>
      
      <div className="relative group">
-       <button className="flex items-center gap-1 py-8 font-medium text-black/60 group-hover:text-black transition">
-         Studios
-       </button>
-       
-       <div className="fixed left-0 top-[80px] w-screen invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-all duration-300 bg-[#FFFCF7] border-y border-black/[0.06] shadow-[0_30px_80px_rgba(0,0,0,0.12)] z-50">
-         <div className="max-w-[1440px] mx-auto px-10 py-8">
-           <div className="grid grid-cols-6 gap-4">
-             {studios.map((s) => (
-               <Link key={s.label} href={s.href} className="bg-white rounded-[16px] border border-black/[0.06] p-3 hover:border-black/15 hover:shadow-[0_12px_32px_rgba(0,0,0,0.08)] hover:-translate-y-[2px] transition-all duration-200 block overflow-hidden">
-                 <div className="text-[13px] tracking-[0.2em] text-[#d6a85a] font-bold mb-2 text-center">{s.label}</div>
-                 <div className="text-[12px] font-bold leading-[1.3] min-h-[36px] text-black text-center">
-                   {s.title}<br/><span className="font-normal text-black/60 text-[11px]">{s.sub}</span>
-                 </div>
-                 <div className="bg-[#F7F2EB] rounded-[12px] aspect-[4/2.6] my-3 overflow-hidden relative">
-                   <Image 
-                     src={s.img} 
-                     alt={s.label} 
-                     fill 
-                     className="object-cover"
-                     sizes="200px"
-                   />
-                 </div>
-                 {s.footer ? (
-                   <div className="bg-[#F7F2EB] rounded-full text-[9.5px] py-2 px-3 text-center truncate">{s.footer}</div>
-                 ) : (
-                   <div className="grid grid-cols-2 gap-1.5">
-                     {s.tags!.map((t) => (
-                       <div key={t} className="bg-[#F7F2EB] rounded-full text-[9px] py-[6px] px-2 text-center truncate">{t}</div>
-                     ))}
-                   </div>
-                 )}
-               </Link>
-             ))}
-           </div>
-         </div>
-       </div>
-     </div>
+  <Link href="/studios" className="flex items-center gap-1 py-8 font-medium text-black/60 group-hover:text-black transition">
+    Studios
+  </Link>
+  
+  <div className="fixed left-0 top-[80px] w-screen invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-all duration-300 bg-[#FFFCF7] border-y border-black/[0.06] shadow-[0_30px_80px_rgba(0,0,0,0.12)] z-50">
+    <div className="max-w-[1440px] mx-auto px-10 py-8">
+      <div className="grid grid-cols-6 gap-4">
+        {studios.map((s) => (
+          <Link key={s.label} href={s.href} className="bg-white rounded-[16px] border border-black/[0.06] p-3 hover:border-black/15 hover:shadow-[0_12px_32px_rgba(0,0,0,0.08)] hover:-translate-y-[2px] transition-all duration-200 block overflow-hidden">
+            <div className="text-[13px] tracking-[0.2em] text-[#d6a85a] font-bold mb-2 text-center">{s.label}</div>
+            <div className="text-[12px] font-bold leading-[1.3] min-h-[36px] text-black text-center">
+              {s.title}<br/><span className="font-normal text-black/60 text-[11px]">{s.sub}</span>
+            </div>
+            <div className="bg-[#F7F2EB] rounded-[12px] aspect-[4/2.6] my-3 overflow-hidden relative">
+              <Image 
+                src={s.img} 
+                alt={s.label} 
+                fill 
+                className="object-cover"
+                sizes="200px"
+              />
+            </div>
+            {s.footer ? (
+              <div className="bg-[#F7F2EB] rounded-full text-[9.5px] py-2 px-3 text-center truncate">{s.footer}</div>
+            ) : (
+              <div className="grid grid-cols-2 gap-1.5">
+                {s.tags!.map((t) => (
+                  <div key={t} className="bg-[#F7F2EB] rounded-full text-[9px] py-[6px] px-2 text-center truncate">{t}</div>
+                ))}
+              </div>
+            )}
+          </Link>
+        ))}
+      </div>
+    </div>
+  </div>
+</div>
 
      <Link href="/assets" className="hover:text-black transition">Assets</Link>
      <Link href="/company" className="hover:text-black transition">Company</Link>
