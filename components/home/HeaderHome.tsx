@@ -73,7 +73,7 @@ export default function HeaderHome(){
     </Link>
 
     <nav className="hidden md:flex items-center gap-9 text-[13.5px] tracking-wide text-black/60">
-     <Link href="/products" className="hover:text-black transition">Products</Link>
+     <Link href="/pricing" className="hover:text-black transition">Pricing</Link>
      <Link href="/solutions" className="hover:text-black transition">Solutions</Link>
      
      <div className="relative group">
