@@ -34,7 +34,6 @@ const studios = [
     desc: "Bring your ideas to life with stunning 3D models, characters and scenes.",
     features: ["3D Models","Characters","Scenes","High Quality"],
   },
-  // YOUR NEW SEQUENCE
   {
     slug: "template-maker",
     title: "Template",
@@ -72,22 +71,23 @@ export default function StudiosPage(){
   <>
    <HeaderHome />
    <div className="min-h-screen bg-[#FFFBF0] text-[#111]">
-     {/* 3. TITLE / SUB-HEADING */}
-     <div className="max-w-[1400px] mx-auto px-6 md:px-10 pt-10 md:pt-16 pb-8">
+     {/* FIX 1: CENTERED */}
+     <div className="max-w-[1400px] mx-auto px-6 md:px-10 pt-10 md:pt-16 pb-8 text-center">
        <h1 className="text-[42px] md:text-[56px] font-black tracking-tight leading-none text-[#111]">Studios</h1>
-       <p className="mt-3 text-[14px] md:text-[16px] text-black/60 max-w-[620px]">
+       <p className="mt-3 text-[14px] md:text-[16px] text-black/60 max-w-[620px] mx-auto">
          Your creative workspace. Six studios, one platform. Craft photos, vectors, 3D, motion, mockups, and templates — all in one place.
        </p>
      </div>
 
      <div className="max-w-[1400px] mx-auto px-4 md:px-10 pb-20">
-       <div className="grid grid-cols-1 md:grid-cols-3 gap-0 rounded-[20px] overflow-hidden border border-black/10 shadow-sm">
+       {/* FIX 2: SEPARATED WITH GAP */}
+       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
          {studios.map((s) => (
            <Link 
              key={s.slug} 
              href={`/studios/${s.slug}`} 
-             className={`${s.bg} p-6 md:p-7 border-b border-r border-white/[0.08] 
-               hover:scale-[1.02] hover:z-10 hover:shadow-2xl hover:brightness-110 
+             className={`${s.bg} p-6 md:p-7 rounded-[20px] border border-white/5 shadow-lg
+               hover:scale-[1.02] hover:shadow-2xl hover:brightness-110 
                transition-all duration-300 group cursor-pointer`}
            >
              <h2 className="text-[18px] font-bold tracking-tight text-white">
