@@ -73,7 +73,7 @@ export default function HeaderHome(){
     </Link>
 
     <nav className="hidden md:flex items-center gap-9 text-[13.5px] tracking-wide text-black/60">
-     <Link href="/home" className="hover:text-black transition">Home</Link>
+     <Link href="/" className="hover:text-black transition font-medium text-black">Home</Link>
      <Link href="/solutions" className="hover:text-black transition">Solutions</Link>
      
      <div className="relative group">
@@ -90,7 +90,6 @@ export default function HeaderHome(){
                  <div className="text-[12px] font-bold leading-[1.3] min-h-[36px] text-black text-center">
                    {s.title}<br/><span className="font-normal text-black/60 text-[11px]">{s.sub}</span>
                  </div>
-                 {/* IMAGE */}
                  <div className="bg-[#F7F2EB] rounded-[12px] aspect-[4/2.6] my-3 overflow-hidden relative">
                    <Image 
                      src={s.img} 
