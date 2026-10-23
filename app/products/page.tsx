@@ -1,47 +1,41 @@
-    "use client";
+"use client";
 import Link from "next/link";
 
-const products = [
-  { id: 1, title: "Football Concept", prompt: "football", tag: "Sports" },
-  { id: 2, title: "Cyberpunk Street", prompt: "cyberpunk city at night", tag: "Futuristic" },
-  { id: 3, title: "Minimal Chair", prompt: "minimal chair product photo", tag: "Furniture" },
-  { id: 4, title: "Sneaker Drop", prompt: "sneaker product shot", tag: "Fashion" },
+const list = [
+  ["Photo", "Retouch, grade, and organize."],
+  ["Vector", "Scalable graphics made simple."],
+  ["3D", "Model, light, and render."],
+  ["Animate", "Animate with ease."],
+  ["Template", "Start fast with ready layouts."],
+  ["Mockup", "Showcase in clean scenes."],
+  ["Motion", "Micro-interactions & playful motion."],
+  ["AI Product", "Generate products from text."],
 ];
 
 export default function ProductsPage() {
   return (
-    <div className="min-h-screen bg-[#FFFCF7] text-black">
-      <div className="max-w-[1200px] mx-auto p-6 md:p-10">
-        <div className="flex justify-between items-end">
-          <div>
-            <p className="text-xs tracking-widest opacity-50">VISFORA</p>
-            <h1 className="text-3xl md:text-5xl font-bold mt-2">All Products</h1>
-          </div>
-          <Link href="/" className="text-sm underline opacity-60">Back Home</Link>
-        </div>
+    <div className="min-h-screen bg-[#FDF8EE]">
+      <div className="bg-[#FFFCF7] text-center py-8 border-b">
+        <h1 className="text-6xl font-black">VF</h1>
+        <p className="tracking-[0.5em] text-xs">VISFORA</p>
+        <p className="text-xs mt-3">Products · Studios · Marketplace · Pricing · Docs</p>
+      </div>
+      <div className="h-1 bg-gradient-to-r from-[#8B7CFF] to-[#D8B26A]" />
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mt-10">
-          {products.map((p) => (
-            <Link
-              key={p.id}
-              href={`/product?prompt=${encodeURIComponent(p.prompt)}`}
-              className="group bg-white rounded-[32px] border border-black/5 p-5 hover:shadow-xl transition-all"
-            >
-              <div className="h-[200px] bg-[#F6F1E8] rounded-[20px] flex items-center justify-center text-black/20 text-sm">
-                Preview: {p.title}
-              </div>
-              <div className="mt-4 flex justify-between items-center">
-                <div>
-                  <span className="text-[10px] bg-black text-white px-2 py-1 rounded-full">{p.tag}</span>
-                  <h3 className="font-bold mt-2">{p.title}</h3>
-                </div>
-                <div className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center group-hover:bg-[#FFD700] group-hover:text-black transition">
-                  →
-                </div>
-              </div>
+      <div className="max-w-[1000px] mx-auto p-6">
+        <h2 className="text-3xl font-bold text-center mt-6">Studios, built for joyful creation</h2>
+        <p className="text-center text-sm opacity-60 mt-2">Six focused studios. One seamless workspace.</p>
+
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-10">
+          {list.map(([title, desc]) => (
+            <Link key={title} href={`/product?prompt=${title}`} className="bg-white p-4 rounded-xl border">
+              <h4 className="font-bold text-sm">{title}</h4>
+              <p className="text-xs opacity-60 mt-1">{desc}</p>
             </Link>
           ))}
         </div>
+
+        <p className="text-center text-[11px] opacity-40 mt-16">© 2024 Visfora</p>
       </div>
     </div>
   );
