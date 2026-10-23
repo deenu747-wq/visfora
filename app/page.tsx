@@ -98,7 +98,12 @@ export default function HomePage() {
           </Link>
         </div>
 
-        <Link href="/studios" className="inline-flex mt-12 px-8 py-3 rounded-full bg-white text-black text-[13px] font-semibold border border-black/10 cursor-pointer hover:bg-black hover:text-white transition-all">View All 6 Studios → Template, Mockup, Motion included</Link>
+        <Link 
+  href="/studios" 
+  className="inline-flex mt-12 px-8 py-3 rounded-full bg-white text-black text-[13px] font-semibold border border-black/10 hover:bg-[#111] hover:text-white hover:-translate-y-[1px] hover:shadow-md transition-all"
+>
+  View All 6 Studios <span className="text-black/50 ml-2 font-normal group-hover:text-white/60">Template, Mockup, Motion included</span> <span className="ml-2">→</span>
+</Link>
       </section>
 
       <section id="pricing" className="max-w-[1280px] mx-auto px-6 mt-24 pb-20">
