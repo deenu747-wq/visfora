@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
-import Header from "@/components/HeaderHome.tsx";
-import Footer from "@/components/FooterHome.tsx";
+import Header from "@/components/home/HeaderHome.tsx";
+import Footer from "@/components/home/FooterHome.tsx";
 
 const studios = [
   { title: "Photo", desc: "Retouch, grade, and organize.\nFast, clean, natural results.", icon: "📷", href: "/product?prompt=photo" },
