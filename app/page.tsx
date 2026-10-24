@@ -109,7 +109,7 @@ export default function HomePage() {
           <p className="mt-3 text-[14px] text-black/40 font-medium">Simple, Transparent Pricing — Pay for results, not tools.</p>
           <div className="flex items-center justify-center gap-3 mt-6">
             <span className={isMonthly ? "text-[13px] font-bold" : "text-[13px] text-black/40"}>Monthly</span>
-            <button onClick={() => setBilling(isMonthly ? "yearly" : "monthly")} className="relative w-[52px] h-[30px] rounded-full bg-black/[0.08] border border-black/10 p-1"><div className={isYearly ? "w-[22px] h-[22px] rounded-full bg-[#D4A85B] translate-x-[20px] transition-all" : "w-[22px] h-[22px] rounded-full bg-[#D4A85B] transition-all"} /></button>
+            <button onClick={() => setBilling(isMonthly ? "yearly" : "monthly")} className="relative w-[52px] h-[30px] rounded-full bg-black/[0.08] border border-black/10 p-1"><div className={isYearly ? "w-[22px] h-[22px] rounded-full bg-black translate-x-[20px] transition-all" : "w-[22px] h-[22px] rounded-full bg-black transition-all"} /></button>
             <span className={isYearly ? "text-[13px] font-bold flex items-center gap-2" : "text-[13px] text-black/40 flex items-center gap-2"}>Yearly <span className="bg-[#F5E6C6] border border-[#E8D5A8] px-2.5 py-0.5 rounded-full text-[10px] font-bold">20% OFF</span></span>
           </div>
         </div>
