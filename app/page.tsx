@@ -46,13 +46,11 @@ export default function HomePage() {
     <div className="min-h-screen bg-[#FFFCF7] text-black antialiased">
       <HeaderHome />
       <section className="max-w-[1280px] mx-auto px-6 pt-12 pb-6 text-center">
-        {/* 1. REMOVED - USED BY 2,400+ SELLERS */}
         <h1 className="text-[40px] md:text-[64px] font-[900] tracking-[-0.04em] leading-[0.9]">Amazon Photos That <span className="font-serif italic text-[#D4A85B]">Sell.</span><br/>In 8 Seconds.</h1>
         <p className="mt-4 text-[16px] text-black/60 max-w-[600px] mx-auto">Upload an iPhone photo. Get studio lighting, clean background, Amazon-ready. No Photoshop needed.</p>
         <div className="max-w-[700px] mx-auto mt-8 flex items-center gap-2 p-2 rounded-[18px] border border-black/[0.08] bg-white shadow-[0_12px_32px_rgba(0,0,0,0.08)]">
           <span className="px-3 text-black/40">🔍</span>
           <input value={prompt} onChange={(e) => setPrompt(e.target.value)} onKeyDown={(e) => e.key === "Enter" && handleGenerate()} placeholder="Describe your product visual..." className="flex-1 outline-none bg-transparent text-[14px] placeholder:text-black/30" />
-          {/* 2. REMOVED ARROW + HOVER BLACK TO CLAY */}
           <button onClick={handleGenerate} className="px-6 py-3 rounded-full bg-black text-white font-semibold text-sm border border-black hover:bg-[#D4A85B] hover:text-black hover:border-[#D4A85B] transition-all duration-200">Generate</button>
         </div>
         {uploadedPreview && (
@@ -64,9 +62,13 @@ export default function HomePage() {
         )}
         <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
         <div className="flex justify-center gap-3 mt-4">
-          {/* 3. HOVER BLACK TO CLAY */}
-          <button onClick={handleUploadClick} className="px-8 py-3 rounded-full bg-[#D4A85B] text-black text-sm font-bold cursor-pointer border border-[#D4A85B] hover:bg-black hover:text-white hover:border-black transition-all duration-200">Upload Your Product Photo</button>
-          {hasResult ? <button onClick={handleDownload} className="px-8 py-3 rounded-full bg-black text-white text-sm font-bold cursor-pointer hover:bg-[#D4A85B] hover:text-black transition-all">⬇ Download File</button> : <button onClick={() => document.getElementById("studios")?.scrollIntoView({ behavior: "smooth" })} className="px-6 py-3 rounded-full border border-black/10 bg-white text-sm cursor-pointer hover:bg-[#D4A85B] hover:text-black hover:border-[#D4A85B] transition-all">View Studios</button>}
+          <button onClick={handleUploadClick} className="px-8 py-3 rounded-full bg-[#D4A85B] text-black text-sm font-bold cursor-pointer border border-[#D4A85B] hover:bg-black hover:text-white hover:border-black hover:shadow-[0_8px_20px_rgba(0,0,0,0.15)] transition-all duration-200">Upload Your Product Photo</button>
+          {hasResult ? (
+            <button onClick={handleDownload} className="px-8 py-3 rounded-full bg-black text-white text-sm font-bold cursor-pointer border border-black hover:bg-[#D4A85B] hover:text-black hover:border-[#D4A85B] transition-all">⬇ Download File</button>
+          ) : (
+            // LEFT AS BEFORE - White default, Black hover
+            <button onClick={() => document.getElementById("studios")?.scrollIntoView({ behavior: "smooth" })} className="px-6 py-3 rounded-full border border-black/10 bg-white text-sm cursor-pointer hover:bg-black hover:text-white transition-all">View Studios</button>
+          )}
         </div>
       </section>
 
@@ -76,7 +78,6 @@ export default function HomePage() {
         
         <div className="grid md:grid-cols-3 gap-6 mt-12 text-center">
           <Link href="/studios/photo-studio" className="group relative rounded-[24px] border-2 border-[#D4A85B] bg-white shadow-[0_20px_60px_rgba(0,0,0,0.12)] hover:-translate-y-2 transition-all flex flex-col pt-2 overflow-visible">
-            {/* 4. BLACK TO CLAY */}
             <div className="absolute -top-3 left-1/2 -translate-x-1/2 text-[10px] bg-[#D4A85B] text-black px-4 py-1 rounded-full font-bold tracking-widest z-30 shadow-lg whitespace-nowrap">MOST POPULAR</div>
             <div className="p-6 pb-4 pt-6"><div className="text-[15px] font-bold tracking-[0.14em] uppercase text-[#D4A85B]">PHOTO STUDIO</div><div className="font-bold mt-2 text-[16px] leading-tight">Amazon-Ready Photos • AI BG Removal</div></div>
             <div className="w-full aspect-[16/10] bg-[#FAF6EE] overflow-hidden rounded-b-[22px]">
@@ -108,7 +109,6 @@ export default function HomePage() {
           <p className="mt-3 text-[14px] text-black/40 font-medium">Simple, Transparent Pricing — Pay for results, not tools.</p>
           <div className="flex items-center justify-center gap-3 mt-6">
             <span className={isMonthly ? "text-[13px] font-bold" : "text-[13px] text-black/40"}>Monthly</span>
-            {/* 5. TRANSITION BLACK TO CLAY */}
             <button onClick={() => setBilling(isMonthly ? "yearly" : "monthly")} className="relative w-[52px] h-[30px] rounded-full bg-black/[0.08] border border-black/10 p-1"><div className={isYearly ? "w-[22px] h-[22px] rounded-full bg-[#D4A85B] translate-x-[20px] transition-all" : "w-[22px] h-[22px] rounded-full bg-[#D4A85B] transition-all"} /></button>
             <span className={isYearly ? "text-[13px] font-bold flex items-center gap-2" : "text-[13px] text-black/40 flex items-center gap-2"}>Yearly <span className="bg-[#F5E6C6] border border-[#E8D5A8] px-2.5 py-0.5 rounded-full text-[10px] font-bold">20% OFF</span></span>
           </div>
