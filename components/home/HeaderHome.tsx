@@ -65,9 +65,9 @@ export default function HeaderHome(){
        Log in
      </Link>
      {/* UPDATED - CLAY DEFAULT + BLACK HOVER */}
-     <Link href="/get-started" className="bg-[#D4A85B] text-black rounded-full px-[22px] py-[10px] text-[13px] font-medium border border-[#D4A85B] hover:bg-black hover:text-white hover:border-black hover:shadow-[0_8px_20px_rgba(0,0,0,0.2)] transition-all duration-200">
-       Get started
-     </Link>
+     <Link href="/get-started" className="bg-black text-white rounded-full px-[22px] py-[10px] text-[13px] font-medium border border-black hover:bg-[#D4A85B] hover:text-black hover:border-[#D4A85B] hover:shadow-[0_8px_20px_rgba(212,168,91,0.3)] transition-all duration-200">
+  Get started
+</Link>
     </div>
    </div>
   </header>
