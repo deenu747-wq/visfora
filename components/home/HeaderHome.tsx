@@ -18,7 +18,7 @@ export default function HeaderHome(){
     <Link href="/" className="flex items-center gap-3">
      <Image src="/Logo.png" alt="Visfora" width={56} height={56} className="object-contain" priority style={{ width: "56px", height: "56px" }} />
      <span className="text-[36px] tracking-[0.32em] font-light text-black">
-       VIS<span className="font-normal text-[#d6a85a]">FORA</span>
+       VIS<span className="font-normal text-[#D4A85B]">FORA</span>
      </span>
     </Link>
 
@@ -34,7 +34,7 @@ export default function HeaderHome(){
           <div className="grid grid-cols-6 gap-4">
             {studios.map((s) => (
               <Link key={s.label} href={s.href} className="bg-white rounded-[16px] border border-black/[0.06] p-3 hover:border-black/15 hover:shadow-[0_12px_32px_rgba(0,0,0,0.08)] hover:-translate-y-[2px] transition-all duration-200 block overflow-hidden">
-                <div className="text-[13px] tracking-[0.2em] text-[#d6a85a] font-bold mb-2 text-center">{s.label}</div>
+                <div className="text-[13px] tracking-[0.2em] text-[#D4A85B] font-bold mb-2 text-center">{s.label}</div>
                 <div className="text-[12px] font-bold leading-[1.3] min-h-[36px] text-black text-center">
                   {s.title}<br/><span className="font-normal text-black/60 text-[11px]">{s.sub}</span>
                 </div>
@@ -60,14 +60,14 @@ export default function HeaderHome(){
      <Link href="/company" className="hover:text-black transition">Company</Link>
     </nav>
 
-    {/* FIXED LOGIN BUTTON - was invisible */}
     <div className="hidden md:flex items-center gap-3">
      <Link href="/login" className="!text-black border border-black rounded-full px-[26px] py-[10px] text-[13.5px] font-semibold bg-white hover:bg-black hover:!text-white transition-all">
        Log in
      </Link>
-     <Link href="/get-started" className="bg-black text-white rounded-full px-[22px] py-[10px] text-[13px] font-medium border border-black hover:bg-[#d6a85a] hover:text-black hover:border-[#d6a85a] hover:shadow-[0_8px_20px_rgba(214,168,90,0.3)] transition-all duration-200">
-  Get started
-</Link>
+     {/* UPDATED - CLAY DEFAULT + BLACK HOVER */}
+     <Link href="/get-started" className="bg-[#D4A85B] text-black rounded-full px-[22px] py-[10px] text-[13px] font-medium border border-[#D4A85B] hover:bg-black hover:text-white hover:border-black hover:shadow-[0_8px_20px_rgba(0,0,0,0.2)] transition-all duration-200">
+       Get started
+     </Link>
     </div>
    </div>
   </header>
