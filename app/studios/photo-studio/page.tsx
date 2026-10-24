@@ -27,13 +27,6 @@ export default function PhotoStudio() {
     { id: "shadow", label: "Shadow Studio", icon: "☁️" },
   ];
 
-  const bgPresets: any = {
-    "Luxury Marble • Gold": "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=1000",
-    "White Infinity": "#FFFFFF",
-    "Minimal Concrete": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?q=80&w=1000",
-    "Studio Black": "#111111",
-  };
-
   const handleUpload = (file: File) => {
     const url = URL.createObjectURL(file);
     setUploadedImage(url);
@@ -60,7 +53,6 @@ export default function PhotoStudio() {
       const blob = await removeBackground(uploadedFile as File);
       setAfterImage(URL.createObjectURL(blob));
     } catch (err: any) {
-      console.error(err);
       alert("Error: " + err.message);
     }
     setIsProcessing(false);
@@ -82,6 +74,7 @@ export default function PhotoStudio() {
   ];
 
   const ctaClass = "bg-[#e69f50] text-black hover:bg-[#d48e40] hover:shadow-[0_0_20px_rgba(230,159,80,0.5)] cursor-pointer transition-all duration-200 font-medium";
+  const toolBtnClass = "w-full text-left px-4 py-3.5 rounded-xl flex items-center gap-3 transition cursor-pointer text-[13px] h-[48px]";
 
   return (
     <div className="min-h-screen bg-[#0A0A0A] text-[#E8DCC6] flex flex-col">
@@ -98,20 +91,31 @@ export default function PhotoStudio() {
       </header>
 
       <div className="flex-1 flex flex-col lg:flex-row gap-4 p-4">
+        {/* LEFT TOOLS - SAME SIZE + BORDER HIGHLIGHT */}
         <div className="w-full lg:w-[280px] flex flex-col gap-3">
           <aside className="border border-[#D4A574]/30 rounded-2xl p-4 bg-[#141414] h-fit">
             <h3 className="text-[#E8DCC6] font-medium mb-4 flex items-center gap-2"><span>⊞</span> Tools</h3>
             <div className="space-y-2.5">
               {tools.map((tool) => (
-                <button key={tool.id} onClick={() => setActiveTool(tool.id)} className={`w-full text-left px-4 py-3.5 rounded-xl flex items-center gap-3 transition cursor-pointer ${activeTool === tool.id ? "bg-[#e69f50] text-black font-medium shadow-[0_0_15px_rgba(230,159,80,0.3)]" : "bg-[#1F1F1F] text-[#E8DCC6]/80 hover:bg-[#2A2A2A] border border-[#D4A574]/10"}`}><span>{tool.icon}</span> {tool.label}</button>
+                <button 
+                  key={tool.id} 
+                  onClick={() => setActiveTool(tool.id)} 
+                  className={`${toolBtnClass} border-2 ${
+                    activeTool === tool.id 
+                      ? "bg-[#e69f50] text-black border-[#e69f50] font-semibold shadow-[0_0_15px_rgba(230,159,80,0.35)]" 
+                      : "bg-[#1F1F1F] text-[#E8DCC6]/80 border-[#D4A574]/10 hover:bg-[#2A2A2A] hover:border-[#D4A574]/30"
+                  }`}
+                >
+                  <span>{tool.icon}</span> {tool.label}
+                </button>
               ))}
             </div>
           </aside>
           <div className="flex flex-col gap-3">
-            <button onClick={handleProcess} disabled={isProcessing} className={`w-full py-3.5 rounded-xl text-sm flex items-center justify-center gap-2 disabled:opacity-50 ${ctaClass}`}>
+            <button onClick={handleProcess} disabled={isProcessing} className={`w-full rounded-xl flex items-center justify-center gap-2 disabled:opacity-50 h-[48px] text-[13px] ${ctaClass}`}>
               <span>✨</span> {isProcessing ? "Processing..." : `Run ${tools.find(t=>t.id===activeTool)?.label}`}
             </button>
-            <button onClick={() => fileInputRef.current?.click()} className={`w-full py-3.5 rounded-xl text-sm flex items-center justify-center gap-2 ${ctaClass}`}>
+            <button onClick={() => fileInputRef.current?.click()} className={`w-full rounded-xl flex items-center justify-center gap-2 h-[48px] text-[13px] ${ctaClass}`}>
               <span className="text-lg leading-none">+</span> Upload New
             </button>
           </div>
@@ -127,41 +131,32 @@ export default function PhotoStudio() {
           </div>
 
           <div onDragOver={(e) => e.preventDefault()} onDrop={handleDrop} className="flex-1 border border-dashed border-[#D4A574]/50 rounded-2xl p-4 bg-[#0F0F0F] relative min-h-[580px] flex flex-col">
-            <p className="text-center text-sm text-[#E8DCC6]/60 mb-4">Drag & drop to upload<br />or click Upload</p>
             
-            {/* 1. BEFORE/AFTER MOVED OUT OF FRAME TO TOP CENTER */}
-            {/* 2. IMAGE EXPANDED WITH EQUAL MARGIN */}
+            {/* 1-B ALIGNED IN ONE LINE + 1-A INCREASED SIZE */}
+            <div className="flex items-center justify-between mb-4 px-2">
+              <span className="text-sm bg-[#1F1F1F] border border-[#D4A574]/30 px-5 py-2 rounded-full text-[#E8DCC6] font-medium tracking-wide">BEFORE</span>
+              <p className="text-center text-sm text-[#E8DCC6]/60">Drag & drop to upload<br/>or click Upload</p>
+              <span className="text-sm bg-[#e69f50] text-black px-5 py-2 rounded-full font-semibold tracking-wide">AFTER</span>
+            </div>
+            
             <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* BEFORE COLUMN */}
-              <div className="flex flex-col">
-                <div className="flex justify-center mb-3">
-                  <span className="text-xs bg-[#1F1F1F] border border-[#D4A574]/30 px-4 py-1.5 rounded-full text-[#E8DCC6]">BEFORE</span>
-                </div>
-                <div className="relative rounded-xl overflow-hidden bg-[#1A1A1A] flex-1 min-h-[380px] p-4 flex items-center justify-center">
-                  {uploadedImage ? (
-                    <img src={uploadedImage} className="w-full h-full object-contain" alt="before" />
-                  ) : (
-                    <img src="/sneaker.png" className="w-full h-full object-contain" alt="sneaker" />
-                  )}
-                </div>
+              <div className="relative rounded-xl overflow-hidden bg-[#1A1A1A] flex-1 min-h-[400px] p-4 flex items-center justify-center">
+                {uploadedImage ? (
+                  <img src={uploadedImage} className="w-full h-full object-contain" alt="before" />
+                ) : (
+                  <img src="/sneaker.png" className="w-full h-full object-contain" alt="sneaker" />
+                )}
               </div>
-
-              {/* AFTER COLUMN */}
-              <div className="flex flex-col">
-                <div className="flex justify-center mb-3">
-                  <span className="text-xs bg-[#e69f50] text-black px-4 py-1.5 rounded-full font-medium">AFTER</span>
-                </div>
-                <div className="relative rounded-xl overflow-hidden bg-[#1A1A1A] flex-1 min-h-[380px] p-4 flex items-center justify-center bg-[length:20px_20px] bg-[url('https://upload.wikimedia.org/wikipedia/commons/5/5b/Checkerboard_pattern.png')]">
-                  {isProcessing ? (
-                    <div className="w-full h-full flex items-center justify-center text-[#e69f50] animate-pulse">Processing... first time 15s</div>
-                  ) : afterImage ? (
-                    <img src={afterImage} className="w-full h-full object-contain" alt="after" style={{ filter: `drop-shadow(0 15px ${shadowIntensity / 3}px rgba(0,0,0,0.6))` }} />
-                  ) : uploadedImage ? (
-                    <img src={uploadedImage} className="w-full h-full object-contain opacity-80" alt="after preview" />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-[#E8DCC6]/30 text-sm">No preview yet</div>
-                  )}
-                </div>
+              <div className="relative rounded-xl overflow-hidden bg-[#1A1A1A] flex-1 min-h-[400px] p-4 flex items-center justify-center bg-[length:20px_20px] bg-[url('https://upload.wikimedia.org/wikipedia/commons/5/5b/Checkerboard_pattern.png')]">
+                {isProcessing ? (
+                  <div className="w-full h-full flex items-center justify-center text-[#e69f50] animate-pulse">Processing... first time 15s</div>
+                ) : afterImage ? (
+                  <img src={afterImage} className="w-full h-full object-contain" alt="after" style={{ filter: `drop-shadow(0 15px ${shadowIntensity / 3}px rgba(0,0,0,0.6))` }} />
+                ) : uploadedImage ? (
+                  <img src={uploadedImage} className="w-full h-full object-contain opacity-80" alt="after preview" />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-[#E8DCC6]/30 text-sm">No preview yet</div>
+                )}
               </div>
             </div>
 
