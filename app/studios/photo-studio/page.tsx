@@ -169,7 +169,6 @@ export default function PhotoStudio() {
       </header>
 
       <div className="flex-1 flex flex-col lg:flex-row gap-4 p-4">
-        {/* LEFT - TOOLS BOX + UPLOAD OUTSIDE */}
         <div className="w-full lg:w-[280px] flex flex-col gap-3">
           <aside className="border border-[#D4A574]/30 rounded-2xl p-4 bg-[#141414] h-fit">
             <h3 className="text-[#E8DCC6] font-medium mb-4 flex items-center gap-2"><span>⊞</span> Tools</h3>
@@ -180,7 +179,6 @@ export default function PhotoStudio() {
             </div>
             <button onClick={handleProcess} disabled={isProcessing} className="w-full mt-4 bg-white text-black py-3 rounded-xl font-medium disabled:opacity-50">{isProcessing ? "Processing..." : "✨ Run " + tools.find(t=>t.id===activeTool)?.label}</button>
           </aside>
-          {/* 2. UPLOAD NEW OUTSIDE BOX - GREEN LINE POSITION */}
           <button onClick={() => fileInputRef.current?.click()} className="w-full bg-[#D4A574] text-black py-3 rounded-xl font-medium flex items-center justify-center gap-2 text-sm hover:bg-[#E8DCC6] transition border border-[#D4A574]">
             <span className="text-lg leading-none">+</span> Upload New
           </button>
@@ -197,16 +195,18 @@ export default function PhotoStudio() {
 
           <div onDragOver={(e) => e.preventDefault()} onDrop={handleDrop} className="flex-1 border border-dashed border-[#D4A574]/50 rounded-2xl p-4 bg-[#0F0F0F] relative min-h-[480px] flex flex-col">
             <p className="text-center text-sm text-[#E8DCC6]/60 mb-4">Drag & drop to upload<br />or click Upload</p>
+            
             <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="relative rounded-xl overflow-hidden bg-[#1A1A1A] aspect-[4/3]">
                 <span className="absolute top-3 left-3 text-xs bg-black/50 px-2 py-1 rounded-full z-10">BEFORE</span>
-                {uploadedImage ? <img src={uploadedImage} className="w-full h-full object-cover" alt="before" /> : <img src="/sneaker.png" className="w-full h-full object-contain p-6 opacity-70" alt="sneaker" />}
-              </div>
-              <div className="relative rounded-xl overflow-hidden bg-[#1A1A1A] aspect-[4/3] bg-[url('https://upload.wikimedia.org/wikipedia/commons/5/5b/Checkerboard_pattern.png')] bg-repeat">
-                <span className="absolute top-3 left-3 text-xs bg-[#D4A574] text-black px-2 py-1 rounded-full z-10">AFTER</span>
-                {isProcessing ? <div className="w-full h-full flex items-center justify-center text-[#D4A574] animate-pulse">Processing... first time 15s</div> : afterImage ? <img src={afterImage} className="w-full h-full object-contain" alt="after" style={{ filter: `drop-shadow(0 15px ${shadowIntensity / 3}px rgba(0,0,0,0.6))` }} /> : uploadedImage ? <img src={uploadedImage} className="w-full h-full object-cover opacity-50" alt="after preview" /> : <img src="/sneaker.png" className="w-full h-full object-contain p-6" alt="sneaker" />}
+                {uploadedImage ? (
+                  <img src={uploadedImage} className="w-full h-full object-cover" alt="before" />
+                ) : (
+                  <img src="/sneaker.png" className="w-full h-full object-contain p-6 opacity-70" alt="sneaker" />
+                )}
               </div>
             </div>
+
             <input ref={fileInputRef} type="file" accept="image/*" hidden onChange={(e) => e.target.files && handleUpload(e.target.files[0])} />
             {afterImage && <div className="flex justify-center mt-4"><a href={afterImage} download={`visfora-${activeTool}.png`} target="_blank" className="bg-white text-black px-6 py-2.5 rounded-xl font-medium text-sm">⬇️ Download Result</a></div>}
           </div>
@@ -233,13 +233,12 @@ export default function PhotoStudio() {
         </aside>
       </div>
 
-      {/* 3 & 4 - PROMPT AREA REDUCED + LEFT ALIGNED + CHIPS LEFT */}
       <div className="border-t border-[#D4A574]/30 p-4 bg-[#141414] mx-4 mb-4 rounded-2xl">
-        <div className="flex gap-3 items-start">
-          <div className="w-full max-w-[520px] flex items-center gap-3 bg-[#0F0F0F] border border-[#D4A574]/20 rounded-xl px-4 py-3"><span>✨</span><input value={prompt} onChange={(e) => setPrompt(e.target.value)} placeholder="Describe your edit • e.g., Add golden luxury studio backdrop" className="flex-1 bg-transparent outline-none text-sm placeholder:text-[#E8DCC6]/40" /></div>
-          <button onClick={handleProcess} disabled={isProcessing} className="bg-[#D4A574] text-black px-6 py-3 rounded-xl font-medium flex items-center gap-2 hover:bg-[#E8DCC6] transition disabled:opacity-50">{isProcessing ? "Working..." : "✨ Generate"}</button>
+        <div className="flex gap-3">
+          <div className="flex-1 flex items-center gap-3 bg-[#0F0F0F] border border-[#D4A574]/20 rounded-xl px-4 py-3"><span>✨</span><input value={prompt} onChange={(e) => setPrompt(e.target.value)} placeholder="Describe your edit • e.g., Add golden luxury studio backdrop, soft dramatic shadow, photoreal" className="flex-1 bg-transparent outline-none text-sm placeholder:text-[#E8DCC6]/40" /></div>
+          <button onClick={handleProcess} disabled={isProcessing} className="bg-[#D4A574] text-black px-6 py-3 rounded-xl font-medium flex items-center gap-2 hover:bg-[#E8DCC6] transition disabled:opacity-50">{isProcessing ? "Working..." : "Generate"}</button>
         </div>
-        <div className="flex gap-2 mt-3 overflow-x-auto justify-start">
+        <div className="flex gap-2 mt-3 overflow-x-auto justify-center">
           {chips.map(({ chip, bg, tool }) => (
             <button key={chip} onClick={() => { setPrompt(chip); setBgStyle(bg); setActiveTool(tool); }} className="whitespace-nowrap px-4 py-2 rounded-xl text-xs border border-[#D4A574]/30 bg-[#1F1F1F] hover:bg-[#D4A574] hover:text-black transition">✨ {chip}</button>
           ))}
