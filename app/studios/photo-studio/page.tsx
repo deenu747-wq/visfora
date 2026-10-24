@@ -1,5 +1,5 @@
 "use client";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 
 const AI_MODE = process.env.NEXT_PUBLIC_AI_MODE || "free";
@@ -16,7 +16,9 @@ export default function PhotoStudio() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [exportFormat, setExportFormat] = useState("WEBP");
   const [exportQuality, setExportQuality] = useState(90);
+  const [activeDropdown, setActiveDropdown] = useState<null | "notif" | "settings" | "profile">(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
 
   const tools = [
     { id: "remove-bg", label: "Remove Background", icon: "✂️" },
@@ -26,6 +28,16 @@ export default function PhotoStudio() {
     { id: "recolor", label: "Recolor", icon: "🎨" },
     { id: "shadow", label: "Shadow Studio", icon: "☁️" },
   ];
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (headerRef.current && !headerRef.current.contains(e.target as Node)) {
+        setActiveDropdown(null);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const handleUpload = (file: File) => {
     const url = URL.createObjectURL(file);
@@ -78,34 +90,86 @@ export default function PhotoStudio() {
 
   return (
     <div className="min-h-screen bg-[#0A0A0A] text-[#E8DCC6] flex flex-col">
-      <header className="border-b border-[#D4A574]/30 px-6 py-3 flex items-center justify-between bg-[#0A0A0A] sticky top-0 z-50">
+      <header ref={headerRef} className="border-b border-[#D4A574]/30 px-6 py-3 flex items-center justify-between bg-[#0A0A0A] sticky top-0 z-50">
         <Link href="/" className="flex items-center gap-3 cursor-pointer">
           <img src="/Logo-White.png" alt="VISFORA Logo" className="h-14 w-auto object-contain" />
           <span className="text-[24px] tracking-[0.32em] font-light text-white leading-none">VIS<span className="font-normal text-[#d6a85a]">FORA</span></span>
         </Link>
-        <div className="flex items-center gap-3">
-          <button className="w-9 h-9 rounded-full bg-[#1F1F1F] border border-[#D4A574]/20 flex items-center justify-center hover:bg-[#2A2A2A] transition cursor-pointer">🔔</button>
-          <button className="w-9 h-9 rounded-full bg-[#1F1F1F] border border-[#D4A574]/20 flex items-center justify-center hover:bg-[#2A2A2A] transition cursor-pointer">⚙️</button>
-          <button className="w-9 h-9 rounded-full bg-[#D4A574] text-black flex items-center justify-center font-medium cursor-pointer">👤</button>
+        <div className="flex items-center gap-3 relative">
+          {/* 1 - NOTIFICATION ICON */}
+          <div className="relative">
+            <button onClick={() => setActiveDropdown(activeDropdown === "notif" ? null : "notif")} className={`w-9 h-9 rounded-full border flex items-center justify-center transition cursor-pointer ${activeDropdown === "notif" ? "bg-[#e69f50] border-[#e69f50] text-black" : "bg-[#1F1F1F] border-[#D4A574]/20 hover:bg-[#2A2A2A]"}`}>🔔</button>
+            {activeDropdown === "notif" && (
+              <div className="absolute right-0 top-12 w-[340px] bg-[#141414] border border-[#D4A574]/30 rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.6)] z-50 overflow-hidden">
+                <div className="p-4 border-b border-[#D4A574]/20 flex items-center justify-between">
+                  <h4 className="font-medium text-white">Notifications</h4>
+                  <span className="text-xs bg-[#e69f50] text-black px-2 py-0.5 rounded-full">3 new</span>
+                </div>
+                <div className="p-2 space-y-1 max-h-[300px] overflow-y-auto">
+                  <div className="p-3 rounded-xl bg-[#1F1F1F] border border-[#D4A574]/10 hover:bg-[#2A2A2A] cursor-pointer">
+                    <div className="flex gap-3"><span className="text-[#e69f50]">✨</span><div><p className="text-sm text-white">Background removed successfully</p><p className="text-xs text-[#E8DCC6]/50 mt-1">sneaker.png • 2 min ago</p></div></div>
+                  </div>
+                  <div className="p-3 rounded-xl bg-[#1F1F1F] border border-[#D4A574]/10 hover:bg-[#2A2A2A] cursor-pointer">
+                    <div className="flex gap-3"><span className="text-yellow-400">⚠️</span><div><p className="text-sm text-white">Credits running low</p><p className="text-xs text-[#E8DCC6]/50 mt-1">12 credits left • 1 hour ago</p></div></div>
+                  </div>
+                  <div className="p-3 rounded-xl bg-[#1F1F1F] border border-[#D4A574]/10 hover:bg-[#2A2A2A] cursor-pointer">
+                    <div className="flex gap-3"><span className="text-green-400">✅</span><div><p className="text-sm text-white">Export WEBP ready</p><p className="text-xs text-[#E8DCC6]/50 mt-1">2048x2048 • 3 hours ago</p></div></div>
+                  </div>
+                </div>
+                <div className="p-3 border-t border-[#D4A574]/20"><button className="w-full text-center text-xs text-[#e69f50] hover:underline cursor-pointer">View all notifications</button></div>
+              </div>
+            )}
+          </div>
+
+          {/* 2 - SETTINGS ICON */}
+          <div className="relative">
+            <button onClick={() => setActiveDropdown(activeDropdown === "settings" ? null : "settings")} className={`w-9 h-9 rounded-full border flex items-center justify-center transition cursor-pointer ${activeDropdown === "settings" ? "bg-[#e69f50] border-[#e69f50] text-black" : "bg-[#1F1F1F] border-[#D4A574]/20 hover:bg-[#2A2A2A]"}`}>⚙️</button>
+            {activeDropdown === "settings" && (
+              <div className="absolute right-0 top-12 w-[300px] bg-[#141414] border border-[#D4A574]/30 rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.6)] z-50 overflow-hidden p-4">
+                <h4 className="font-medium text-white mb-4">Settings</h4>
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between"><span className="text-sm text-[#E8DCC6]/70">High Quality Export</span><div className="w-10 h-5 bg-[#e69f50] rounded-full p-0.5 cursor-pointer"><div className="w-4 h-4 bg-black rounded-full ml-auto"></div></div></div>
+                  <div className="flex items-center justify-between"><span className="text-sm text-[#E8DCC6]/70">Auto-save results</span><div className="w-10 h-5 bg-[#1F1F1F] border border-[#D4A574]/20 rounded-full p-0.5 cursor-pointer"><div className="w-4 h-4 bg-[#E8DCC6]/50 rounded-full"></div></div></div>
+                  <div><label className="text-xs text-[#E8DCC6]/50">Default Format</label><select className="w-full mt-1 bg-[#1F1F1F] border border-[#D4A574]/20 rounded-xl px-3 py-2 text-sm cursor-pointer"><option>WEBP</option><option>PNG</option><option>JPG</option></select></div>
+                  <div><label className="text-xs text-[#E8DCC6]/50">Language</label><select className="w-full mt-1 bg-[#1F1F1F] border border-[#D4A574]/20 rounded-xl px-3 py-2 text-sm cursor-pointer"><option>English</option><option>Hindi</option></select></div>
+                  <div className="pt-2 border-t border-[#D4A574]/10 flex gap-2">
+                    <button className="flex-1 bg-[#1F1F1F] border border-[#D4A574]/20 py-2 rounded-xl text-xs hover:bg-[#2A2A2A] cursor-pointer">Reset</button>
+                    <button onClick={() => setActiveDropdown(null)} className={`flex-1 py-2 rounded-xl text-xs ${ctaClass}`}>Save</button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* 3 - PROFILE ICON */}
+          <div className="relative">
+            <button onClick={() => setActiveDropdown(activeDropdown === "profile" ? null : "profile")} className={`w-9 h-9 rounded-full flex items-center justify-center font-medium cursor-pointer border-2 transition ${activeDropdown === "profile" ? "bg-[#e69f50] border-[#e69f50] text-black" : "bg-[#e69f50] border-[#e69f50]/50 text-black"}`}>👤</button>
+            {activeDropdown === "profile" && (
+              <div className="absolute right-0 top-12 w-[280px] bg-[#141414] border border-[#D4A574]/30 rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.6)] z-50 overflow-hidden">
+                <div className="p-4 border-b border-[#D4A574]/20 flex gap-3 items-center">
+                  <div className="w-12 h-12 rounded-full bg-[#e69f50] flex items-center justify-center text-black font-bold">AK</div>
+                  <div><p className="text-sm font-medium text-white">Ankit Kumar</p><p className="text-xs text-[#E8DCC6]/50">ankit@visfora.com</p><span className="text-[10px] bg-[#e69f50]/20 text-[#e69f50] px-2 py-0.5 rounded-full mt-1 inline-block">PRO PLAN</span></div>
+                </div>
+                <div className="p-2">
+                  <button className="w-full text-left px-3 py-2.5 rounded-xl text-sm hover:bg-[#1F1F1F] flex items-center gap-3 cursor-pointer"><span>👤</span> My Profile</button>
+                  <button className="w-full text-left px-3 py-2.5 rounded-xl text-sm hover:bg-[#1F1F1F] flex items-center gap-3 cursor-pointer"><span>💳</span> Billing & Credits <span className="ml-auto text-xs bg-[#1F1F1F] px-2 py-0.5 rounded-full">112 left</span></button>
+                  <button className="w-full text-left px-3 py-2.5 rounded-xl text-sm hover:bg-[#1F1F1F] flex items-center gap-3 cursor-pointer"><span>📁</span> My Projects</button>
+                  <button className="w-full text-left px-3 py-2.5 rounded-xl text-sm hover:bg-[#1F1F1F] flex items-center gap-3 cursor-pointer"><span>❓</span> Help & Support</button>
+                  <div className="border-t border-[#D4A574]/10 mt-2 pt-2"><button className="w-full text-left px-3 py-2.5 rounded-xl text-sm hover:bg-red-500/10 hover:text-red-400 flex items-center gap-3 cursor-pointer"><span>🚪</span> Logout</button></div>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </header>
 
       <div className="flex-1 flex flex-col lg:flex-row gap-4 p-4">
-        {/* LEFT TOOLS - SAME SIZE + BORDER HIGHLIGHT */}
         <div className="w-full lg:w-[280px] flex flex-col gap-3">
           <aside className="border border-[#D4A574]/30 rounded-2xl p-4 bg-[#141414] h-fit">
             <h3 className="text-[#E8DCC6] font-medium mb-4 flex items-center gap-2"><span>⊞</span> Tools</h3>
             <div className="space-y-2.5">
               {tools.map((tool) => (
-                <button 
-                  key={tool.id} 
-                  onClick={() => setActiveTool(tool.id)} 
-                  className={`${toolBtnClass} border-2 ${
-                    activeTool === tool.id 
-                      ? "bg-[#e69f50] text-black border-[#e69f50] font-semibold shadow-[0_0_15px_rgba(230,159,80,0.35)]" 
-                      : "bg-[#1F1F1F] text-[#E8DCC6]/80 border-[#D4A574]/10 hover:bg-[#2A2A2A] hover:border-[#D4A574]/30"
-                  }`}
-                >
+                <button key={tool.id} onClick={() => setActiveTool(tool.id)} className={`${toolBtnClass} border-2 ${activeTool === tool.id ? "bg-[#e69f50] text-black border-[#e69f50] font-semibold shadow-[0_0_15px_rgba(230,159,80,0.35)]" : "bg-[#1F1F1F] text-[#E8DCC6]/80 border-[#D4A574]/10 hover:bg-[#2A2A2A] hover:border-[#D4A574]/30"}`}>
                   <span>{tool.icon}</span> {tool.label}
                 </button>
               ))}
@@ -131,8 +195,6 @@ export default function PhotoStudio() {
           </div>
 
           <div onDragOver={(e) => e.preventDefault()} onDrop={handleDrop} className="flex-1 border border-dashed border-[#D4A574]/50 rounded-2xl p-4 bg-[#0F0F0F] relative min-h-[580px] flex flex-col">
-            
-            {/* 1-B ALIGNED IN ONE LINE + 1-A INCREASED SIZE */}
             <div className="flex items-center justify-between mb-4 px-2">
               <span className="text-sm bg-[#1F1F1F] border border-[#D4A574]/30 px-5 py-2 rounded-full text-[#E8DCC6] font-medium tracking-wide">BEFORE</span>
               <p className="text-center text-sm text-[#E8DCC6]/60">Drag & drop to upload<br/>or click Upload</p>
@@ -141,25 +203,12 @@ export default function PhotoStudio() {
             
             <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="relative rounded-xl overflow-hidden bg-[#1A1A1A] flex-1 min-h-[400px] p-4 flex items-center justify-center">
-                {uploadedImage ? (
-                  <img src={uploadedImage} className="w-full h-full object-contain" alt="before" />
-                ) : (
-                  <img src="/sneaker.png" className="w-full h-full object-contain" alt="sneaker" />
-                )}
+                {uploadedImage ? <img src={uploadedImage} className="w-full h-full object-contain" alt="before" /> : <img src="/sneaker.png" className="w-full h-full object-contain" alt="sneaker" />}
               </div>
               <div className="relative rounded-xl overflow-hidden bg-[#1A1A1A] flex-1 min-h-[400px] p-4 flex items-center justify-center bg-[length:20px_20px] bg-[url('https://upload.wikimedia.org/wikipedia/commons/5/5b/Checkerboard_pattern.png')]">
-                {isProcessing ? (
-                  <div className="w-full h-full flex items-center justify-center text-[#e69f50] animate-pulse">Processing... first time 15s</div>
-                ) : afterImage ? (
-                  <img src={afterImage} className="w-full h-full object-contain" alt="after" style={{ filter: `drop-shadow(0 15px ${shadowIntensity / 3}px rgba(0,0,0,0.6))` }} />
-                ) : uploadedImage ? (
-                  <img src={uploadedImage} className="w-full h-full object-contain opacity-80" alt="after preview" />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-[#E8DCC6]/30 text-sm">No preview yet</div>
-                )}
+                {isProcessing ? <div className="w-full h-full flex items-center justify-center text-[#e69f50] animate-pulse">Processing...</div> : afterImage ? <img src={afterImage} className="w-full h-full object-contain" alt="after" /> : uploadedImage ? <img src={uploadedImage} className="w-full h-full object-contain opacity-80" alt="after preview" /> : <div className="w-full h-full flex items-center justify-center text-[#E8DCC6]/30 text-sm">No preview yet</div>}
               </div>
             </div>
-
             <input ref={fileInputRef} type="file" accept="image/*" hidden onChange={(e) => e.target.files && handleUpload(e.target.files[0])} />
           </div>
         </main>
@@ -176,7 +225,7 @@ export default function PhotoStudio() {
           <div className="border border-[#D4A574]/30 rounded-2xl p-5 bg-[#141414] h-fit">
             <h3 className="text-[#E8DCC6] font-medium mb-5 flex items-center justify-between">Output / Export <span>📤</span></h3>
             <div className="space-y-4">
-              <div><label className="text-sm text-[#E8DCC6]/70">Format</label><div className="grid grid-cols-3 gap-2 mt-2">{["PNG","JPG","WEBP"].map(f => (<button key={f} onClick={() => setExportFormat(f)} className={`py-2 rounded-xl text-xs font-medium border transition cursor-pointer ${exportFormat===f ? "bg-[#e69f50] text-black border-[#e69f50] shadow-[0_0_10px_rgba(230,159,80,0.3)]" : "bg-[#1F1F1F] text-[#E8DCC6]/70 border-[#D4A574]/20 hover:bg-[#2A2A2A]"}`}>{f}</button>))}</div></div>
+              <div><label className="text-sm text-[#E8DCC6]/70">Format</label><div className="grid grid-cols-3 gap-2 mt-2">{["PNG","JPG","WEBP"].map(f => (<button key={f} onClick={() => setExportFormat(f)} className={`py-2 rounded-xl text-xs font-medium border transition cursor-pointer ${exportFormat===f ? "bg-[#e69f50] text-black border-[#e69f50]" : "bg-[#1F1F1F] text-[#E8DCC6]/70 border-[#D4A574]/20 hover:bg-[#2A2A2A]"}`}>{f}</button>))}</div></div>
               <div><label className="text-sm text-[#E8DCC6]/70">Quality — {exportQuality}%</label><input type="range" min="10" max="100" value={exportQuality} onChange={(e) => setExportQuality(Number(e.target.value))} className="w-full mt-2 accent-[#e69f50] cursor-pointer" /></div>
               <div className="grid grid-cols-2 gap-2"><div className="bg-[#1F1F1F] border border-[#D4A574]/20 rounded-xl px-3 py-2.5 text-xs"><span className="text-[#E8DCC6]/50">Size</span><div className="text-[#E8DCC6] mt-1">2048 x 2048</div></div><div className="bg-[#1F1F1F] border border-[#D4A574]/20 rounded-xl px-3 py-2.5 text-xs"><span className="text-[#E8DCC6]/50">DPI</span><div className="text-[#E8DCC6] mt-1">300 DPI</div></div></div>
               <button onClick={handleExport} disabled={!afterImage && !uploadedImage} className={`w-full py-3 rounded-xl text-sm disabled:opacity-30 ${ctaClass}`}>⬇️ Export {exportFormat}</button>
