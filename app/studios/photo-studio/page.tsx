@@ -156,20 +156,31 @@ export default function PhotoStudio() {
 
   return (
     <div className="min-h-screen bg-[#0A0A0A] text-[#E8DCC6] flex flex-col">
-      <header className="border-b border-[#D4A574]/30 px-6 py-4 flex items-center justify-between">
+      {/* HEADER - BIGGER LOGO + USER ICONS */}
+      <header className="border-b border-[#D4A574]/30 px-6 py-3 flex items-center justify-between bg-[#0A0A0A] sticky top-0 z-50">
         <Link href="/" className="flex items-center gap-3 cursor-pointer">
-          <img src="/Logo.png" alt="VISFORA Logo" className="h-10 w-10 object-contain" />
-          <div className="flex flex-col">
-            <span className="text-[22px] tracking-[0.32em] font-light text-white leading-none">VIS<span className="font-normal text-[#d6a85a]">FORA</span></span>
-          </div>
+          <img src="/Logo-White.png" alt="VISFORA Logo" className="h-14 w-auto object-contain" />
+          <span className="text-[24px] tracking-[0.32em] font-light text-white leading-none">VIS<span className="font-normal text-[#d6a85a]">FORA</span></span>
         </Link>
-        <div className="flex items-center gap-2">
-          <span className="text-xs px-3 py-1 rounded-full bg-[#1F1F1F] border border-[#D4A574]/20">{isProcessing ? "Processing..." : "Ready"}</span>
+        <div className="flex items-center gap-3">
+          {/* Bell Icon */}
+          <button className="w-9 h-9 rounded-full bg-[#1F1F1F] border border-[#D4A574]/20 flex items-center justify-center hover:bg-[#2A2A2A] transition">
+            <span className="text-sm">🔔</span>
+          </button>
+          {/* Settings */}
+          <button className="w-9 h-9 rounded-full bg-[#1F1F1F] border border-[#D4A574]/20 flex items-center justify-center hover:bg-[#2A2A2A] transition">
+            <span className="text-sm">⚙️</span>
+          </button>
+          {/* User Icon */}
+          <button className="w-9 h-9 rounded-full bg-[#D4A574] text-black flex items-center justify-center font-medium">
+            👤
+          </button>
         </div>
       </header>
 
       <div className="flex-1 flex flex-col lg:flex-row gap-4 p-4">
-        <aside className="w-full lg:w-[280px] border border-[#D4A574]/30 rounded-2xl p-4 bg-[#141414] h-fit">
+        {/* LEFT - TOOLS + UPLOAD NEW MOVED HERE */}
+        <aside className="w-full lg:w-[280px] border border-[#D4A574]/30 rounded-2xl p-4 bg-[#141414] h-fit flex flex-col">
           <h3 className="text-[#E8DCC6] font-medium mb-4 flex items-center gap-2"><span>⊞</span> Tools</h3>
           <div className="space-y-2.5">
             {tools.map((tool) => (
@@ -177,6 +188,12 @@ export default function PhotoStudio() {
             ))}
           </div>
           <button onClick={handleProcess} disabled={isProcessing} className="w-full mt-4 bg-white text-black py-3 rounded-xl font-medium disabled:opacity-50">{isProcessing ? "Processing..." : "✨ Run " + tools.find(t=>t.id===activeTool)?.label}</button>
+          
+          {/* 3. MOVED UPLOAD NEW BELOW TOOLS */}
+          <button onClick={() => fileInputRef.current?.click()} className="w-full mt-3 bg-[#D4A574] text-black py-3 rounded-xl font-medium flex items-center justify-center gap-2 text-sm hover:bg-[#E8DCC6] transition">
+            <span className="text-lg leading-none">+</span> Upload New
+          </button>
+          
           <p className="text-xs text-[#E8DCC6]/40 mt-3 text-center">Free mode: no key needed</p>
         </aside>
 
@@ -217,15 +234,11 @@ export default function PhotoStudio() {
 
             <input ref={fileInputRef} type="file" accept="image/*" hidden onChange={(e) => e.target.files && handleUpload(e.target.files[0])} />
             
-            {/* 1. MOVED BUTTON TO LEFT-BOTTOM-CORNER */}
-            <div className="flex items-center justify-between mt-4">
-              <button onClick={() => fileInputRef.current?.click()} className="bg-[#D4A574] text-black px-5 py-2.5 rounded-xl font-medium flex items-center gap-2 text-sm hover:bg-[#E8DCC6] transition">
-                <span className="text-lg">+</span> Upload New
-              </button>
-              {afterImage && (
+            {afterImage && (
+              <div className="flex justify-center mt-4">
                 <a href={afterImage} download={`visfora-${activeTool}.png`} target="_blank" className="bg-white text-black px-6 py-2.5 rounded-xl font-medium text-sm">⬇️ Download Result</a>
-              )}
-            </div>
+              </div>
+            )}
           </div>
         </main>
 
@@ -239,7 +252,6 @@ export default function PhotoStudio() {
             </div>
           </div>
 
-          {/* 2. NEW OUTPUT/EXPORT SETTINGS */}
           <div className="border border-[#D4A574]/30 rounded-2xl p-5 bg-[#141414] h-fit">
             <h3 className="text-[#E8DCC6] font-medium mb-5 flex items-center justify-between">Output / Export <span>📤</span></h3>
             <div className="space-y-4">
@@ -270,7 +282,6 @@ export default function PhotoStudio() {
           <div className="flex-1 flex items-center gap-3 bg-[#0F0F0F] border border-[#D4A574]/20 rounded-xl px-4 py-3"><span>✨</span><input value={prompt} onChange={(e) => setPrompt(e.target.value)} placeholder="Describe your edit • e.g., Add golden luxury studio backdrop, soft dramatic shadow, photoreal" className="flex-1 bg-transparent outline-none text-sm placeholder:text-[#E8DCC6]/40" /></div>
           <button onClick={handleProcess} disabled={isProcessing} className="bg-[#D4A574] text-black px-6 py-3 rounded-xl font-medium flex items-center gap-2 hover:bg-[#E8DCC6] transition disabled:opacity-50">{isProcessing ? "Working..." : "✨ Generate"}</button>
         </div>
-        {/* 3. CENTERED CHIPS */}
         <div className="flex gap-2 mt-3 overflow-x-auto justify-center">
           {chips.map(({ chip, bg, tool }) => (
             <button key={chip} onClick={() => { setPrompt(chip); setBgStyle(bg); setActiveTool(tool); }} className="whitespace-nowrap px-4 py-2 rounded-xl text-xs border border-[#D4A574]/30 bg-[#1F1F1F] hover:bg-[#D4A574] hover:text-black transition">✨ {chip}</button>
