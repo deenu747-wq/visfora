@@ -156,7 +156,7 @@ export default function PhotoStudio() {
     <div className="min-h-screen bg-[#0A0A0A] text-[#E8DCC6] flex flex-col">
       <header className="border-b border-[#D4A574]/30 px-6 py-4 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-3 cursor-pointer">
-          <img src="/Logo.png" alt="VISFORA Logo" className="h-24 w-24 object-contain" />
+          <img src="/Logo-White.png" alt="VISFORA Logo" className="h-24 w-24 object-contain" />
           <div className="flex flex-col">
             <span className="text-[36px] tracking-[0.32em] font-light text-white leading-none">VIS<span className="font-normal text-[#d6a85a]">FORA</span></span>
           </div>
