@@ -65,9 +65,9 @@ export default function HeaderHome(){
      <Link href="/login" className="!text-black border border-black rounded-full px-[26px] py-[10px] text-[13.5px] font-semibold bg-white hover:bg-black hover:!text-white transition-all">
        Log in
      </Link>
-     <Link href="/get-started" className="bg-black text-white rounded-full px-[22px] py-[10px] text-[13px] font-medium hover:bg-black/90 transition">
-       Get started
-     </Link>
+     <Link href="/get-started" className="bg-black text-white rounded-full px-[22px] py-[10px] text-[13px] font-medium border border-black hover:bg-[#d6a85a] hover:text-black hover:border-[#d6a85a] hover:shadow-[0_8px_20px_rgba(214,168,90,0.3)] transition-all duration-200">
+  Get started
+</Link>
     </div>
    </div>
   </header>
