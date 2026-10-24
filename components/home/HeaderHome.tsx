@@ -16,7 +16,7 @@ export default function HeaderHome(){
   <header className="sticky top-0 z-50 w-full bg-[#FFFCF7] border-b border-black/[0.06]">
    <div className="max-w-[1440px] mx-auto h-[80px] px-10 flex items-center justify-between">
     <Link href="/" className="flex items-center gap-3">
-     <Image src="/Logo.png" alt="Visfora" width={56} height={56} className="object-contain" priority style={{ width: "56px", height: "56px" }} />
+     <Image src="/Logo.png" alt="Visfora" width={100} height={100} className="object-contain" priority style={{ width: "100px", height: "100px" }} />
      <span className="text-[36px] tracking-[0.32em] font-light text-black">
        VIS<span className="font-normal text-[#D4A85B]">FORA</span>
      </span>
