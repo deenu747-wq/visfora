@@ -60,8 +60,7 @@ export default function PhotoStudio() {
       if (activeTool === "remove-bg") {
         if (AI_MODE === "free") {
           const blob = await removeBackground(uploadedFile as File);
-          const url = URL.createObjectURL(blob);
-          setAfterImage(url);
+          setAfterImage(URL.createObjectURL(blob));
         } else {
           const reader = new FileReader();
           const base64 = await new Promise<string>((res) => {
@@ -116,19 +115,8 @@ export default function PhotoStudio() {
             fg.src = cutoutUrl!;
           };
           const bgVal = bgPresets[bgStyle];
-          bg.src = bgVal?.startsWith("#") ? "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+ip1sAAAAASUVORK5CYII=" : bgVal;
+          bg.src = bgVal?.startsWith("#") ? "data:image/png;base64,[STRIPPED]" : bgVal;
         });
-        setAfterImage(canvas.toDataURL("image/png"));
-      } else if (activeTool === "enhance") {
-        const img = new Image();
-        img.src = (afterImage || uploadedImage)!;
-        await new Promise(r => img.onload = r as any);
-        const canvas = document.createElement("canvas");
-        canvas.width = img.width * 2;
-        canvas.height = img.height * 2;
-        const ctx = canvas.getContext("2d")!;
-        ctx.imageSmoothingQuality = "high";
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
         setAfterImage(canvas.toDataURL("image/png"));
       } else {
         alert(`${activeTool} Premium coming soon!`);
@@ -176,14 +164,27 @@ export default function PhotoStudio() {
       </header>
 
       <div className="flex-1 flex flex-col lg:flex-row gap-4 p-4">
-        <aside className="w-full lg:w-[280px] border border-[#D4A574]/30 rounded-2xl p-4 bg-[#141414] h-fit">
-          <h3 className="text-[#E8DCC6] font-medium mb-4 flex items-center gap-2"><span>⊞</span> Tools</h3>
-          <div className="space-y-2.5">
-            {tools.map((tool) => (
-              <button key={tool.id} onClick={() => setActiveTool(tool.id)} className={`w-full text-left px-4 py-3.5 rounded-xl flex items-center gap-3 transition cursor-pointer ${activeTool === tool.id ? "bg-[#e69f50] text-black font-medium shadow-[0_0_15px_rgba(230,159,80,0.3)]" : "bg-[#1F1F1F] text-[#E8DCC6]/80 hover:bg-[#2A2A2A] border border-[#D4A574]/10"}`}><span>{tool.icon}</span> {tool.label}</button>
-            ))}
+        {/* LEFT - TOOLS + BUTTONS MOVED TO LEFT BOTTOM */}
+        <div className="w-full lg:w-[280px] flex flex-col gap-3">
+          <aside className="border border-[#D4A574]/30 rounded-2xl p-4 bg-[#141414] h-fit">
+            <h3 className="text-[#E8DCC6] font-medium mb-4 flex items-center gap-2"><span>⊞</span> Tools</h3>
+            <div className="space-y-2.5">
+              {tools.map((tool) => (
+                <button key={tool.id} onClick={() => setActiveTool(tool.id)} className={`w-full text-left px-4 py-3.5 rounded-xl flex items-center gap-3 transition cursor-pointer ${activeTool === tool.id ? "bg-[#e69f50] text-black font-medium shadow-[0_0_15px_rgba(230,159,80,0.3)]" : "bg-[#1F1F1F] text-[#E8DCC6]/80 hover:bg-[#2A2A2A] border border-[#D4A574]/10"}`}><span>{tool.icon}</span> {tool.label}</button>
+              ))}
+            </div>
+          </aside>
+
+          {/* 2. MOVED TO LEFT BOTTOM BELOW TOOLS - SAME SIZE */}
+          <div className="flex flex-col gap-3">
+            <button onClick={handleProcess} disabled={isProcessing} className={`w-full py-3.5 rounded-xl text-sm flex items-center justify-center gap-2 disabled:opacity-50 ${ctaClass}`}>
+              <span>✨</span> {isProcessing ? "Processing..." : `Run ${tools.find(t=>t.id===activeTool)?.label}`}
+            </button>
+            <button onClick={() => fileInputRef.current?.click()} className={`w-full py-3.5 rounded-xl text-sm flex items-center justify-center gap-2 ${ctaClass}`}>
+              <span className="text-lg leading-none">+</span> Upload New
+            </button>
           </div>
-        </aside>
+        </div>
 
         <main className="flex-1 flex flex-col">
           <div className="flex items-center justify-between mb-3 px-2">
@@ -197,10 +198,10 @@ export default function PhotoStudio() {
           <div onDragOver={(e) => e.preventDefault()} onDrop={handleDrop} className="flex-1 border border-dashed border-[#D4A574]/50 rounded-2xl p-4 bg-[#0F0F0F] relative min-h-[520px] flex flex-col">
             <p className="text-center text-sm text-[#E8DCC6]/60 mb-4">Drag & drop to upload<br />or click Upload</p>
             
-            {/* FIX 1: AFTER PREVIEW RESTORED */}
             <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="relative rounded-xl overflow-hidden bg-[#1A1A1A] aspect-[4/3]">
-                <span className="absolute top-3 left-3 text-xs bg-black/60 px-2 py-1 rounded-full z-10">BEFORE</span>
+                {/* 1. MOVED TO CENTER */}
+                <span className="absolute top-3 left-1/2 -translate-x-1/2 text-xs bg-black/60 px-3 py-1 rounded-full z-10">BEFORE</span>
                 {uploadedImage ? (
                   <img src={uploadedImage} className="w-full h-full object-contain p-2" alt="before" />
                 ) : (
@@ -208,7 +209,8 @@ export default function PhotoStudio() {
                 )}
               </div>
               <div className="relative rounded-xl overflow-hidden bg-[#1A1A1A] aspect-[4/3] bg-[length:20px_20px] bg-[url('https://upload.wikimedia.org/wikipedia/commons/5/5b/Checkerboard_pattern.png')]">
-                <span className="absolute top-3 left-3 text-xs bg-[#e69f50] text-black px-2 py-1 rounded-full z-10 font-medium">AFTER</span>
+                {/* 1. MOVED TO CENTER */}
+                <span className="absolute top-3 left-1/2 -translate-x-1/2 text-xs bg-[#e69f50] text-black px-3 py-1 rounded-full z-10 font-medium">AFTER</span>
                 {isProcessing ? (
                   <div className="w-full h-full flex items-center justify-center text-[#e69f50] animate-pulse">Processing... first time 15s</div>
                 ) : afterImage ? (
@@ -222,17 +224,6 @@ export default function PhotoStudio() {
             </div>
 
             <input ref={fileInputRef} type="file" accept="image/*" hidden onChange={(e) => e.target.files && handleUpload(e.target.files[0])} />
-
-            {/* FIX 2: REMOVE DOWNLOAD - REPLACED BY EXPORT ONLY */}
-            {/* FIX 3: TWO BUTTONS SAME SIZE MOVED TO GREEN LINE POSITION */}
-            <div className="flex gap-3 mt-6">
-              <button onClick={handleProcess} disabled={isProcessing} className={`flex-1 py-3.5 rounded-xl text-sm flex items-center justify-center gap-2 disabled:opacity-50 ${ctaClass}`}>
-                <span>✨</span> {isProcessing ? "Processing..." : `Run ${tools.find(t=>t.id===activeTool)?.label}`}
-              </button>
-              <button onClick={() => fileInputRef.current?.click()} className={`flex-1 py-3.5 rounded-xl text-sm flex items-center justify-center gap-2 ${ctaClass}`}>
-                <span className="text-lg leading-none">+</span> Upload New
-              </button>
-            </div>
           </div>
         </main>
 
@@ -251,7 +242,6 @@ export default function PhotoStudio() {
               <div><label className="text-sm text-[#E8DCC6]/70">Format</label><div className="grid grid-cols-3 gap-2 mt-2">{["PNG","JPG","WEBP"].map(f => (<button key={f} onClick={() => setExportFormat(f)} className={`py-2 rounded-xl text-xs font-medium border transition cursor-pointer ${exportFormat===f ? "bg-[#e69f50] text-black border-[#e69f50] shadow-[0_0_10px_rgba(230,159,80,0.3)]" : "bg-[#1F1F1F] text-[#E8DCC6]/70 border-[#D4A574]/20 hover:bg-[#2A2A2A]"}`}>{f}</button>))}</div></div>
               <div><label className="text-sm text-[#E8DCC6]/70">Quality — {exportQuality}%</label><input type="range" min="10" max="100" value={exportQuality} onChange={(e) => setExportQuality(Number(e.target.value))} className="w-full mt-2 accent-[#e69f50] cursor-pointer" /></div>
               <div className="grid grid-cols-2 gap-2"><div className="bg-[#1F1F1F] border border-[#D4A574]/20 rounded-xl px-3 py-2.5 text-xs"><span className="text-[#E8DCC6]/50">Size</span><div className="text-[#E8DCC6] mt-1">2048 x 2048</div></div><div className="bg-[#1F1F1F] border border-[#D4A574]/20 rounded-xl px-3 py-2.5 text-xs"><span className="text-[#E8DCC6]/50">DPI</span><div className="text-[#E8DCC6] mt-1">300 DPI</div></div></div>
-              {/* FIX 4: EXPORT BUTTON SAME COLOR */}
               <button onClick={handleExport} disabled={!afterImage && !uploadedImage} className={`w-full py-3 rounded-xl text-sm disabled:opacity-30 ${ctaClass}`}>⬇️ Export {exportFormat}</button>
             </div>
           </div>
