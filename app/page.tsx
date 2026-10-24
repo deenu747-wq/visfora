@@ -67,7 +67,7 @@ export default function HomePage() {
             <button onClick={handleDownload} className="px-8 py-3 rounded-full bg-black text-white text-sm font-bold cursor-pointer border border-black hover:bg-[#D4A85B] hover:text-black hover:border-[#D4A85B] transition-all">⬇ Download File</button>
           ) : (
             // LEFT AS BEFORE - White default, Black hover
-            <button onClick={() => document.getElementById("studios")?.scrollIntoView({ behavior: "smooth" })} className="px-6 py-3 rounded-full border border-black/10 bg-white text-sm cursor-pointer hover:bg-black hover:text-white transition-all">View Studios</button>
+            <button onClick={() => document.getElementById("studios")?.scrollIntoView({ behavior: "smooth" })} className="px-6 py-3 rounded-full border border-black bg-white text-sm cursor-pointer hover:bg-black hover:text-white transition-all">View Studios</button>
           )}
         </div>
       </section>
