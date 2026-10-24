@@ -156,46 +156,35 @@ export default function PhotoStudio() {
 
   return (
     <div className="min-h-screen bg-[#0A0A0A] text-[#E8DCC6] flex flex-col">
-      {/* HEADER - BIGGER LOGO + USER ICONS */}
       <header className="border-b border-[#D4A574]/30 px-6 py-3 flex items-center justify-between bg-[#0A0A0A] sticky top-0 z-50">
         <Link href="/" className="flex items-center gap-3 cursor-pointer">
           <img src="/Logo-White.png" alt="VISFORA Logo" className="h-14 w-auto object-contain" />
           <span className="text-[24px] tracking-[0.32em] font-light text-white leading-none">VIS<span className="font-normal text-[#d6a85a]">FORA</span></span>
         </Link>
         <div className="flex items-center gap-3">
-          {/* Bell Icon */}
-          <button className="w-9 h-9 rounded-full bg-[#1F1F1F] border border-[#D4A574]/20 flex items-center justify-center hover:bg-[#2A2A2A] transition">
-            <span className="text-sm">🔔</span>
-          </button>
-          {/* Settings */}
-          <button className="w-9 h-9 rounded-full bg-[#1F1F1F] border border-[#D4A574]/20 flex items-center justify-center hover:bg-[#2A2A2A] transition">
-            <span className="text-sm">⚙️</span>
-          </button>
-          {/* User Icon */}
-          <button className="w-9 h-9 rounded-full bg-[#D4A574] text-black flex items-center justify-center font-medium">
-            👤
-          </button>
+          <button className="w-9 h-9 rounded-full bg-[#1F1F1F] border border-[#D4A574]/20 flex items-center justify-center hover:bg-[#2A2A2A] transition">🔔</button>
+          <button className="w-9 h-9 rounded-full bg-[#1F1F1F] border border-[#D4A574]/20 flex items-center justify-center hover:bg-[#2A2A2A] transition">⚙️</button>
+          <button className="w-9 h-9 rounded-full bg-[#D4A574] text-black flex items-center justify-center font-medium">👤</button>
         </div>
       </header>
 
       <div className="flex-1 flex flex-col lg:flex-row gap-4 p-4">
-        {/* LEFT - TOOLS + UPLOAD NEW MOVED HERE */}
-        <aside className="w-full lg:w-[280px] border border-[#D4A574]/30 rounded-2xl p-4 bg-[#141414] h-fit flex flex-col">
-          <h3 className="text-[#E8DCC6] font-medium mb-4 flex items-center gap-2"><span>⊞</span> Tools</h3>
-          <div className="space-y-2.5">
-            {tools.map((tool) => (
-              <button key={tool.id} onClick={() => setActiveTool(tool.id)} className={`w-full text-left px-4 py-3.5 rounded-xl flex items-center gap-3 transition ${activeTool === tool.id ? "bg-[#D4A574] text-black font-medium" : "bg-[#1F1F1F] text-[#E8DCC6]/80 hover:bg-[#2A2A2A] border border-[#D4A574]/10"}`}><span>{tool.icon}</span> {tool.label}</button>
-            ))}
-          </div>
-          <button onClick={handleProcess} disabled={isProcessing} className="w-full mt-4 bg-white text-black py-3 rounded-xl font-medium disabled:opacity-50">{isProcessing ? "Processing..." : "✨ Run " + tools.find(t=>t.id===activeTool)?.label}</button>
-          
-          {/* 3. MOVED UPLOAD NEW BELOW TOOLS */}
-          <button onClick={() => fileInputRef.current?.click()} className="w-full mt-3 bg-[#D4A574] text-black py-3 rounded-xl font-medium flex items-center justify-center gap-2 text-sm hover:bg-[#E8DCC6] transition">
+        {/* LEFT - TOOLS BOX + UPLOAD OUTSIDE */}
+        <div className="w-full lg:w-[280px] flex flex-col gap-3">
+          <aside className="border border-[#D4A574]/30 rounded-2xl p-4 bg-[#141414] h-fit">
+            <h3 className="text-[#E8DCC6] font-medium mb-4 flex items-center gap-2"><span>⊞</span> Tools</h3>
+            <div className="space-y-2.5">
+              {tools.map((tool) => (
+                <button key={tool.id} onClick={() => setActiveTool(tool.id)} className={`w-full text-left px-4 py-3.5 rounded-xl flex items-center gap-3 transition ${activeTool === tool.id ? "bg-[#D4A574] text-black font-medium" : "bg-[#1F1F1F] text-[#E8DCC6]/80 hover:bg-[#2A2A2A] border border-[#D4A574]/10"}`}><span>{tool.icon}</span> {tool.label}</button>
+              ))}
+            </div>
+            <button onClick={handleProcess} disabled={isProcessing} className="w-full mt-4 bg-white text-black py-3 rounded-xl font-medium disabled:opacity-50">{isProcessing ? "Processing..." : "✨ Run " + tools.find(t=>t.id===activeTool)?.label}</button>
+          </aside>
+          {/* 2. UPLOAD NEW OUTSIDE BOX - GREEN LINE POSITION */}
+          <button onClick={() => fileInputRef.current?.click()} className="w-full bg-[#D4A574] text-black py-3 rounded-xl font-medium flex items-center justify-center gap-2 text-sm hover:bg-[#E8DCC6] transition border border-[#D4A574]">
             <span className="text-lg leading-none">+</span> Upload New
           </button>
-          
-          <p className="text-xs text-[#E8DCC6]/40 mt-3 text-center">Free mode: no key needed</p>
-        </aside>
+        </div>
 
         <main className="flex-1 flex flex-col">
           <div className="flex items-center justify-between mb-3 px-2">
@@ -208,37 +197,18 @@ export default function PhotoStudio() {
 
           <div onDragOver={(e) => e.preventDefault()} onDrop={handleDrop} className="flex-1 border border-dashed border-[#D4A574]/50 rounded-2xl p-4 bg-[#0F0F0F] relative min-h-[480px] flex flex-col">
             <p className="text-center text-sm text-[#E8DCC6]/60 mb-4">Drag & drop to upload<br />or click Upload</p>
-            
             <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="relative rounded-xl overflow-hidden bg-[#1A1A1A] aspect-[4/3]">
                 <span className="absolute top-3 left-3 text-xs bg-black/50 px-2 py-1 rounded-full z-10">BEFORE</span>
-                {uploadedImage ? (
-                  <img src={uploadedImage} className="w-full h-full object-cover" alt="before" />
-                ) : (
-                  <img src="/sneaker.png" className="w-full h-full object-contain p-6 opacity-70" alt="sneaker" />
-                )}
+                {uploadedImage ? <img src={uploadedImage} className="w-full h-full object-cover" alt="before" /> : <img src="/sneaker.png" className="w-full h-full object-contain p-6 opacity-70" alt="sneaker" />}
               </div>
               <div className="relative rounded-xl overflow-hidden bg-[#1A1A1A] aspect-[4/3] bg-[url('https://upload.wikimedia.org/wikipedia/commons/5/5b/Checkerboard_pattern.png')] bg-repeat">
                 <span className="absolute top-3 left-3 text-xs bg-[#D4A574] text-black px-2 py-1 rounded-full z-10">AFTER</span>
-                {isProcessing ? (
-                  <div className="w-full h-full flex items-center justify-center text-[#D4A574] animate-pulse">Processing... first time 15s</div>
-                ) : afterImage ? (
-                  <img src={afterImage} className="w-full h-full object-contain" alt="after" style={{ filter: `drop-shadow(0 15px ${shadowIntensity / 3}px rgba(0,0,0,0.6))` }} />
-                ) : uploadedImage ? (
-                  <img src={uploadedImage} className="w-full h-full object-cover opacity-50" alt="after preview" />
-                ) : (
-                  <img src="/sneaker.png" className="w-full h-full object-contain p-6" alt="sneaker" />
-                )}
+                {isProcessing ? <div className="w-full h-full flex items-center justify-center text-[#D4A574] animate-pulse">Processing... first time 15s</div> : afterImage ? <img src={afterImage} className="w-full h-full object-contain" alt="after" style={{ filter: `drop-shadow(0 15px ${shadowIntensity / 3}px rgba(0,0,0,0.6))` }} /> : uploadedImage ? <img src={uploadedImage} className="w-full h-full object-cover opacity-50" alt="after preview" /> : <img src="/sneaker.png" className="w-full h-full object-contain p-6" alt="sneaker" />}
               </div>
             </div>
-
             <input ref={fileInputRef} type="file" accept="image/*" hidden onChange={(e) => e.target.files && handleUpload(e.target.files[0])} />
-            
-            {afterImage && (
-              <div className="flex justify-center mt-4">
-                <a href={afterImage} download={`visfora-${activeTool}.png`} target="_blank" className="bg-white text-black px-6 py-2.5 rounded-xl font-medium text-sm">⬇️ Download Result</a>
-              </div>
-            )}
+            {afterImage && <div className="flex justify-center mt-4"><a href={afterImage} download={`visfora-${activeTool}.png`} target="_blank" className="bg-white text-black px-6 py-2.5 rounded-xl font-medium text-sm">⬇️ Download Result</a></div>}
           </div>
         </main>
 
@@ -251,38 +221,25 @@ export default function PhotoStudio() {
               <div><label className="text-sm text-[#E8DCC6]/70">Lighting Direction</label><button className="w-full mt-2 bg-[#1F1F1F] border border-[#D4A574]/20 rounded-xl px-3 py-2.5 text-sm text-left flex items-center gap-2">☀️ {lighting}</button></div>
             </div>
           </div>
-
           <div className="border border-[#D4A574]/30 rounded-2xl p-5 bg-[#141414] h-fit">
             <h3 className="text-[#E8DCC6] font-medium mb-5 flex items-center justify-between">Output / Export <span>📤</span></h3>
             <div className="space-y-4">
-              <div>
-                <label className="text-sm text-[#E8DCC6]/70">Format</label>
-                <div className="grid grid-cols-3 gap-2 mt-2">
-                  {["PNG","JPG","WEBP"].map(f => (
-                    <button key={f} onClick={() => setExportFormat(f)} className={`py-2 rounded-xl text-xs font-medium border transition ${exportFormat===f ? "bg-[#D4A574] text-black border-[#D4A574]" : "bg-[#1F1F1F] text-[#E8DCC6]/70 border-[#D4A574]/20 hover:bg-[#2A2A2A]"}`}>{f}</button>
-                  ))}
-                </div>
-              </div>
-              <div>
-                <label className="text-sm text-[#E8DCC6]/70">Quality — {exportQuality}%</label>
-                <input type="range" min="10" max="100" value={exportQuality} onChange={(e) => setExportQuality(Number(e.target.value))} className="w-full mt-2 accent-[#D4A574]" />
-              </div>
-              <div className="grid grid-cols-2 gap-2">
-                <div className="bg-[#1F1F1F] border border-[#D4A574]/20 rounded-xl px-3 py-2.5 text-xs"><span className="text-[#E8DCC6]/50">Size</span><div className="text-[#E8DCC6] mt-1">2048 x 2048</div></div>
-                <div className="bg-[#1F1F1F] border border-[#D4A574]/20 rounded-xl px-3 py-2.5 text-xs"><span className="text-[#E8DCC6]/50">DPI</span><div className="text-[#E8DCC6] mt-1">300 DPI</div></div>
-              </div>
+              <div><label className="text-sm text-[#E8DCC6]/70">Format</label><div className="grid grid-cols-3 gap-2 mt-2">{["PNG","JPG","WEBP"].map(f => (<button key={f} onClick={() => setExportFormat(f)} className={`py-2 rounded-xl text-xs font-medium border transition ${exportFormat===f ? "bg-[#D4A574] text-black border-[#D4A574]" : "bg-[#1F1F1F] text-[#E8DCC6]/70 border-[#D4A574]/20 hover:bg-[#2A2A2A]"}`}>{f}</button>))}</div></div>
+              <div><label className="text-sm text-[#E8DCC6]/70">Quality — {exportQuality}%</label><input type="range" min="10" max="100" value={exportQuality} onChange={(e) => setExportQuality(Number(e.target.value))} className="w-full mt-2 accent-[#D4A574]" /></div>
+              <div className="grid grid-cols-2 gap-2"><div className="bg-[#1F1F1F] border border-[#D4A574]/20 rounded-xl px-3 py-2.5 text-xs"><span className="text-[#E8DCC6]/50">Size</span><div className="text-[#E8DCC6] mt-1">2048 x 2048</div></div><div className="bg-[#1F1F1F] border border-[#D4A574]/20 rounded-xl px-3 py-2.5 text-xs"><span className="text-[#E8DCC6]/50">DPI</span><div className="text-[#E8DCC6] mt-1">300 DPI</div></div></div>
               <button onClick={() => afterImage && window.open(afterImage, '_blank')} disabled={!afterImage} className="w-full bg-white text-black py-2.5 rounded-xl font-medium text-sm disabled:opacity-30">⬇️ Export {exportFormat}</button>
             </div>
           </div>
         </aside>
       </div>
 
+      {/* 3 & 4 - PROMPT AREA REDUCED + LEFT ALIGNED + CHIPS LEFT */}
       <div className="border-t border-[#D4A574]/30 p-4 bg-[#141414] mx-4 mb-4 rounded-2xl">
-        <div className="flex gap-3">
-          <div className="flex-1 flex items-center gap-3 bg-[#0F0F0F] border border-[#D4A574]/20 rounded-xl px-4 py-3"><span>✨</span><input value={prompt} onChange={(e) => setPrompt(e.target.value)} placeholder="Describe your edit • e.g., Add golden luxury studio backdrop, soft dramatic shadow, photoreal" className="flex-1 bg-transparent outline-none text-sm placeholder:text-[#E8DCC6]/40" /></div>
+        <div className="flex gap-3 items-start">
+          <div className="w-full max-w-[520px] flex items-center gap-3 bg-[#0F0F0F] border border-[#D4A574]/20 rounded-xl px-4 py-3"><span>✨</span><input value={prompt} onChange={(e) => setPrompt(e.target.value)} placeholder="Describe your edit • e.g., Add golden luxury studio backdrop" className="flex-1 bg-transparent outline-none text-sm placeholder:text-[#E8DCC6]/40" /></div>
           <button onClick={handleProcess} disabled={isProcessing} className="bg-[#D4A574] text-black px-6 py-3 rounded-xl font-medium flex items-center gap-2 hover:bg-[#E8DCC6] transition disabled:opacity-50">{isProcessing ? "Working..." : "✨ Generate"}</button>
         </div>
-        <div className="flex gap-2 mt-3 overflow-x-auto justify-center">
+        <div className="flex gap-2 mt-3 overflow-x-auto justify-start">
           {chips.map(({ chip, bg, tool }) => (
             <button key={chip} onClick={() => { setPrompt(chip); setBgStyle(bg); setActiveTool(tool); }} className="whitespace-nowrap px-4 py-2 rounded-xl text-xs border border-[#D4A574]/30 bg-[#1F1F1F] hover:bg-[#D4A574] hover:text-black transition">✨ {chip}</button>
           ))}
