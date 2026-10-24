@@ -57,70 +57,8 @@ export default function PhotoStudio() {
       const pkg = "@imgly" + "/background-removal";
       // @ts-ignore
       const { removeBackground } = await import(pkg);
-      if (activeTool === "remove-bg") {
-        if (AI_MODE === "free") {
-          const blob = await removeBackground(uploadedFile as File);
-          setAfterImage(URL.createObjectURL(blob));
-        } else {
-          const reader = new FileReader();
-          const base64 = await new Promise<string>((res) => {
-            reader.onload = () => res(reader.result as string);
-            reader.readAsDataURL(uploadedFile!);
-          });
-          const r = await fetch("/api/photo/remove-bg", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ image: base64 }),
-          });
-          const data = await r.json();
-          const resultUrl = data.image?.url || data.image_url || data.url;
-          if (resultUrl) setAfterImage(resultUrl);
-          else alert("Fal error: " + JSON.stringify(data).slice(0,300));
-        }
-      } else if (activeTool === "ai-bg") {
-        let cutoutUrl = afterImage;
-        if (!cutoutUrl && uploadedFile) {
-          const blob = await removeBackground(uploadedFile as File);
-          cutoutUrl = URL.createObjectURL(blob);
-          setAfterImage(cutoutUrl);
-        }
-        const canvas = document.createElement("canvas");
-        const ctx = canvas.getContext("2d")!;
-        const bg = new Image();
-        const fg = new Image();
-        bg.crossOrigin = "anonymous";
-        fg.crossOrigin = "anonymous";
-        await new Promise<void>((resolve) => {
-          bg.onload = () => {
-            canvas.width = 1000;
-            canvas.height = 1000;
-            const bgVal = bgPresets[bgStyle];
-            if (bgVal?.startsWith("#")) {
-              ctx.fillStyle = bgVal;
-              ctx.fillRect(0, 0, canvas.width, canvas.height);
-            } else {
-              ctx.drawImage(bg, 0, 0, canvas.width, canvas.height);
-            }
-            fg.onload = () => {
-              const scale = Math.min(canvas.width / fg.width, canvas.height / fg.height) * 0.7;
-              const w = fg.width * scale;
-              const h = fg.height * scale;
-              const x = (canvas.width - w) / 2;
-              const y = (canvas.height - h) / 2;
-              ctx.shadowColor = "rgba(0,0,0,0.5)";
-              ctx.shadowBlur = shadowIntensity;
-              ctx.drawImage(fg, x, y, w, h);
-              resolve();
-            };
-            fg.src = cutoutUrl!;
-          };
-          const bgVal = bgPresets[bgStyle];
-          bg.src = bgVal?.startsWith("#") ? "data:image/png;base64,[STRIPPED]" : bgVal;
-        });
-        setAfterImage(canvas.toDataURL("image/png"));
-      } else {
-        alert(`${activeTool} Premium coming soon!`);
-      }
+      const blob = await removeBackground(uploadedFile as File);
+      setAfterImage(URL.createObjectURL(blob));
     } catch (err: any) {
       console.error(err);
       alert("Error: " + err.message);
@@ -129,10 +67,6 @@ export default function PhotoStudio() {
   };
 
   const handleExport = () => {
-    if (!afterImage && !uploadedImage) {
-      alert("No image to export");
-      return;
-    }
     const link = document.createElement("a");
     link.href = afterImage || uploadedImage!;
     link.download = `visfora-${activeTool}.${exportFormat.toLowerCase()}`;
@@ -164,7 +98,6 @@ export default function PhotoStudio() {
       </header>
 
       <div className="flex-1 flex flex-col lg:flex-row gap-4 p-4">
-        {/* LEFT - TOOLS + BUTTONS MOVED TO LEFT BOTTOM */}
         <div className="w-full lg:w-[280px] flex flex-col gap-3">
           <aside className="border border-[#D4A574]/30 rounded-2xl p-4 bg-[#141414] h-fit">
             <h3 className="text-[#E8DCC6] font-medium mb-4 flex items-center gap-2"><span>⊞</span> Tools</h3>
@@ -174,8 +107,6 @@ export default function PhotoStudio() {
               ))}
             </div>
           </aside>
-
-          {/* 2. MOVED TO LEFT BOTTOM BELOW TOOLS - SAME SIZE */}
           <div className="flex flex-col gap-3">
             <button onClick={handleProcess} disabled={isProcessing} className={`w-full py-3.5 rounded-xl text-sm flex items-center justify-center gap-2 disabled:opacity-50 ${ctaClass}`}>
               <span>✨</span> {isProcessing ? "Processing..." : `Run ${tools.find(t=>t.id===activeTool)?.label}`}
@@ -195,31 +126,42 @@ export default function PhotoStudio() {
             </div>
           </div>
 
-          <div onDragOver={(e) => e.preventDefault()} onDrop={handleDrop} className="flex-1 border border-dashed border-[#D4A574]/50 rounded-2xl p-4 bg-[#0F0F0F] relative min-h-[520px] flex flex-col">
+          <div onDragOver={(e) => e.preventDefault()} onDrop={handleDrop} className="flex-1 border border-dashed border-[#D4A574]/50 rounded-2xl p-4 bg-[#0F0F0F] relative min-h-[580px] flex flex-col">
             <p className="text-center text-sm text-[#E8DCC6]/60 mb-4">Drag & drop to upload<br />or click Upload</p>
             
-            <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="relative rounded-xl overflow-hidden bg-[#1A1A1A] aspect-[4/3]">
-                {/* 1. MOVED TO CENTER */}
-                <span className="absolute top-3 left-1/2 -translate-x-1/2 text-xs bg-black/60 px-3 py-1 rounded-full z-10">BEFORE</span>
-                {uploadedImage ? (
-                  <img src={uploadedImage} className="w-full h-full object-contain p-2" alt="before" />
-                ) : (
-                  <img src="/sneaker.png" className="w-full h-full object-contain p-6 opacity-70" alt="sneaker" />
-                )}
+            {/* 1. BEFORE/AFTER MOVED OUT OF FRAME TO TOP CENTER */}
+            {/* 2. IMAGE EXPANDED WITH EQUAL MARGIN */}
+            <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* BEFORE COLUMN */}
+              <div className="flex flex-col">
+                <div className="flex justify-center mb-3">
+                  <span className="text-xs bg-[#1F1F1F] border border-[#D4A574]/30 px-4 py-1.5 rounded-full text-[#E8DCC6]">BEFORE</span>
+                </div>
+                <div className="relative rounded-xl overflow-hidden bg-[#1A1A1A] flex-1 min-h-[380px] p-4 flex items-center justify-center">
+                  {uploadedImage ? (
+                    <img src={uploadedImage} className="w-full h-full object-contain" alt="before" />
+                  ) : (
+                    <img src="/sneaker.png" className="w-full h-full object-contain" alt="sneaker" />
+                  )}
+                </div>
               </div>
-              <div className="relative rounded-xl overflow-hidden bg-[#1A1A1A] aspect-[4/3] bg-[length:20px_20px] bg-[url('https://upload.wikimedia.org/wikipedia/commons/5/5b/Checkerboard_pattern.png')]">
-                {/* 1. MOVED TO CENTER */}
-                <span className="absolute top-3 left-1/2 -translate-x-1/2 text-xs bg-[#e69f50] text-black px-3 py-1 rounded-full z-10 font-medium">AFTER</span>
-                {isProcessing ? (
-                  <div className="w-full h-full flex items-center justify-center text-[#e69f50] animate-pulse">Processing... first time 15s</div>
-                ) : afterImage ? (
-                  <img src={afterImage} className="w-full h-full object-contain p-2" alt="after" style={{ filter: `drop-shadow(0 15px ${shadowIntensity / 3}px rgba(0,0,0,0.6))` }} />
-                ) : uploadedImage ? (
-                  <img src={uploadedImage} className="w-full h-full object-contain p-2 opacity-80" alt="after preview" />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-[#E8DCC6]/30 text-sm">No preview yet</div>
-                )}
+
+              {/* AFTER COLUMN */}
+              <div className="flex flex-col">
+                <div className="flex justify-center mb-3">
+                  <span className="text-xs bg-[#e69f50] text-black px-4 py-1.5 rounded-full font-medium">AFTER</span>
+                </div>
+                <div className="relative rounded-xl overflow-hidden bg-[#1A1A1A] flex-1 min-h-[380px] p-4 flex items-center justify-center bg-[length:20px_20px] bg-[url('https://upload.wikimedia.org/wikipedia/commons/5/5b/Checkerboard_pattern.png')]">
+                  {isProcessing ? (
+                    <div className="w-full h-full flex items-center justify-center text-[#e69f50] animate-pulse">Processing... first time 15s</div>
+                  ) : afterImage ? (
+                    <img src={afterImage} className="w-full h-full object-contain" alt="after" style={{ filter: `drop-shadow(0 15px ${shadowIntensity / 3}px rgba(0,0,0,0.6))` }} />
+                  ) : uploadedImage ? (
+                    <img src={uploadedImage} className="w-full h-full object-contain opacity-80" alt="after preview" />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-[#E8DCC6]/30 text-sm">No preview yet</div>
+                  )}
+                </div>
               </div>
             </div>
 
