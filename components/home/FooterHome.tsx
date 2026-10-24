@@ -12,7 +12,7 @@ export default function FooterHome() {
           <div className="w-[130px] flex justify-center items-start">
           <Link href="/" className="block">
               <Image 
-                src="/Logo.png"
+                src="/Logo-White.png"
                 alt="VISFORA" 
                 width={180}
                 height={90}
