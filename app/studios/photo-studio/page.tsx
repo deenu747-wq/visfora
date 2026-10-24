@@ -159,11 +159,9 @@ export default function PhotoStudio() {
           <img src="/Logo.png" alt="VISFORA Logo" className="h-24 w-24 object-contain" />
           <div className="flex flex-col">
             <span className="text-[36px] tracking-[0.32em] font-light text-white leading-none">VIS<span className="font-normal text-[#d6a85a]">FORA</span></span>
-            <span className="text-sm text-[#D4A574]/70 mt-1 tracking-wide">Photo Studio • {AI_MODE === "free" ? "FREE MODE" : "FAL PREMIUM"} {isProcessing && "• Processing..."}</span>
           </div>
         </Link>
         <div className="flex items-center gap-4">
-          <span className="text-sm text-[#E8DCC6]/70 hidden md:block">Mode: {AI_MODE}</span>
           <button onClick={() => fileInputRef.current?.click()} className="bg-[#D4A574] text-black px-5 py-2.5 rounded-xl font-medium flex items-center gap-2"><span className="text-xl">+</span> Upload New</button>
         </div>
       </header>
