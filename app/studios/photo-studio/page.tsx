@@ -149,10 +149,13 @@ export default function PhotoStudio() {
         </div>
       </header>
 
-      {/* SECOND ROW - 1. Generate button icon removed */}
+      {/* 1. CORRECTED: chips in dropdown, removed Edit/Retouch */}
       <div className="border border-[#D4A574]/20 rounded-2xl bg-[#141414] p-3 flex items-center gap-3">
         <span className="text-sm text-[#E8DCC6]/70">Generation Mode:</span>
-        <select className="bg-[#1F1F1F] border border-[#D4A574]/20 rounded-xl px-3 py-2 text-sm cursor-pointer"><option>Edit / Retouch</option><option>Text to 3D Prompt</option></select>
+        <select className="bg-[#1F1F1F] border border-[#D4A574]/20 rounded-xl px-3 py-2 text-sm cursor-pointer min-w-[200px]" value={prompt} onChange={e=>{setPrompt(e.target.value); const c=chips.find(x=>x.chip===e.target.value); if(c){setBgStyle(c.bg); setActiveTool(c.tool);}}}>
+          <option value="">Select chip...</option>
+          {chips.map(c=><option key={c.chip} value={c.chip}>{c.chip}</option>)}
+        </select>
         <div className="flex-1 flex items-center gap-3 bg-[#0F0F0F] border border-[#D4A574]/20 rounded-full px-5 py-2.5"><span>✨</span><input value={prompt} onChange={(e)=>setPrompt(e.target.value)} placeholder="Describe your edit e.g. minimal low poly fox, neon cyan wireframe" className="flex-1 bg-transparent outline-none text-sm placeholder:text-[#E8DCC6]/40" /></div>
         <button onClick={handleProcess} disabled={isProcessing} className={`px-6 py-2.5 text-sm ${ctaClass}`}>Generate</button>
       </div>
@@ -170,9 +173,9 @@ export default function PhotoStudio() {
             </div>
             <button onClick={handleProcess} disabled={isProcessing} className={`w-full mt-4 flex items-center justify-center gap-2 h-[44px] text-[13px] ${ctaClass}`}>✨ Run {tools.find(t=>t.id===activeTool)?.label}</button>
           </div>
+          {/* 2. CORRECTED: UPLOAD text removed */}
           <div className="border border-[#D4A574]/30 rounded-2xl p-4 bg-[#141414]">
-            <span className="text-[11px] bg-[#e69f50]/20 text-[#e69f50] px-3 py-1 rounded-full font-bold">UPLOAD</span>
-            <div onDragOver={e=>e.preventDefault()} onDrop={handleDrop} className="mt-4 border border-dashed border-[#e69f50]/40 rounded-xl p-6 text-center">
+            <div onDragOver={e=>e.preventDefault()} onDrop={handleDrop} className="border border-dashed border-[#e69f50]/40 rounded-xl p-6 text-center">
               <div className="text-[#e69f50] text-2xl">☁️</div>
               <p className="text-sm mt-2">Drag & drop image here</p>
               <p className="text-xs text-[#E8DCC6]/50 mt-1">or click to browse • PNG, JPG</p>
@@ -216,7 +219,6 @@ export default function PhotoStudio() {
           <div className="p-2 text-center text-xs text-[#E8DCC6]/40 border-t border-[#D4A574]/20">Model: {fileName} • 12.4k polygons • 1 material • Ready • Loaded in 1.2s</div>
         </div>
 
-        {/* RIGHT - 2 & 3 CORRECTED */}
         <div className="border border-[#D4A574]/30 rounded-2xl p-4 bg-[#141414] flex flex-col gap-5">
           <div><span className="text-[11px] bg-[#e69f50]/20 text-[#e69f50] px-3 py-1 rounded-full font-bold">EXPORT & VIEW</span><h4 className="text-sm font-medium mt-3 mb-3">DOWNLOAD FORMATS</h4>
             <div className="grid grid-cols-2 gap-2">
