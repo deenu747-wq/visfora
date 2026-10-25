@@ -159,8 +159,9 @@ export default function PhotoStudio() {
         <button onClick={handleProcess} disabled={isProcessing} className={`px-6 py-2.5 text-sm ${ctaClass}`}>Generate</button>
       </div>
 
-      <div className="flex-1 grid grid-cols-1 lg:grid-cols-[280px_1fr_320px] gap-3 items-start">
-        <div className="flex flex-col gap-3">
+      {/* 1,2,3,4 CORRECTED: Expand borders, align bottom edges in one line */}
+      <div className="flex-1 grid grid-cols-1 lg:grid-cols-[280px_1fr_320px] gap-3 items-stretch">
+        <div className="flex flex-col gap-3 h-full">
           <div className="border border-[#D4A574]/30 rounded-2xl p-4 bg-[#141414]">
             <span className="text-[11px] bg-[#e69f50]/20 text-[#e69f50] px-3 py-1 rounded-full font-bold tracking-wide">GENERATE</span>
             <div className="space-y-2 mt-4">
@@ -172,9 +173,8 @@ export default function PhotoStudio() {
             </div>
             <button onClick={handleProcess} disabled={isProcessing} className={`w-full mt-4 flex items-center justify-center gap-2 h-[44px] text-[13px] ${ctaClass}`}>✨ Run {tools.find(t=>t.id===activeTool)?.label}</button>
           </div>
-          {/* 2. CORRECTED: Visible dotted border */}
-          <div className="border border-[#D4A574]/30 rounded-2xl p-4 bg-[#141414]">
-            <div onDragOver={e=>e.preventDefault()} onDrop={handleDrop} className="border-2 border-dashed border-[#e69f50]/70 rounded-xl p-6 text-center bg-[#0F0F0F]/50">
+          <div className="border border-[#D4A574]/30 rounded-2xl p-4 bg-[#141414] flex-1 flex flex-col">
+            <div onDragOver={e=>e.preventDefault()} onDrop={handleDrop} className="border-2 border-dashed border-[#e69f50]/70 rounded-xl p-6 text-center bg-[#0F0F0F]/50 flex-1 flex flex-col justify-center">
               <div className="text-[#e69f50] text-2xl">☁️</div>
               <p className="text-sm mt-2">Drag & drop image here</p>
               <p className="text-xs text-[#E8DCC6]/50 mt-1">or click to browse • PNG, JPG</p>
@@ -184,7 +184,7 @@ export default function PhotoStudio() {
           </div>
         </div>
 
-        <div className="border border-[#D4A574]/30 rounded-2xl bg-[#141414] flex flex-col overflow-hidden aspect-square max-h-[500px]">
+        <div className="border border-[#D4A574]/30 rounded-2xl bg-[#141414] flex flex-col overflow-hidden w-full h-full min-h-[640px]">
           <div className="p-3 border-b border-[#D4A574]/20 flex items-center justify-between">
             <h3 className="text-[#E8DCC6] font-medium">3D Model Viewer</h3>
             <div className="flex items-center gap-2">
@@ -218,14 +218,14 @@ export default function PhotoStudio() {
           <div className="p-2 text-center text-xs text-[#E8DCC6]/40 border-t border-[#D4A574]/20">Model: {fileName} • 12.4k polygons • 1 material • Ready • Loaded in 1.2s</div>
         </div>
 
-        <div className="border border-[#D4A574]/30 rounded-2xl p-4 bg-[#141414] flex flex-col gap-5">
+        <div className="border border-[#D4A574]/30 rounded-2xl p-4 bg-[#141414] flex flex-col gap-5 h-full min-h-[640px]">
           <div><span className="text-[11px] bg-[#e69f50]/20 text-[#e69f50] px-3 py-1 rounded-full font-bold">EXPORT & VIEW</span><h4 className="text-sm font-medium mt-3 mb-3">DOWNLOAD FORMATS</h4>
             <div className="grid grid-cols-2 gap-2">
               <select className="bg-[#1F1F1F] border border-[#D4A574]/20 rounded-xl py-2.5 px-3 text-xs cursor-pointer"><option>⬇️ PNG</option><option>JPG</option><option>WEBP</option></select>
               <select className="bg-[#1F1F1F] border border-[#D4A574]/20 rounded-xl py-2.5 px-3 text-xs cursor-pointer"><option>⬇️ PNG</option><option>JPG</option><option>WEBP</option></select>
             </div>
           </div>
-          <div className="border-t border-[#D4A574]/20 pt-4">
+          <div className="border-t border-[#D4A574]/20 pt-4 flex-1">
             <h4 className="text-sm font-medium mb-3">EXPORT OPTIONS</h4>
             <div className="space-y-4">
               <div><label className="text-xs text-[#E8DCC6]/70">Background Style</label><select value={bgStyle} onChange={e=>setBgStyle(e.target.value)} className="w-full mt-1 bg-[#1F1F1F] border border-[#D4A574]/20 rounded-xl px-3 py-2 text-xs cursor-pointer"><option>Luxury Marble • Gold</option><option>White Infinity</option><option>Minimal Concrete</option><option>Studio Black</option></select></div>
@@ -234,9 +234,9 @@ export default function PhotoStudio() {
               <div><label className="text-xs text-[#E8DCC6]/70 flex justify-between">Quality — {exportQuality}%</label><input type="range" min="10" max="100" value={exportQuality} onChange={e=>setExportQuality(Number(e.target.value))} className="w-full mt-1 accent-[#e69f50] cursor-pointer" /></div>
               <div className="grid grid-cols-2 gap-2 text-xs"><div className="bg-[#1F1F1F] border border-[#D4A574]/20 rounded-xl px-3 py-2"><span className="text-[#E8DCC6]/50">Size</span><div>2048 x 2048</div></div><div className="bg-[#1F1F1F] border border-[#D4A574]/20 rounded-xl px-3 py-2"><span className="text-[#E8DCC6]/50">DPI</span><div>300 DPI</div></div></div>
               <div className="flex gap-2 text-[11px]"><span className="bg-[#e69f50] text-black px-2 py-1 rounded-full">☑ Include Textures</span><span className="bg-[#1F1F1F] border border-[#D4A574]/20 px-2 py-1 rounded-full">Compressed</span></div>
-              <button onClick={handleExport} className={`w-full py-3 text-sm ${ctaClass}`}>⬇️ Export All Formats</button>
             </div>
           </div>
+          <button onClick={handleExport} className={`w-full py-3 text-sm mt-auto ${ctaClass}`}>⬇️ Export All Formats</button>
         </div>
       </div>
 
