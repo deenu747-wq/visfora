@@ -29,7 +29,6 @@ export default function PhotoStudio() {
     { id: "shadow", label: "Shadow Studio", icon: "☁️" },
   ];
 
-  // 2. Dynamic text mapping by tool selection
   const toolStatus: Record<string, { before: string; after: string }> = {
     "change-bg": { before: "Original", after: "BG Removed" },
     "enhance": { before: "Original", after: "Enhanced" },
@@ -48,7 +47,8 @@ export default function PhotoStudio() {
   }, []);
 
   const handleUpload = (file: File) => {
-    setUploadedImage(URL.createObjectURL(file));
+    const url = URL.createObjectURL(file);
+    setUploadedImage(url);
     setUploadedFile(file);
     setFileName(file.name);
     setAfterImage(null);
@@ -90,10 +90,19 @@ export default function PhotoStudio() {
           <img src="/Logo-White.png" alt="VISFORA Logo" className="h-14 w-auto object-contain" />
           <span className="text-[32px] tracking-[0.18em] font-light text-white leading-none flex items-center h-14">VIS<span className="font-semibold text-[#d6a85a]">FORA</span></span>
         </Link>
-        <div className="flex items-center gap-3">
-          <button className="w-9 h-9 rounded-full border bg-[#1F1F1F] border-[#D4A574]/20 flex items-center justify-center cursor-pointer">🔔</button>
-          <button className="w-9 h-9 rounded-full border bg-[#1F1F1F] border-[#D4A574]/20 flex items-center justify-center cursor-pointer">⚙️</button>
-          <button className="w-9 h-9 rounded-full bg-[#e69f50] border-2 border-[#e69f50] text-black flex items-center justify-center font-medium cursor-pointer">👤</button>
+        <div className="flex items-center gap-3 relative">
+          <div className="relative">
+            <button onClick={() => setActiveDropdown(activeDropdown === "notif" ? null : "notif")} className={`w-9 h-9 rounded-full border flex items-center justify-center transition cursor-pointer ${activeDropdown === "notif" ? "bg-[#e69f50] border-[#e69f50] text-black" : "bg-[#1F1F1F] border-[#D4A574]/20 hover:bg-[#2A2A2A]"}`}>🔔</button>
+            {activeDropdown === "notif" && (<div className="absolute right-0 top-12 w-[340px] bg-[#141414] border border-[#D4A574]/30 rounded-2xl shadow-xl z-50 p-2"><div className="p-3 rounded-xl bg-[#1F1F1F]"><p className="text-sm text-white">Background removed</p><p className="text-xs text-[#E8DCC6]/50 mt-1">{fileName} • just now</p></div></div>)}
+          </div>
+          <div className="relative">
+            <button onClick={() => setActiveDropdown(activeDropdown === "settings" ? null : "settings")} className={`w-9 h-9 rounded-full border flex items-center justify-center transition cursor-pointer ${activeDropdown === "settings" ? "bg-[#e69f50] border-[#e69f50] text-black" : "bg-[#1F1F1F] border-[#D4A574]/20 hover:bg-[#2A2A2A]"}`}>⚙️</button>
+            {activeDropdown === "settings" && (<div className="absolute right-0 top-12 w-[300px] bg-[#141414] border border-[#D4A574]/30 rounded-2xl shadow-xl z-50 p-4"><h4 className="text-white mb-3">Settings</h4><div className="text-sm text-[#E8DCC6]/60">High Quality Export ON</div></div>)}
+          </div>
+          <div className="relative">
+            <button onClick={() => setActiveDropdown(activeDropdown === "profile" ? null : "profile")} className="w-9 h-9 rounded-full bg-[#e69f50] border-2 border-[#e69f50] text-black flex items-center justify-center font-medium cursor-pointer">👤</button>
+            {activeDropdown === "profile" && (<div className="absolute right-0 top-12 w-[280px] bg-[#141414] border border-[#D4A574]/30 rounded-2xl shadow-xl z-50 p-4"><p className="text-white text-sm">Ankit Kumar</p><p className="text-xs text-[#E8DCC6]/50">ankit@visfora.com</p></div>)}
+          </div>
         </div>
       </header>
 
@@ -119,11 +128,10 @@ export default function PhotoStudio() {
           <div className="flex items-center justify-between mb-3 px-2">
             <h2 className="text-[#E8DCC6] font-medium text-lg">Canvas</h2>
             <div className="flex items-center gap-3">
-              {/* 1. RENAMED TO Background Removal */}
               <span className="text-xs text-[#E8DCC6]/70 tracking-wide">Background Removal</span>
               <button onClick={() => setIsBgRemoved(!isBgRemoved)} className={`relative w-[64px] h-[28px] rounded-full p-1 transition-all duration-300 cursor-pointer flex items-center ${isBgRemoved ? "bg-[#e69f50]" : "bg-[#2A2A2A] border border-[#D4A574]/20"}`}>
                 <span className={`absolute text-[10px] font-bold transition-all ${isBgRemoved ? "left-2.5 text-black" : "right-2.5 text-[#E8DCC6]/50"}`}>{isBgRemoved ? "ON" : "OFF"}</span>
-                <div className={`w-5 h-5 rounded-full bg-black shadow-md transition-all duration-300 z-10 ${isBgRemoved ? "translate-x-[36px]" : "translate-x-0 bg-[#E8DCC6]"}`} />
+                <div className={`w-5 h-5 rounded-full shadow-md transition-all duration-300 z-10 ${isBgRemoved ? "translate-x-[36px] bg-black" : "translate-x-0 bg-[#E8DCC6]"}`} />
               </button>
             </div>
           </div>
@@ -136,7 +144,6 @@ export default function PhotoStudio() {
             </div>
             
             <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* 4. REMOVED EXTRA TEXTS BEFORE and PNG - CLEAN EDGE-TO-EDGE */}
               <div className="relative rounded-xl overflow-hidden bg-[#111] min-h-[480px]">
                 {uploadedImage ? <img src={uploadedImage} className="w-full h-full object-cover absolute inset-0" alt="before" /> : <img src="/sneaker.png" className="w-full h-full object-cover absolute inset-0" alt="sneaker" />}
               </div>
@@ -144,7 +151,7 @@ export default function PhotoStudio() {
               <div className="relative rounded-xl overflow-hidden bg-[#111] min-h-[480px]">
                 <div className={`absolute inset-0 ${isBgRemoved ? "bg-[length:20px_20px] bg-[url('https://upload.wikimedia.org/wikipedia/commons/5/5b/Checkerboard_pattern.png')] bg-[#1A1A1A]" : "bg-[#1A1A1A]"}`} />
                 {isProcessing ? (
-                  <div className="absolute inset-0 flex items-center justify-center text-[#e69f50] animate-pulse text-sm z-10">Processing...</div>
+                  <div className="absolute inset-0 flex items-center justify-center text-[#e69f50] animate-pulse text-sm z-10">Processing... removing background</div>
                 ) : afterImage && isBgRemoved ? (
                   <img src={afterImage} className="absolute inset-0 w-full h-full object-contain z-10" alt="after removed" />
                 ) : uploadedImage && !isBgRemoved ? (
@@ -157,15 +164,12 @@ export default function PhotoStudio() {
                   <div className="absolute inset-0 flex flex-col items-center justify-center z-10"><p className="text-[#E8DCC6]/30 text-sm">Preview</p><p className="text-[#E8DCC6]/20 text-xs mt-1">No preview yet</p></div>
                 )}
 
-                {/* 2+3. DYNAMIC TEXT + COLOR EXCHANGED */}
                 <div className="absolute bottom-0 left-0 right-0 z-20 p-2.5 flex justify-between items-center">
-                  {/* 2. Text changes by tool */}
                   <span className="text-[10px] bg-black/80 backdrop-blur px-3 py-1.5 rounded-full border border-[#e69f50]/30 text-white flex items-center gap-1.5">
                     <span className="truncate max-w-[80px] text-white/70">{fileName}</span>
                     <span className="text-[#e69f50]">• {currentStatus.after}</span>
                   </span>
                   <div className="flex gap-1.5">
-                    {/* 3. COLOR EXCHANGED: PNG now white, size now gold */}
                     <span className="text-[9px] bg-black/80 backdrop-blur px-2.5 py-1.5 rounded-full border border-white/10 text-white/70">{exportFormat}</span>
                     <span className="text-[9px] bg-black/80 backdrop-blur px-2.5 py-1.5 rounded-full border border-[#e69f50]/30 text-[#e69f50]">2048x2048</span>
                   </div>
@@ -180,7 +184,7 @@ export default function PhotoStudio() {
           <div className="border border-[#D4A574]/30 rounded-2xl p-5 bg-[#141414] h-fit">
             <h3 className="text-[#E8DCC6] font-medium mb-6 flex items-center justify-between">Properties <span>⚙️</span></h3>
             <div className="space-y-6">
-              <div><label className="text-sm text-[#E8DCC6]/70">Background Style</label><select value={bgStyle} onChange={(e) => setBgStyle(e.target.value)} className="w-full mt-2 bg-[#1F1F1F] border border-[#D4A574]/20 rounded-xl px-3 py-2.5 text-sm cursor-pointer"><option>Luxury Marble • Gold</option><option>White Infinity</option></select></div>
+              <div><label className="text-sm text-[#E8DCC6]/70">Background Style</label><select value={bgStyle} onChange={(e) => setBgStyle(e.target.value)} className="w-full mt-2 bg-[#1F1F1F] border border-[#D4A574]/20 rounded-xl px-3 py-2.5 text-sm cursor-pointer"><option>Luxury Marble • Gold</option><option>White Infinity</option><option>Minimal Concrete</option><option>Studio Black</option></select></div>
               <div><label className="text-sm text-[#E8DCC6]/70">Shadow Intensity</label><div className="flex items-center gap-3 mt-2"><input type="range" min="0" max="100" value={shadowIntensity} onChange={(e) => setShadowIntensity(Number(e.target.value))} className="flex-1 accent-[#e69f50] cursor-pointer" /><span className="bg-[#e69f50] text-black text-xs px-3 py-1 rounded-full">{shadowIntensity}%</span></div></div>
               <div><label className="text-sm text-[#E8DCC6]/70">Lighting Direction</label><button className="w-full mt-2 bg-[#1F1F1F] border border-[#D4A574]/20 rounded-xl px-3 py-2.5 text-sm text-left flex items-center gap-2 cursor-pointer">☀️ {lighting}</button></div>
             </div>
