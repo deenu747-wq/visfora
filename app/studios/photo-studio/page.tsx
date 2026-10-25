@@ -5,7 +5,6 @@ import Link from "next/link";
 const AI_MODE = process.env.NEXT_PUBLIC_AI_MODE || "free";
 
 type TabAction = { label: string; desc: string; tool?: string; bg?: string; prompt?: string; badge?: string; };
-
 type HeaderTab = { name: string; path: string; items: TabAction[]; };
 
 export default function PhotoStudio() {
@@ -28,70 +27,13 @@ export default function PhotoStudio() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
 
-  // NEW DYNAMIC HEADER CONFIG - Option 1
   const HEADER_TABS: HeaderTab[] = [
-    {
-      name: "Dashboard",
-      path: "#dashboard",
-      items: [
-        { label: "Overview", desc: "Edits today & credits" },
-        { label: "Recent Projects", desc: "Last 10 files", tool: "remove-bg" },
-        { label: "Quick Upload", desc: "Start new edit" },
-      ],
-    },
-    {
-      name: "Studio",
-      path: "#studio",
-      items: [
-        { label: "Add / Change Background", desc: "Remove & replace BG", tool: "remove-bg" },
-        { label: "Enhance", desc: "Auto enhance image", tool: "enhance" },
-        { label: "AI Backgrounds", desc: "Premium studio BG", tool: "ai-bg", bg: "Luxury Marble • Gold" },
-        { label: "Magic Eraser", desc: "Remove unwanted object", tool: "eraser" },
-        { label: "Recolor", desc: "Change product color", tool: "recolor" },
-        { label: "Shadow Studio", desc: "Add realistic shadow", tool: "shadow" },
-      ],
-    },
-    {
-      name: "Backgrounds",
-      path: "#backgrounds",
-      items: [
-        { label: "Luxury Marble • Gold", desc: "Best seller", tool: "ai-bg", bg: "Luxury Marble • Gold", prompt: "Luxury gold studio" },
-        { label: "White Infinity", desc: "E-com clean", tool: "ai-bg", bg: "White Infinity", prompt: "Minimal marble" },
-        { label: "Studio Black", desc: "Premium dark", tool: "ai-bg", bg: "Studio Black", prompt: "Dark moody" },
-        { label: "Minimal Concrete", desc: "Trending", tool: "ai-bg", bg: "Minimal Concrete", prompt: "Neutral grey backdrop" },
-        { label: "Outdoor Sunlight", desc: "Natural light", tool: "ai-bg", bg: "White Infinity", prompt: "Outdoor sunlight" },
-      ],
-    },
-    {
-      name: "Enhance",
-      path: "#enhance",
-      items: [
-        { label: "Auto Enhance", desc: "One-click fix", tool: "enhance" },
-        { label: "Upscale 2x / 4x", desc: "HD quality", tool: "enhance" },
-        { label: "Color Correction", desc: "True colors", tool: "recolor" },
-        { label: "Lighting Fix", desc: "Studio lights fix", tool: "enhance" },
-        { label: "Sharpen & Denoise", desc: "Crisp details", tool: "enhance" },
-      ],
-    },
-    {
-      name: "Batch",
-      path: "#batch",
-      items: [
-        { label: "Bulk Upload (100)", desc: "Process 10-100 images", badge: "PRO" },
-        { label: "Apply Same BG to All", desc: "Save time", bg: "Luxury Marble • Gold", tool: "ai-bg" },
-        { label: "Bulk Export ZIP", desc: "Download all at once" },
-      ],
-    },
-    {
-      name: "Export",
-      path: "#export",
-      items: [
-        { label: "Recent Exports", desc: "Last 20 files" },
-        { label: "PNG / JPG / WEBP", desc: "Choose format" },
-        { label: "Quality & DPI", desc: "2048x2048 - 300 DPI" },
-        { label: "Share Link", desc: "Client preview" },
-      ],
-    },
+    { name: "Dashboard", path: "#dashboard", items: [ { label: "Overview", desc: "Edits today & credits" }, { label: "Recent Projects", desc: "Last 10 files", tool: "remove-bg" }, { label: "Quick Upload", desc: "Start new edit" }, ] },
+    { name: "Studio", path: "#studio", items: [ { label: "Add / Change Background", desc: "Remove & replace BG", tool: "remove-bg" }, { label: "Enhance", desc: "Auto enhance image", tool: "enhance" }, { label: "AI Backgrounds", desc: "Premium studio BG", tool: "ai-bg", bg: "Luxury Marble • Gold" }, { label: "Magic Eraser", desc: "Remove unwanted object", tool: "eraser" }, { label: "Recolor", desc: "Change product color", tool: "recolor" }, { label: "Shadow Studio", desc: "Add realistic shadow", tool: "shadow" }, ] },
+    { name: "Backgrounds", path: "#backgrounds", items: [ { label: "Luxury Marble • Gold", desc: "Best seller", tool: "ai-bg", bg: "Luxury Marble • Gold", prompt: "Luxury gold studio" }, { label: "White Infinity", desc: "E-com clean", tool: "ai-bg", bg: "White Infinity", prompt: "Minimal marble" }, { label: "Studio Black", desc: "Premium dark", tool: "ai-bg", bg: "Studio Black", prompt: "Dark moody" }, { label: "Minimal Concrete", desc: "Trending", tool: "ai-bg", bg: "Minimal Concrete", prompt: "Neutral grey backdrop" }, { label: "Outdoor Sunlight", desc: "Natural light", tool: "ai-bg", bg: "White Infinity", prompt: "Outdoor sunlight" }, ] },
+    { name: "Enhance", path: "#enhance", items: [ { label: "Auto Enhance", desc: "One-click fix", tool: "enhance" }, { label: "Upscale 2x / 4x", desc: "HD quality", tool: "enhance" }, { label: "Color Correction", desc: "True colors", tool: "recolor" }, { label: "Lighting Fix", desc: "Studio lights fix", tool: "enhance" }, { label: "Sharpen & Denoise", desc: "Crisp details", tool: "enhance" }, ] },
+    { name: "Batch", path: "#batch", items: [ { label: "Bulk Upload (100)", desc: "Process 10-100 images", badge: "PRO" }, { label: "Apply Same BG to All", desc: "Save time", bg: "Luxury Marble • Gold", tool: "ai-bg" }, { label: "Bulk Export ZIP", desc: "Download all at once" }, ] },
+    { name: "Export", path: "#export", items: [ { label: "Recent Exports", desc: "Last 20 files" }, { label: "PNG / JPG / WEBP", desc: "Choose format" }, { label: "Quality & DPI", desc: "2048x2048 - 300 DPI" }, { label: "Share Link", desc: "Client preview" }, ] },
   ];
 
   const tools = [
@@ -104,20 +46,12 @@ export default function PhotoStudio() {
   ];
 
   const toolStatus: Record<string, { after: string }> = {
-    "remove-bg": { after: "BG Removed" },
-    "enhance": { after: "Enhanced" },
-    "ai-bg": { after: "New BG" },
-    "eraser": { after: "Erased" },
-    "recolor": { after: "Recolored" },
-    "shadow": { after: "Shadow Added" },
+    "remove-bg": { after: "BG Removed" }, "enhance": { after: "Enhanced" }, "ai-bg": { after: "New BG" }, "eraser": { after: "Erased" }, "recolor": { after: "Recolored" }, "shadow": { after: "Shadow Added" },
   };
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      if (headerRef.current && !headerRef.current.contains(e.target as Node)) {
-        setActiveDropdown(null);
-        setHoveredHeaderTab(null);
-      }
+      if (headerRef.current && !headerRef.current.contains(e.target as Node)) { setActiveDropdown(null); setHoveredHeaderTab(null); }
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
@@ -129,42 +63,29 @@ export default function PhotoStudio() {
     if (item.tool) setActiveTool(item.tool);
     if (item.bg) setBgStyle(item.bg);
     if (item.prompt) setPrompt(item.prompt);
-    if (item.label === "Quick Upload" || item.label.includes("Bulk Upload")) {
-      fileInputRef.current?.click();
-    }
+    if (item.label === "Quick Upload" || item.label.includes("Bulk Upload")) { fileInputRef.current?.click(); }
   };
 
   const handleUpload = (file: File) => {
     const url = URL.createObjectURL(file);
-    setUploadedImage(url);
-    setUploadedFile(file);
-    setFileName(file.name);
-    setAfterImage(null);
+    setUploadedImage(url); setUploadedFile(file); setFileName(file.name); setAfterImage(null);
   };
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    const file = e.dataTransfer.files[0];
-    if (file) handleUpload(file);
-  };
+  const handleDrop = (e: React.DragEvent) => { e.preventDefault(); const file = e.dataTransfer.files[0]; if (file) handleUpload(file); };
   const handleProcess = async () => {
     if (!uploadedFile && !uploadedImage) { alert("Please upload image first!"); return; }
     setIsProcessing(true);
     try {
-      const pkg = "@imgly" + "/background-removal";
+      const pkg = "@imgly" + "/background-removal"; // @ts-ignore const { removeBackground } = await import(pkg);
       // @ts-ignore
-      const { removeBackground } = await import(pkg);
+      const { removeBackground } = await import("@imgly/background-removal");
       const src = uploadedFile || (await fetch(uploadedImage!).then(r => r.blob()).then(b => new File([b], fileName))) as File;
       const blob = await removeBackground(src as File);
-      setAfterImage(URL.createObjectURL(blob));
-      setIsBgRemoved(true);
+      setAfterImage(URL.createObjectURL(blob)); setIsBgRemoved(true);
     } catch (err: any) { alert("Error: " + err.message); }
     setIsProcessing(false);
   };
   const handleExport = () => {
-    const link = document.createElement("a");
-    link.href = afterImage || uploadedImage!;
-    link.download = `visfora-${activeTool}.${exportFormat.toLowerCase()}`;
-    link.click();
+    const link = document.createElement("a"); link.href = afterImage || uploadedImage!; link.download = `visfora-${activeTool}.${exportFormat.toLowerCase()}`; link.click();
   };
 
   const chips = [
@@ -181,7 +102,7 @@ export default function PhotoStudio() {
 
   return (
     <div className="min-h-screen bg-[#0A0A0A] text-[#E8DCC6] flex flex-col p-3 gap-3">
-      {/* HEADER - NEW DYNAMIC TABS */}
+      {/* HEADER - RECTIFIED - NO ARROWS */}
       <header ref={headerRef} className="border border-[#D4A574]/30 rounded-2xl px-7 py-4 flex items-center justify-between bg-[#141414] sticky top-0 z-50">
         <div className="flex items-center gap-10">
           <Link href="/" className="flex items-center gap-3 cursor-pointer">
@@ -194,26 +115,20 @@ export default function PhotoStudio() {
               const isHovered = hoveredHeaderTab === tab.name;
               return (
                 <div key={tab.name} className="relative" onMouseEnter={() => setHoveredHeaderTab(tab.name)} onMouseLeave={() => setHoveredHeaderTab(null)}>
-                  <button
-                    onClick={() => setActiveHeaderTab(tab.name)}
-                    className={`px-4 py-2 rounded-full border-b-2 transition cursor-pointer text-[14px] flex items-center gap-1.5 ${isActive ? "border-[#e69f50] text-white font-medium bg-white/[0.06]" : "border-transparent text-[#E8DCC6]/60 hover:text-white hover:bg-white/[0.04]"}`}
-                  >
+                  {/* FIX 1: Removed ▼ triangle */}
+                  <button onClick={() => setActiveHeaderTab(tab.name)} className={`px-4 py-2 rounded-full transition cursor-pointer text-[14px] ${isActive ? "border border-[#e69f50] text-white font-medium bg-white/[0.06]" : "border border-transparent text-[#E8DCC6]/60 hover:text-white hover:bg-white/[0.04]"}`}>
                     {tab.name}
-                    <span className={`text-[10px] transition ${isHovered ? "rotate-180" : ""}`}>▼</span>
                   </button>
                   {isHovered && (
                     <div className="absolute left-0 top-[44px] w-[300px] bg-[#141414] border border-[#D4A574]/30 rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.6)] z-50 overflow-hidden p-2">
-                      <div className="px-3 py-2 text-[11px] tracking-widest text-[#e69f50]/70 font-bold">{tab.name.toUpperCase()} TOOLS</div>
+                      {/* FIX 3: Removed tab name header */}
                       {tab.items.map((item) => (
-                        <button key={item.label} onClick={() => handleHeaderItemClick(tab.name, item)} className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-[#1F1F1F] flex justify-between items-center group cursor-pointer">
+                        // FIX 2: Removed → arrow
+                        <button key={item.label} onClick={() => handleHeaderItemClick(tab.name, item)} className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-[#1F1F1F] cursor-pointer">
                           <div>
-                            <div className="text-[13px] text-white flex items-center gap-2">
-                              {item.label}
-                              {item.badge && <span className="text-[9px] bg-[#e69f50] text-black px-1.5 py-0.5 rounded-full font-bold">{item.badge}</span>}
-                            </div>
+                            <div className="text-[13px] text-white flex items-center gap-2">{item.label}{item.badge && <span className="text-[9px] bg-[#e69f50] text-black px-1.5 py-0.5 rounded-full font-bold">{item.badge}</span>}</div>
                             <div className="text-[11px] text-[#E8DCC6]/40">{item.desc}</div>
                           </div>
-                          <span className="text-[#E8DCC6]/20 group-hover:text-white text-[12px]">→</span>
                         </button>
                       ))}
                     </div>
