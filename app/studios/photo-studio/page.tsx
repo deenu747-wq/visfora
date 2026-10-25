@@ -120,7 +120,7 @@ export default function PhotoStudio() {
                     {tab.name}
                   </button>
                   {isHovered && (
-                    <div className="absolute left-0 top-[44px] w-[300px] bg-[#141414] border border-[#D4A574]/30 rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.6)] z-50 overflow-hidden p-2">
+                    <div className="absolute left-0 top-[44px] w-auto min-w-[240px] max-w-[360px] bg-[#141414] border border-[#D4A574]/30 rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.6)] z-50 overflow-hidden p-2">
                       {/* FIX 3: Removed tab name header */}
                       {tab.items.map((item) => (
                         // FIX 2: Removed → arrow
