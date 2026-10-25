@@ -146,12 +146,10 @@ export default function PhotoStudio() {
       case "custom-bg":
         return (
           <div className="space-y-3">
-            {/* ③ AUTO ADJUST TABS - Solid / Gradient - NO STRUCTURE CHANGE */}
             <div className="flex gap-2 bg-[#0F0F0F] border border-[#D4A574]/20 rounded-full p-1">
               <button onClick={()=>setBgMode("solid")} className={`flex-1 py-2 rounded-full text-xs font-medium transition ${bgMode==="solid" ? "bg-[#e69f50] text-black" : "text-[#E8DCC6]/50 hover:text-white"}`}>Solid</button>
               <button onClick={()=>setBgMode("gradient")} className={`flex-1 py-2 rounded-full text-xs font-medium transition ${bgMode==="gradient" ? "bg-[#e69f50] text-black" : "text-[#E8DCC6]/50 hover:text-white"}`}>Gradient</button>
             </div>
-
             <div className="bg-[#1F1F1F] border border-[#D4A574]/20 rounded-xl p-3">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-[11px] text-[#E8DCC6]/60">Background Color</span>
@@ -185,7 +183,6 @@ export default function PhotoStudio() {
                 <div className="flex gap-1 items-center"><input value={blue} onChange={e=>{const v=Math.min(255,Math.max(0,Number(e.target.value)||0)); setBlue(v); const hex=`#${red.toString(16).padStart(2,"0")}${green.toString(16).padStart(2,"0")}${blue.toString(16).padStart(2,"0")}`; setBgColor(hex);}} className="w-full bg-[#0F0F0F] border border-[#D4A574]/20 rounded-lg px-2 py-1.5 text-xs" /><span className="text-[9px] text-[#E8DCC6]/40">B</span></div>
               </div>
             </div>
-
             <div><label className="text-xs text-[#E8DCC6]/70">Background Style</label><select value={bgStyle} onChange={e=>setBgStyle(e.target.value)} className="w-full mt-1 bg-[#1F1F1F] border border-[#D4A574]/20 rounded-xl px-3 py-2.5 text-xs cursor-pointer h-[48px]"><option>Luxury Marble • Gold</option><option>White Infinity</option><option>Minimal Concrete</option><option>Studio Black</option><option>Custom Upload BG</option></select></div>
             <div className={baseCard}><span className="text-[#E8DCC6]/50">Mode</span><div className="mt-1 text-white">Custom Background • AI Remove</div></div>
             <div><label className="text-xs text-[#E8DCC6]/70 flex justify-between">Shadow Intensity <span>{shadowIntensity}%</span></label><input type="range" min="0" max="100" value={shadowIntensity} onChange={e=>setShadowIntensity(Number(e.target.value))} className="w-full mt-2 accent-[#e69f50] cursor-pointer" /></div>
@@ -207,7 +204,6 @@ export default function PhotoStudio() {
         <div className="flex items-center gap-10">
           <Link href="/" className="flex items-center gap-3 cursor-pointer">
             <img src="/Logo-White.png" alt="VISFORA Logo" className="h-11 w-auto object-contain" />
-            {/* ① FIX - Studio -> - Photo Studio */}
             <span className="text-[26px] tracking-[0.18em] font-light text-white leading-none">VIS<span className="font-semibold text-[#d6a85a]">FORA</span> <span className="font-light text-[#E8DCC6]"> - Photo Studio</span></span>
           </Link>
           <nav className="hidden lg:flex items-center gap-1 text-[15px]">
@@ -261,8 +257,9 @@ export default function PhotoStudio() {
         <button onClick={handleProcess} disabled={isProcessing} className={`px-6 py-2.5 text-sm ${ctaClass}`}>Generate</button>
       </div>
 
-      {/* LOCKED GRID - NOT CHANGED */}
-      <div className="flex-1 grid grid-cols-1 lg:grid-cols-[280px_1fr_320px] gap-3 items-start">
+      {/* ✅ LOCKED GRID - FIXED TO STRETCH */}
+      <div className="flex-1 grid grid-cols-1 lg:grid-cols-[280px_1fr_320px] gap-3 items-stretch">
+        {/* LEFT COLUMN */}
         <div className="flex flex-col gap-3 h-full">
           <div className="border border-[#D4A574]/30 rounded-2xl p-4 bg-[#141414]">
             <span className="text-[11px] bg-[#e69f50]/20 text-[#e69f50] px-3 py-1 rounded-full font-bold tracking-wide">{activeHeaderTab.toUpperCase()}</span>
@@ -276,20 +273,25 @@ export default function PhotoStudio() {
             </div>
             <button onClick={handleProcess} disabled={isProcessing} className={`w-full mt-4 flex items-center justify-center gap-2 h-[44px] text-[13px] ${ctaClass}`}>Run {activeToolLabel}</button>
           </div>
-          <div className="border border-[#D4A574]/30 rounded-2xl p-4 bg-[#141414] flex-1 flex flex-col">
-            <div onDragOver={e=>e.preventDefault()} onDrop={handleDrop} className="border-2 border-dashed border-[#e69f50]/70 rounded-xl p-6 text-center bg-[#0F0F0F]/50 flex-1 flex flex-col justify-center">
-              <p className="text-sm mt-2">Drag & drop image here</p>
-              <p className="text-xs text-[#E8DCC6]/50 mt-1">or click to browse • PNG, JPG</p>
+
+          {/* ✅ FIX 1: REDUCED & LOCKED UPLOAD - 220px ONLY */}
+          <div className="border border-[#D4A574]/30 rounded-2xl p-4 bg-[#141414] flex flex-col h-[304px] min-h-[304px] max-h-[304px] shrink-0 overflow-hidden">
+            <div 
+              onDragOver={e=>e.preventDefault()} 
+              onDrop={handleDrop} 
+              className="border-2 border-dashed border-[#e69f50]/70 rounded-xl text-center bg-[#0F0F0F]/50 flex flex-col items-center justify-center h-[220px] min-h-[220px] max-h-[220px] w-full shrink-0 overflow-hidden"
+            >
+              <p className="text-[13px]">Drag & drop image here</p>
+              <p className="text-[11px] text-[#E8DCC6]/50 mt-1">or click to browse • PNG, JPG</p>
             </div>
-            <button onClick={()=>fileInputRef.current?.click()} className={`w-full mt-4 h-[40px] text-[13px] ${ctaClass}`}>Upload Image</button>
+            <button onClick={()=>fileInputRef.current?.click()} className={`w-full mt-3 h-[40px] min-h-[40px] text-[13px] shrink-0 ${ctaClass}`}>Upload Image</button>
             <input ref={fileInputRef} type="file" accept="image/*" hidden onChange={e=>e.target.files && handleUpload(e.target.files[0])} />
           </div>
         </div>
 
-        {/* CENTER - LOCKED SIZE h-[640px] */}
-        <div className="border border-[#D4A574]/30 rounded-2xl bg-[#141414] flex flex-col overflow-hidden w-full h-[640px] min-h-[640px] max-h-[640px]">
-          <div className="p-3 border-b border-[#D4A574]/20 flex items-center justify-between">
-            {/* ② FIX - 3D Model Viewer -> Canva */}
+        {/* ✅ FIX 2: CENTER EXPANDED TO FOOTER & LOCKED */}
+        <div className="border border-[#D4A574]/30 rounded-2xl bg-[#141414] flex flex-col overflow-hidden w-full h-[calc(100vh-200px)] min-h-[calc(100vh-200px)] max-h-[calc(100vh-200px)] self-stretch">
+          <div className="p-3 border-b border-[#D4A574]/20 flex items-center justify-between shrink-0">
             <h3 className="text-[#E8DCC6] font-medium">Canva</h3>
             <div className="flex items-center gap-2">
               <div className="flex items-center gap-2 bg-[#1F1F1F] border border-[#D4A574]/30 rounded-full pl-3 pr-1 py-1 ml-2">
@@ -303,7 +305,7 @@ export default function PhotoStudio() {
               <button className="px-3 py-1 rounded-full text-xs bg-[#1F1F1F] border border-[#D4A574]/20">Fullscreen</button>
             </div>
           </div>
-          <div className="flex-1 relative bg-[#0F0F0F] flex min-h-0">
+          <div className="flex-1 relative bg-[#0F0F0F] flex min-h-0 overflow-hidden">
             <div className="flex-1 relative">
               <div className="absolute top-3 left-3 z-10 text-[11px] font-bold tracking-[0.2em] text-[#e69f50] bg-black/60 px-3 py-1 rounded-full">BEFORE</div>
               {uploadedImage ? <img src={uploadedImage} className="w-full h-full object-cover absolute inset-0" alt="before" /> : <img src="/sneaker.png" className="w-full h-full object-cover absolute inset-0" alt="sneaker" />}
@@ -319,7 +321,7 @@ export default function PhotoStudio() {
               </div>
             </div>
           </div>
-          <div className="p-2 text-center text-xs text-[#E8DCC6]/40 border-t border-[#D4A574]/20">Model: {fileName} • 12.4k polygons • 1 material • Ready • Loaded in 1.2s</div>
+          <div className="p-2 text-center text-xs text-[#E8DCC6]/40 border-t border-[#D4A574]/20 shrink-0">Model: {fileName} • 12.4k polygons • 1 material • Ready • Loaded in 1.2s</div>
         </div>
 
         <div className="flex flex-col gap-3 h-full">
