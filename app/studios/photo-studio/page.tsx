@@ -245,10 +245,17 @@ export default function PhotoStudio() {
     <div className="min-h-screen bg-[#0A0A0A] text-[#E8DCC6] flex flex-col p-3 gap-3">
       <header ref={headerRef} className="border border-[#D4A574]/30 rounded-2xl px-7 py-4 flex items-center justify-between bg-[#141414] sticky top-0 z-50">
         <div className="flex items-center gap-10">
-          <Link href="/" className="flex items-center gap-3 cursor-pointer">
-            <img src="/Logo-White.png" alt="VISFORA Logo" className="h-11 w-auto object-contain" />
-            <span className="text-[26px] tracking-[0.18em] font-light text-white leading-none">VIS<span className="font-semibold text-[#d6a85a]">FORA</span> Studio</span>
-          </Link>
+          <div className="flex items-center gap-3">
+  {/* Logo ONLY - homepage link */}
+  <Link href="/" className="flex items-center cursor-pointer">
+    <img src="/Logo-White.png" alt="VISFORA Logo" className="h-11 w-auto object-contain" />
+  </Link>
+
+  {/* Text - NOT linked */}
+  <span className="text-[26px] tracking-[0.18em] font-light text-white leading-none select-none">
+    VIS<span className="font-semibold text-[#d6a85a]">FORA</span> -Photo Studio
+  </span>
+</div>
           <nav className="hidden lg:flex items-center gap-1 text-[15px]">
             {HEADER_TABS.map((tab) => {
               const isActive = activeHeaderTab === tab.name;
