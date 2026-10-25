@@ -6,21 +6,22 @@ export default function PhotoStudio() {
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const [afterImage, setAfterImage] = useState<string | null>(null);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [fileName, setFileName] = useState("sneaker.png");
   const [prompt, setPrompt] = useState("");
   const [shadowIntensity, setShadowIntensity] = useState(70);
   const [bgStyle, setBgStyle] = useState("Luxury Marble • Gold");
   const [lighting, setLighting] = useState("Top-Right");
-  const [activeTool, setActiveTool] = useState("remove-bg");
+  const [activeTool, setActiveTool] = useState("change-bg");
   const [isProcessing, setIsProcessing] = useState(false);
   const [exportFormat, setExportFormat] = useState("WEBP");
   const [exportQuality, setExportQuality] = useState(90);
-  const [viewMode, setViewMode] = useState<"before" | "after">("after");
+  const [isBgRemoved, setIsBgRemoved] = useState(true);
   const [activeDropdown, setActiveDropdown] = useState<null | "notif" | "settings" | "profile">(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
 
   const tools = [
-    { id: "remove-bg", label: "Remove Background", icon: "🎀" },
+    { id: "change-bg", label: "Add / Change Background", icon: "🎀" },
     { id: "enhance", label: "Enhance", icon: "✨" },
     { id: "ai-bg", label: "AI Backgrounds", icon: "🏔️" },
     { id: "eraser", label: "Magic Eraser", icon: "🪶" },
@@ -29,17 +30,18 @@ export default function PhotoStudio() {
   ];
 
   useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
+    const onClickOutside = (e: MouseEvent) => {
       if (headerRef.current && !headerRef.current.contains(e.target as Node)) setActiveDropdown(null);
     };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    document.addEventListener("mousedown", onClickOutside);
+    return () => document.removeEventListener("mousedown", onClickOutside);
   }, []);
 
   const handleUpload = (file: File) => {
     const url = URL.createObjectURL(file);
     setUploadedImage(url);
     setUploadedFile(file);
+    setFileName(file.name);
     setAfterImage(null);
   };
   const handleDrop = (e: React.DragEvent) => {
@@ -48,15 +50,16 @@ export default function PhotoStudio() {
     if (file) handleUpload(file);
   };
   const handleProcess = async () => {
-    if (!uploadedFile) { alert("Upload first"); return; }
+    if (!uploadedFile && !uploadedImage) { alert("Upload first"); return; }
     setIsProcessing(true);
     try {
       const pkg = "@imgly" + "/background-removal";
       // @ts-ignore
       const { removeBackground } = await import(pkg);
-      const blob = await removeBackground(uploadedFile as File);
+      const src = uploadedFile || (await fetch(uploadedImage!).then(r => r.blob()).then(b => new File([b], fileName)));
+      const blob = await removeBackground(src as File);
       setAfterImage(URL.createObjectURL(blob));
-      setViewMode("after");
+      setIsBgRemoved(true);
     } catch (e: any) { alert(e.message); }
     setIsProcessing(false);
   };
@@ -72,37 +75,15 @@ export default function PhotoStudio() {
 
   return (
     <div className="min-h-screen bg-[#0A0A0A] text-[#E8DCC6] flex flex-col">
-      {/* HEADER - 1. FONT SIZE INCREASED */}
       <header ref={headerRef} className="border-b border-[#D4A574]/30 px-6 py-3 flex items-center justify-between bg-[#0A0A0A] sticky top-0 z-50">
         <Link href="/" className="flex items-center gap-3 cursor-pointer">
           <img src="/Logo-White.png" alt="VISFORA Logo" className="h-14 w-auto object-contain" />
           <span className="text-[32px] tracking-[0.18em] font-light text-white leading-none flex items-center h-14">VIS<span className="font-semibold text-[#d6a85a]">FORA</span></span>
         </Link>
         <div className="flex items-center gap-3 relative">
-          <div className="relative">
-            <button onClick={() => setActiveDropdown(activeDropdown === "notif" ? null : "notif")} className={`w-9 h-9 rounded-full border flex items-center justify-center transition cursor-pointer ${activeDropdown === "notif" ? "bg-[#e69f50] border-[#e69f50] text-black" : "bg-[#1F1F1F] border-[#D4A574]/20 hover:bg-[#2A2A2A]"}`}>🔔</button>
-            {activeDropdown === "notif" && (
-              <div className="absolute right-0 top-12 w-[340px] bg-[#141414] border border-[#D4A574]/30 rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.6)] z-50 overflow-hidden">
-                <div className="p-4 border-b border-[#D4A574]/20 flex items-center justify-between"><h4 className="font-medium text-white">Notifications</h4><span className="text-xs bg-[#e69f50] text-black px-2 py-0.5 rounded-full">3 new</span></div>
-                <div className="p-2 space-y-1"><div className="p-3 rounded-xl bg-[#1F1F1F] border border-[#D4A574]/10"><p className="text-sm text-white">Background removed successfully</p><p className="text-xs text-[#E8DCC6]/50 mt-1">sneaker.png • 2 min ago</p></div><div className="p-3 rounded-xl bg-[#1F1F1F] border border-[#D4A574]/10"><p className="text-sm text-white">Credits running low</p><p className="text-xs text-[#E8DCC6]/50 mt-1">12 credits left</p></div><div className="p-3 rounded-xl bg-[#1F1F1F] border border-[#D4A574]/10"><p className="text-sm text-white">Export WEBP ready</p><p className="text-xs text-[#E8DCC6]/50 mt-1">2048x2048</p></div></div>
-              </div>
-            )}
-          </div>
-          <div className="relative">
-            <button onClick={() => setActiveDropdown(activeDropdown === "settings" ? null : "settings")} className={`w-9 h-9 rounded-full border flex items-center justify-center transition cursor-pointer ${activeDropdown === "settings" ? "bg-[#e69f50] border-[#e69f50] text-black" : "bg-[#1F1F1F] border-[#D4A574]/20 hover:bg-[#2A2A2A]"}`}>⚙️</button>
-            {activeDropdown === "settings" && (
-              <div className="absolute right-0 top-12 w-[300px] bg-[#141414] border border-[#D4A574]/30 rounded-2xl shadow-xl z-50 p-4">
-                <h4 className="font-medium text-white mb-4">Settings</h4>
-                <div className="space-y-3 text-sm text-[#E8DCC6]/70"><div className="flex justify-between"><span>High Quality Export</span><div className="w-10 h-5 bg-[#e69f50] rounded-full p-0.5"><div className="w-4 h-4 bg-black rounded-full ml-auto"></div></div></div><div className="flex justify-between"><span>Auto-save</span><div className="w-10 h-5 bg-[#1F1F1F] border rounded-full p-0.5"><div className="w-4 h-4 bg-[#E8DCC6]/50 rounded-full"></div></div></div></div>
-              </div>
-            )}
-          </div>
-          <div className="relative">
-            <button onClick={() => setActiveDropdown(activeDropdown === "profile" ? null : "profile")} className="w-9 h-9 rounded-full bg-[#e69f50] border-2 border-[#e69f50] text-black flex items-center justify-center font-medium cursor-pointer">👤</button>
-            {activeDropdown === "profile" && (
-              <div className="absolute right-0 top-12 w-[280px] bg-[#141414] border border-[#D4A574]/30 rounded-2xl shadow-xl z-50 overflow-hidden"><div className="p-4 border-b border-[#D4A574]/20 flex gap-3"><div className="w-12 h-12 rounded-full bg-[#e69f50] flex items-center justify-center text-black font-bold">AK</div><div><p className="text-sm text-white">Ankit Kumar</p><p className="text-xs text-[#E8DCC6]/50">ankit@visfora.com</p></div></div><div className="p-2 text-sm"><button className="w-full text-left px-3 py-2 rounded-xl hover:bg-[#1F1F1F] cursor-pointer">👤 My Profile</button><button className="w-full text-left px-3 py-2 rounded-xl hover:bg-[#1F1F1F] cursor-pointer">💳 Billing • 112 left</button><button className="w-full text-left px-3 py-2 rounded-xl hover:bg-red-500/10 hover:text-red-400 cursor-pointer mt-2 border-t border-[#D4A574]/10">🚪 Logout</button></div></div>
-            )}
-          </div>
+          <div className="relative"><button onClick={() => setActiveDropdown(activeDropdown === "notif" ? null : "notif")} className={`w-9 h-9 rounded-full border flex items-center justify-center transition cursor-pointer ${activeDropdown === "notif" ? "bg-[#e69f50] border-[#e69f50] text-black" : "bg-[#1F1F1F] border-[#D4A574]/20 hover:bg-[#2A2A2A]"}`}>🔔</button>{activeDropdown === "notif" && (<div className="absolute right-0 top-12 w-[340px] bg-[#141414] border border-[#D4A574]/30 rounded-2xl shadow-xl z-50 p-2"><div className="p-3 rounded-xl bg-[#1F1F1F]"><p className="text-sm text-white">Background removed</p><p className="text-xs text-[#E8DCC6]/50 mt-1">{fileName} • just now</p></div></div>)}</div>
+          <div className="relative"><button onClick={() => setActiveDropdown(activeDropdown === "settings" ? null : "settings")} className={`w-9 h-9 rounded-full border flex items-center justify-center transition cursor-pointer ${activeDropdown === "settings" ? "bg-[#e69f50] border-[#e69f50] text-black" : "bg-[#1F1F1F] border-[#D4A574]/20 hover:bg-[#2A2A2A]"}`}>⚙️</button>{activeDropdown === "settings" && (<div className="absolute right-0 top-12 w-[300px] bg-[#141414] border border-[#D4A574]/30 rounded-2xl shadow-xl z-50 p-4"><h4 className="text-white mb-3">Settings</h4><div className="text-sm text-[#E8DCC6]/60">High Quality Export ON</div></div>)}</div>
+          <div className="relative"><button onClick={() => setActiveDropdown(activeDropdown === "profile" ? null : "profile")} className="w-9 h-9 rounded-full bg-[#e69f50] border-2 border-[#e69f50] text-black flex items-center justify-center font-medium cursor-pointer">👤</button>{activeDropdown === "profile" && (<div className="absolute right-0 top-12 w-[280px] bg-[#141414] border border-[#D4A574]/30 rounded-2xl shadow-xl z-50 p-4"><p className="text-white text-sm">Ankit Kumar</p><p className="text-xs text-[#E8DCC6]/50">ankit@visfora.com</p></div>)}</div>
         </div>
       </header>
 
@@ -127,30 +108,65 @@ export default function PhotoStudio() {
         <main className="flex-1 flex flex-col">
           <div className="flex items-center justify-between mb-3 px-2">
             <h2 className="text-[#E8DCC6] font-medium text-lg">Canvas</h2>
-            
-            {/* 3. SLIDING TOGGLE REPLACING TWO BUTTONS */}
-            <div className="relative bg-[#1F1F1F] border border-[#D4A574]/20 rounded-full p-1 flex w-[180px] h-[36px] cursor-pointer">
-              <div className={`absolute top-1 bottom-1 w-[86px] bg-[#e69f50] rounded-full shadow-[0_0_10px_rgba(230,159,80,0.4)] transition-all duration-300 ease-out ${viewMode === "before" ? "left-1" : "left-[86px]"}`} />
-              <button onClick={() => setViewMode("before")} className={`relative z-10 flex-1 text-xs font-medium tracking-wide rounded-full transition-colors cursor-pointer ${viewMode === "before" ? "text-black" : "text-[#E8DCC6]/60 hover:text-[#E8DCC6]"}`}>BEFORE</button>
-              <button onClick={() => setViewMode("after")} className={`relative z-10 flex-1 text-xs font-medium tracking-wide rounded-full transition-colors cursor-pointer ${viewMode === "after" ? "text-black" : "text-[#E8DCC6]/60 hover:text-[#E8DCC6]"}`}>AFTER</button>
+            {/* 1. NEW SLIDING BG REMOVER TOGGLE */}
+            <div className="flex items-center gap-3">
+              <span className="text-xs text-[#E8DCC6]/60 tracking-wide">Add Bg Remover</span>
+              <button onClick={() => setIsBgRemoved(!isBgRemoved)} className={`relative w-[52px] h-[28px] rounded-full p-1 transition-all duration-300 cursor-pointer ${isBgRemoved ? "bg-[#e69f50]" : "bg-[#1F1F1F] border border-[#D4A574]/30"}`}>
+                <div className={`w-5 h-5 rounded-full bg-black shadow-md transition-all duration-300 ${isBgRemoved ? "translate-x-6 bg-black" : "translate-x-0 bg-[#E8DCC6]/60"}`} />
+              </button>
+              <span className={`text-xs font-medium ${isBgRemoved ? "text-[#e69f50]" : "text-[#E8DCC6]/40"}`}>{isBgRemoved ? "ON" : "OFF"}</span>
             </div>
           </div>
 
           <div onDragOver={(e) => e.preventDefault()} onDrop={handleDrop} className="flex-1 border border-dashed border-[#D4A574]/50 rounded-2xl p-4 bg-[#0F0F0F] relative min-h-[580px] flex flex-col">
-            
-            {/* 2. BEFORE/AFTER WITHOUT BACKGROUND BOX */}
-            <div className="flex items-center justify-between mb-5 px-4">
-              <span className="text-[13px] font-semibold tracking-[0.15em] text-[#E8DCC6]/90">BEFORE</span>
-              <p className="text-center text-[13px] text-[#E8DCC6]/60 leading-tight">Drag & drop to upload<br/>or click Upload</p>
-              <span className="text-[13px] font-semibold tracking-[0.15em] text-[#E8DCC6]/90">AFTER</span>
+            <div className="flex items-center justify-between mb-3 px-2">
+              <span className="text-[11px] font-bold tracking-[0.2em] text-[#E8DCC6]/60">BEFORE</span>
+              <p className="text-center text-[12px] text-[#E8DCC6]/50">Drag & drop to upload<br/>or click Upload</p>
+              <span className="text-[11px] font-bold tracking-[0.2em] text-[#E8DCC6]/60">AFTER</span>
             </div>
             
-            <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className={`relative rounded-xl overflow-hidden bg-[#1A1A1A] flex-1 min-h-[420px] p-4 flex items-center justify-center transition-all duration-300 ${viewMode === "before" ? "ring-1 ring-[#e69f50]/50" : "opacity-60"}`}>
-                {uploadedImage ? <img src={uploadedImage} className="w-full h-full object-contain" alt="before" /> : <img src="/sneaker.png" className="w-full h-full object-contain" alt="sneaker" />}
+            <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* 3. EXPANDED TO EDGES */}
+              <div className="relative rounded-xl overflow-hidden bg-[#111] min-h-[460px] flex items-center justify-center">
+                {uploadedImage ? (
+                  <img src={uploadedImage} className="w-full h-full object-cover absolute inset-0" alt="before" />
+                ) : (
+                  <img src="/sneaker.png" className="w-full h-full object-cover absolute inset-0" alt="sneaker" />
+                )}
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent px-3 py-2 flex justify-between items-center">
+                  <span className="text-[10px] text-white/70 truncate">{fileName}</span>
+                  <span className="text-[10px] bg-black/50 border border-white/10 px-2 py-0.5 rounded-full text-white/60">{uploadedFile?.type.split("/")[1]?.toUpperCase() || "PNG"} • BEFORE</span>
+                </div>
               </div>
-              <div className={`relative rounded-xl overflow-hidden bg-[#1A1A1A] flex-1 min-h-[420px] p-4 flex items-center justify-center transition-all duration-300 bg-[length:20px_20px] bg-[url('https://upload.wikimedia.org/wikipedia/commons/5/5b/Checkerboard_pattern.png')] ${viewMode === "after" ? "ring-1 ring-[#e69f50]/50 opacity-100" : "opacity-60"}`}>
-                {isProcessing ? <div className="w-full h-full flex items-center justify-center text-[#e69f50] animate-pulse">Processing... first time 15s</div> : afterImage ? <img src={afterImage} className="w-full h-full object-contain" alt="after" /> : uploadedImage ? <img src={uploadedImage} className="w-full h-full object-contain opacity-80" alt="preview" /> : <div className="w-full h-full flex items-center justify-center text-[#E8DCC6]/30 text-sm">No preview yet</div>}
+
+              {/* 1 + 4. AFTER WITH BG REMOVER TOGGLE + PREVIEW + FILE NAME */}
+              <div className={`relative rounded-xl overflow-hidden min-h-[460px] flex flex-col ${isBgRemoved ? "bg-[length:20px_20px] bg-[url('https://upload.wikimedia.org/wikipedia/commons/5/5b/Checkerboard_pattern.png')] bg-[#1A1A1A]" : "bg-[#1A1A1A]"}`}>
+                <div className="flex-1 relative flex items-center justify-center">
+                  {isProcessing ? (
+                    <div className="text-[#e69f50] animate-pulse text-sm">Processing... removing background</div>
+                  ) : afterImage && isBgRemoved ? (
+                    <img src={afterImage} className="w-full h-full object-contain p-2" alt="after removed" />
+                  ) : uploadedImage && !isBgRemoved ? (
+                    <img src={uploadedImage} className="w-full h-full object-cover absolute inset-0" alt="after with bg" />
+                  ) : afterImage && !isBgRemoved ? (
+                    <div className="w-full h-full relative">
+                      <img src={bgStyle.includes("Gold") ? "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=1000" : "/sneaker.png"} className="w-full h-full object-cover absolute inset-0 opacity-60" alt="bg" />
+                      <img src={afterImage} className="w-full h-full object-contain p-4 relative z-10" alt="after" />
+                    </div>
+                  ) : uploadedImage ? (
+                    <img src={uploadedImage} className="w-full h-full object-contain opacity-60 p-2" alt="preview" />
+                  ) : (
+                    <div className="text-center">
+                      <p className="text-[#E8DCC6]/30 text-sm">Preview</p>
+                      <p className="text-[#E8DCC6]/20 text-xs mt-1">No preview yet</p>
+                    </div>
+                  )}
+                </div>
+                {/* 4. SHOW PREVIEW TEXT AND FILE NAME WITH FORMAT */}
+                <div className="absolute bottom-0 left-0 right-0 bg-[#0A0A0A]/90 border-t border-[#D4A574]/20 px-3 py-2.5 flex justify-between items-center backdrop-blur">
+                  <div className="flex flex-col"><span className="text-[11px] text-white font-medium">Preview • {isBgRemoved ? "BG Removed" : "With Background"}</span><span className="text-[10px] text-[#E8DCC6]/50 truncate max-w-[160px]">{fileName}</span></div>
+                  <div className="flex gap-1.5"><span className="text-[9px] bg-[#1F1F1F] border border-[#D4A574]/20 px-2 py-1 rounded-full text-[#E8DCC6]/70">{exportFormat}</span><span className="text-[9px] bg-[#e69f50]/20 text-[#e69f50] px-2 py-1 rounded-full">2048x2048</span></div>
+                </div>
               </div>
             </div>
             <input ref={fileInputRef} type="file" accept="image/*" hidden onChange={(e) => e.target.files && handleUpload(e.target.files[0])} />
@@ -179,15 +195,8 @@ export default function PhotoStudio() {
       </div>
 
       <div className="border-t border-[#D4A574]/30 p-4 bg-[#141414] mx-4 mb-4 rounded-2xl">
-        <div className="flex gap-3">
-          <div className="flex-1 flex items-center gap-3 bg-[#0F0F0F] border border-[#D4A574]/20 rounded-xl px-4 py-3"><span>✨</span><input value={prompt} onChange={(e) => setPrompt(e.target.value)} placeholder="Describe your edit • e.g., Add golden luxury studio backdrop, soft dramatic shadow, photoreal" className="flex-1 bg-transparent outline-none text-sm placeholder:text-[#E8DCC6]/40" /></div>
-          <button onClick={handleProcess} disabled={isProcessing} className={`px-6 py-3 rounded-xl text-sm disabled:opacity-50 ${ctaClass}`}>{isProcessing ? "Working..." : "Generate"}</button>
-        </div>
-        <div className="flex gap-2 mt-3 overflow-x-auto justify-center">
-          {["Luxury gold studio","Minimal marble","Dark moody","Outdoor sunlight","Neutral grey backdrop"].map(chip => (
-            <button key={chip} className="whitespace-nowrap px-4 py-2 rounded-xl text-xs border border-[#D4A574]/30 bg-[#1F1F1F] hover:bg-[#e69f50] hover:text-black transition cursor-pointer">✨ {chip}</button>
-          ))}
-        </div>
+        <div className="flex gap-3"><div className="flex-1 flex items-center gap-3 bg-[#0F0F0F] border border-[#D4A574]/20 rounded-xl px-4 py-3"><span>✨</span><input value={prompt} onChange={(e) => setPrompt(e.target.value)} placeholder="Describe your edit • e.g., Add golden luxury studio backdrop, soft dramatic shadow, photoreal" className="flex-1 bg-transparent outline-none text-sm placeholder:text-[#E8DCC6]/40" /></div><button onClick={handleProcess} disabled={isProcessing} className={`px-6 py-3 rounded-xl text-sm disabled:opacity-50 ${ctaClass}`}>{isProcessing ? "Working..." : "Generate"}</button></div>
+        <div className="flex gap-2 mt-3 overflow-x-auto justify-center">{["Luxury gold studio","Minimal marble","Dark moody","Outdoor sunlight","Neutral grey backdrop"].map(chip => (<button key={chip} className="whitespace-nowrap px-4 py-2 rounded-xl text-xs border border-[#D4A574]/30 bg-[#1F1F1F] hover:bg-[#e69f50] hover:text-black transition cursor-pointer">✨ {chip}</button>))}</div>
       </div>
     </div>
   );
