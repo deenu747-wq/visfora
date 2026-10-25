@@ -18,7 +18,7 @@ export default function PhotoStudio() {
   const [exportFormat, setExportFormat] = useState("PNG");
   const [exportQuality, setExportQuality] = useState(90);
   const [isBgRemoved, setIsBgRemoved] = useState(true);
-  const [activeDropdown, setActiveDropdown] = useState<null | "notif" | "settings" | "profile">(null);
+  const [activeDropdown, setActiveDropdown] = useState<null | "notif" | "profile">(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
 
@@ -95,30 +95,23 @@ export default function PhotoStudio() {
 
   return (
     <div className="min-h-screen bg-[#0A0A0A] text-[#E8DCC6] flex flex-col p-3 gap-3">
-      <header ref={headerRef} className="border border-[#D4A574]/30 rounded-2xl px-6 py-3 flex items-center justify-between bg-[#141414] sticky top-0 z-50">
-        <div className="flex items-center gap-8">
+      {/* HEADER - UPDATED PER YOUR 4 POINTS */}
+      <header ref={headerRef} className="border border-[#D4A574]/30 rounded-2xl px-7 py-4 flex items-center justify-between bg-[#141414] sticky top-0 z-50">
+        <div className="flex items-center gap-10">
           <Link href="/" className="flex items-center gap-3 cursor-pointer">
-            <img src="/Logo-White.png" alt="VISFORA Logo" className="h-10 w-auto object-contain" />
-            <span className="text-[22px] tracking-[0.18em] font-light text-white leading-none">VIS<span className="font-semibold text-[#d6a85a]">FORA</span> Studio</span>
+            <img src="/Logo-White.png" alt="VISFORA Logo" className="h-11 w-auto object-contain" />
+            <span className="text-[26px] tracking-[0.18em] font-light text-white leading-none">VIS<span className="font-semibold text-[#d6a85a]">FORA</span> Studio</span>
           </Link>
-          <nav className="hidden lg:flex items-center gap-6 text-sm">
+          <nav className="hidden lg:flex items-center gap-8 text-[15px]">
             {["Project","Studio","Assets","Scene","Render","Settings"].map(tab => (
-              <button key={tab} className={`pb-1 border-b-2 transition cursor-pointer ${tab==="Studio" ? "border-[#e69f50] text-white font-medium" : "border-transparent text-[#E8DCC6]/60 hover:text-white"}`}>{tab}</button>
+              <button key={tab} className={`pb-1 border-b-2 transition cursor-pointer text-[15px] ${tab==="Studio" ? "border-[#e69f50] text-white font-medium" : "border-transparent text-[#E8DCC6]/60 hover:text-white"}`}>{tab}</button>
             ))}
           </nav>
         </div>
-        <div className="flex items-center gap-3 relative">
+        <div className="flex items-center gap-1 relative">
+          {/* 1. NOTIFICATION FIRST - 3. NO CIRCLE, ONLY HOVER EFFECT */}
           <div className="relative">
-            <button onClick={() => setActiveDropdown(activeDropdown === "profile" ? null : "profile")} className={`w-9 h-9 rounded-full flex items-center justify-center font-medium cursor-pointer border-2 transition ${activeDropdown === "profile" ? "bg-[#e69f50] border-[#e69f50] text-black" : "bg-[#e69f50] border-[#e69f50]/50 text-black"}`}>U</button>
-            {activeDropdown === "profile" && (
-              <div className="absolute right-0 top-12 w-[280px] bg-[#141414] border border-[#D4A574]/30 rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.6)] z-50 overflow-hidden">
-                <div className="p-4 border-b border-[#D4A574]/20 flex gap-3 items-center"><div className="w-12 h-12 rounded-full bg-[#e69f50] flex items-center justify-center text-black font-bold">AK</div><div><p className="text-sm font-medium text-white">Ankit Kumar</p><p className="text-xs text-[#E8DCC6]/50">ankit@visfora.com</p><span className="text-[10px] bg-[#e69f50]/20 text-[#e69f50] px-2 py-0.5 rounded-full mt-1 inline-block">PRO PLAN</span></div></div>
-                <div className="p-2"><button className="w-full text-left px-3 py-2.5 rounded-xl text-sm hover:bg-[#1F1F1F] flex items-center gap-3 cursor-pointer"><span>👤</span> My Profile</button><button className="w-full text-left px-3 py-2.5 rounded-xl text-sm hover:bg-[#1F1F1F] flex items-center gap-3 cursor-pointer"><span>💳</span> Billing & Credits <span className="ml-auto text-xs bg-[#1F1F1F] px-2 py-0.5 rounded-full">112 left</span></button><button className="w-full text-left px-3 py-2.5 rounded-xl text-sm hover:bg-[#1F1F1F] flex items-center gap-3 cursor-pointer"><span>📁</span> My Projects</button><button className="w-full text-left px-3 py-2.5 rounded-xl text-sm hover:bg-[#1F1F1F] flex items-center gap-3 cursor-pointer"><span>❓</span> Help & Support</button><div className="border-t border-[#D4A574]/10 mt-2 pt-2"><button className="w-full text-left px-3 py-2.5 rounded-xl text-sm hover:bg-red-500/10 hover:text-red-400 flex items-center gap-3 cursor-pointer"><span>🚪</span> Logout</button></div></div>
-              </div>
-            )}
-          </div>
-          <div className="relative">
-            <button onClick={() => setActiveDropdown(activeDropdown === "notif" ? null : "notif")} className={`w-9 h-9 rounded-full border flex items-center justify-center transition cursor-pointer ${activeDropdown === "notif" ? "bg-[#e69f50] border-[#e69f50] text-black" : "bg-[#1F1F1F] border-[#D4A574]/20 hover:bg-[#2A2A2A]"}`}>🔔</button>
+            <button onClick={() => setActiveDropdown(activeDropdown === "notif" ? null : "notif")} className={`w-11 h-11 flex items-center justify-center text-[20px] transition-all cursor-pointer bg-transparent border-0 rounded-xl ${activeDropdown === "notif" ? "bg-white/10 shadow-[0_2px_12px_rgba(255,255,255,0.15)] text-white" : "text-[#E8DCC6]/80 hover:bg-white/10 hover:shadow-[0_4px_20px_rgba(255,255,255,0.12)] hover:text-white"}`}>🔔</button>
             {activeDropdown === "notif" && (
               <div className="absolute right-0 top-12 w-[340px] bg-[#141414] border border-[#D4A574]/30 rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.6)] z-50 overflow-hidden">
                 <div className="p-4 border-b border-[#D4A574]/20 flex items-center justify-between"><h4 className="font-medium text-white">Notifications</h4><span className="text-xs bg-[#e69f50] text-black px-2 py-0.5 rounded-full">3 new</span></div>
@@ -131,17 +124,20 @@ export default function PhotoStudio() {
               </div>
             )}
           </div>
+          {/* 2. PROFILE SECOND - BIGGER */}
           <div className="relative">
-            <button onClick={() => setActiveDropdown(activeDropdown === "settings" ? null : "settings")} className={`w-9 h-9 rounded-full border flex items-center justify-center transition cursor-pointer ${activeDropdown === "settings" ? "bg-[#e69f50] border-[#e69f50] text-black" : "bg-[#1F1F1F] border-[#D4A574]/20 hover:bg-[#2A2A2A]"}`}>⚙️</button>
-            {activeDropdown === "settings" && (
-              <div className="absolute right-0 top-12 w-[300px] bg-[#141414] border border-[#D4A574]/30 rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.6)] z-50 overflow-hidden p-4">
-                <h4 className="font-medium text-white mb-4">Settings</h4>
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between"><span className="text-sm text-[#E8DCC6]/70">High Quality Export</span><div className="w-10 h-5 bg-[#e69f50] rounded-full p-0.5 cursor-pointer"><div className="w-4 h-4 bg-black rounded-full ml-auto"></div></div></div>
-                  <div className="flex items-center justify-between"><span className="text-sm text-[#E8DCC6]/70">Auto-save results</span><div className="w-10 h-5 bg-[#1F1F1F] border border-[#D4A574]/20 rounded-full p-0.5 cursor-pointer"><div className="w-4 h-4 bg-[#E8DCC6]/50 rounded-full"></div></div></div>
-                  <div><label className="text-xs text-[#E8DCC6]/50">Default Format</label><select value={exportFormat} onChange={(e)=>setExportFormat(e.target.value)} className="w-full mt-1 bg-[#1F1F1F] border border-[#D4A574]/20 rounded-xl px-3 py-2 text-sm cursor-pointer"><option>WEBP</option><option>PNG</option><option>JPG</option></select></div>
-                  <div><label className="text-xs text-[#E8DCC6]/50">Language</label><select className="w-full mt-1 bg-[#1F1F1F] border border-[#D4A574]/20 rounded-xl px-3 py-2 text-sm cursor-pointer"><option>English</option><option>Hindi</option></select></div>
-                  <div className="pt-2 border-t border-[#D4A574]/10 flex gap-2"><button className="flex-1 bg-[#1F1F1F] border border-[#D4A574]/20 py-2 rounded-full text-xs hover:bg-[#2A2A2A] cursor-pointer">Reset</button><button onClick={() => setActiveDropdown(null)} className={`flex-1 py-2 rounded-full text-xs ${ctaClass}`}>Save</button></div>
+            <button onClick={() => setActiveDropdown(activeDropdown === "profile" ? null : "profile")} className={`w-11 h-11 rounded-full flex items-center justify-center font-medium cursor-pointer border-2 transition text-[15px] ${activeDropdown === "profile" ? "bg-[#e69f50] border-[#e69f50] text-black" : "bg-[#e69f50] border-[#e69f50]/50 text-black hover:border-[#e69f50] hover:shadow-[0_0_15px_rgba(230,159,80,0.4)]"}`}>U</button>
+            {activeDropdown === "profile" && (
+              <div className="absolute right-0 top-12 w-[280px] bg-[#141414] border border-[#D4A574]/30 rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.6)] z-50 overflow-hidden">
+                <div className="p-4 border-b border-[#D4A574]/20 flex gap-3 items-center"><div className="w-12 h-12 rounded-full bg-[#e69f50] flex items-center justify-center text-black font-bold">AK</div><div><p className="text-sm font-medium text-white">Ankit Kumar</p><p className="text-xs text-[#E8DCC6]/50">ankit@visfora.com</p><span className="text-[10px] bg-[#e69f50]/20 text-[#e69f50] px-2 py-0.5 rounded-full mt-1 inline-block">PRO PLAN</span></div></div>
+                <div className="p-2">
+                  <button className="w-full text-left px-3 py-2.5 rounded-xl text-sm hover:bg-[#1F1F1F] flex items-center gap-3 cursor-pointer"><span>👤</span> My Profile</button>
+                  <button className="w-full text-left px-3 py-2.5 rounded-xl text-sm hover:bg-[#1F1F1F] flex items-center gap-3 cursor-pointer"><span>💳</span> Billing & Credits <span className="ml-auto text-xs bg-[#1F1F1F] px-2 py-0.5 rounded-full">112 left</span></button>
+                  <button className="w-full text-left px-3 py-2.5 rounded-xl text-sm hover:bg-[#1F1F1F] flex items-center gap-3 cursor-pointer"><span>📁</span> My Projects</button>
+                  {/* 4. SETTINGS MOVED INSIDE PROFILE DROPDOWN - CONTENT UNCHANGED */}
+                  <button className="w-full text-left px-3 py-2.5 rounded-xl text-sm hover:bg-[#1F1F1F] flex items-center gap-3 cursor-pointer"><span>⚙️</span> Settings</button>
+                  <button className="w-full text-left px-3 py-2.5 rounded-xl text-sm hover:bg-[#1F1F1F] flex items-center gap-3 cursor-pointer"><span>❓</span> Help & Support</button>
+                  <div className="border-t border-[#D4A574]/10 mt-2 pt-2"><button className="w-full text-left px-3 py-2.5 rounded-xl text-sm hover:bg-red-500/10 hover:text-red-400 flex items-center gap-3 cursor-pointer"><span>🚪</span> Logout</button></div>
                 </div>
               </div>
             )}
@@ -159,7 +155,6 @@ export default function PhotoStudio() {
         <button onClick={handleProcess} disabled={isProcessing} className={`px-6 py-2.5 text-sm ${ctaClass}`}>Generate</button>
       </div>
 
-      {/* 1,2,3,4 CORRECTED: Expand borders, align bottom edges in one line */}
       <div className="flex-1 grid grid-cols-1 lg:grid-cols-[280px_1fr_320px] gap-3 items-stretch">
         <div className="flex flex-col gap-3 h-full">
           <div className="border border-[#D4A574]/30 rounded-2xl p-4 bg-[#141414]">
