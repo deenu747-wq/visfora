@@ -2,6 +2,8 @@
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 
+const AI_MODE = process.env.NEXT_PUBLIC_AI_MODE || "free";
+
 export default function PhotoStudio() {
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const [afterImage, setAfterImage] = useState<string | null>(null);
@@ -11,7 +13,7 @@ export default function PhotoStudio() {
   const [shadowIntensity, setShadowIntensity] = useState(70);
   const [bgStyle, setBgStyle] = useState("Luxury Marble • Gold");
   const [lighting, setLighting] = useState("Top-Right");
-  const [activeTool, setActiveTool] = useState("change-bg");
+  const [activeTool, setActiveTool] = useState("remove-bg");
   const [isProcessing, setIsProcessing] = useState(false);
   const [exportFormat, setExportFormat] = useState("PNG");
   const [exportQuality, setExportQuality] = useState(90);
@@ -21,7 +23,7 @@ export default function PhotoStudio() {
   const headerRef = useRef<HTMLDivElement>(null);
 
   const tools = [
-    { id: "change-bg", label: "Add / Change Background", icon: "🎀" },
+    { id: "remove-bg", label: "Add / Change Background", icon: "🎀" },
     { id: "enhance", label: "Enhance", icon: "✨" },
     { id: "ai-bg", label: "AI Backgrounds", icon: "🏔️" },
     { id: "eraser", label: "Magic Eraser", icon: "🪶" },
@@ -30,7 +32,7 @@ export default function PhotoStudio() {
   ];
 
   const toolStatus: Record<string, { after: string }> = {
-    "change-bg": { after: "BG Removed" },
+    "remove-bg": { after: "BG Removed" },
     "enhance": { after: "Enhanced" },
     "ai-bg": { after: "New BG" },
     "eraser": { after: "Erased" },
@@ -39,38 +41,49 @@ export default function PhotoStudio() {
   };
 
   useEffect(() => {
-    const onClickOutside = (e: MouseEvent) => {
-      if (headerRef.current && !headerRef.current.contains(e.target as Node)) setActiveDropdown(null);
+    const handleClickOutside = (e: MouseEvent) => {
+      if (headerRef.current && !headerRef.current.contains(e.target as Node)) {
+        setActiveDropdown(null);
+      }
     };
-    document.addEventListener("mousedown", onClickOutside);
-    return () => document.removeEventListener("mousedown", onClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   const handleUpload = (file: File) => {
-    setUploadedImage(URL.createObjectURL(file));
+    const url = URL.createObjectURL(file);
+    setUploadedImage(url);
     setUploadedFile(file);
     setFileName(file.name);
     setAfterImage(null);
   };
+
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     const file = e.dataTransfer.files[0];
     if (file) handleUpload(file);
   };
+
   const handleProcess = async () => {
-    if (!uploadedFile && !uploadedImage) { alert("Upload first"); return; }
+    if (!uploadedFile && !uploadedImage) {
+      alert("Please upload image first!");
+      return;
+    }
     setIsProcessing(true);
     try {
       const pkg = "@imgly" + "/background-removal";
       // @ts-ignore
       const { removeBackground } = await import(pkg);
-      const src = uploadedFile || (await fetch(uploadedImage!).then(r => r.blob()).then(b => new File([b], fileName)));
+      const src = uploadedFile || (await fetch(uploadedImage!).then(r => r.blob()).then(b => new File([b], fileName))) as File;
       const blob = await removeBackground(src as File);
       setAfterImage(URL.createObjectURL(blob));
       setIsBgRemoved(true);
-    } catch (e: any) { alert(e.message); }
+    } catch (err: any) {
+      alert("Error: " + err.message);
+    }
     setIsProcessing(false);
   };
+
   const handleExport = () => {
     const link = document.createElement("a");
     link.href = afterImage || uploadedImage!;
@@ -78,62 +91,87 @@ export default function PhotoStudio() {
     link.click();
   };
 
+  const chips = [
+    { chip: "Luxury gold studio", bg: "Luxury Marble • Gold", tool: "ai-bg" },
+    { chip: "Minimal marble", bg: "White Infinity", tool: "ai-bg" },
+    { chip: "Dark moody", bg: "Studio Black", tool: "ai-bg" },
+    { chip: "Outdoor sunlight", bg: "White Infinity", tool: "ai-bg" },
+    { chip: "Neutral grey backdrop", bg: "Minimal Concrete", tool: "ai-bg" },
+  ];
+
   const ctaClass = "bg-[#e69f50] text-black hover:bg-[#d48e40] hover:shadow-[0_0_20px_rgba(230,159,80,0.5)] cursor-pointer transition-all duration-200 font-medium rounded-full";
   const toolBtnClass = "w-full text-left px-4 py-3.5 rounded-xl flex items-center gap-3 transition cursor-pointer text-[13px] h-[48px]";
   const currentAfterText = isBgRemoved ? toolStatus[activeTool]?.after || "BG Removed" : "Original";
 
   return (
     <div className="min-h-screen bg-[#0A0A0A] text-[#E8DCC6] flex flex-col">
-      {/* HEADER WITH POPUPS RESTORED */}
       <header ref={headerRef} className="border-b border-[#D4A574]/30 px-6 py-3 flex items-center justify-between bg-[#0A0A0A] sticky top-0 z-50">
         <Link href="/" className="flex items-center gap-3 cursor-pointer">
           <img src="/Logo-White.png" alt="VISFORA Logo" className="h-14 w-auto object-contain" />
           <span className="text-[32px] tracking-[0.18em] font-light text-white leading-none flex items-center h-14">VIS<span className="font-semibold text-[#d6a85a]">FORA</span></span>
         </Link>
         <div className="flex items-center gap-3 relative">
-          {/* 1. NOTIF POPUP */}
+          {/* 1 - NOTIFICATION ICON WITH FULL POPUP */}
           <div className="relative">
             <button onClick={() => setActiveDropdown(activeDropdown === "notif" ? null : "notif")} className={`w-9 h-9 rounded-full border flex items-center justify-center transition cursor-pointer ${activeDropdown === "notif" ? "bg-[#e69f50] border-[#e69f50] text-black" : "bg-[#1F1F1F] border-[#D4A574]/20 hover:bg-[#2A2A2A]"}`}>🔔</button>
             {activeDropdown === "notif" && (
               <div className="absolute right-0 top-12 w-[340px] bg-[#141414] border border-[#D4A574]/30 rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.6)] z-50 overflow-hidden">
-                <div className="p-4 border-b border-[#D4A574]/20 flex items-center justify-between"><h4 className="font-medium text-white">Notifications</h4><span className="text-xs bg-[#e69f50] text-black px-2 py-0.5 rounded-full">3 new</span></div>
-                <div className="p-2 space-y-1">
-                  <div className="p-3 rounded-xl bg-[#1F1F1F] border border-[#D4A574]/10"><p className="text-sm text-white">Background removed successfully</p><p className="text-xs text-[#E8DCC6]/50 mt-1">{fileName} • 2 min ago</p></div>
-                  <div className="p-3 rounded-xl bg-[#1F1F1F] border border-[#D4A574]/10"><p className="text-sm text-white">Credits running low</p><p className="text-xs text-[#E8DCC6]/50 mt-1">12 credits left</p></div>
-                  <div className="p-3 rounded-xl bg-[#1F1F1F] border border-[#D4A574]/10"><p className="text-sm text-white">Export {exportFormat} ready</p><p className="text-xs text-[#E8DCC6]/50 mt-1">2048x2048 • {fileName}</p></div>
+                <div className="p-4 border-b border-[#D4A574]/20 flex items-center justify-between">
+                  <h4 className="font-medium text-white">Notifications</h4>
+                  <span className="text-xs bg-[#e69f50] text-black px-2 py-0.5 rounded-full">3 new</span>
                 </div>
+                <div className="p-2 space-y-1 max-h-[300px] overflow-y-auto">
+                  <div className="p-3 rounded-xl bg-[#1F1F1F] border border-[#D4A574]/10 hover:bg-[#2A2A2A] cursor-pointer">
+                    <div className="flex gap-3"><span className="text-[#e69f50]">✨</span><div><p className="text-sm text-white">Background removed successfully</p><p className="text-xs text-[#E8DCC6]/50 mt-1">{fileName} • 2 min ago</p></div></div>
+                  </div>
+                  <div className="p-3 rounded-xl bg-[#1F1F1F] border border-[#D4A574]/10 hover:bg-[#2A2A2A] cursor-pointer">
+                    <div className="flex gap-3"><span className="text-yellow-400">⚠️</span><div><p className="text-sm text-white">Credits running low</p><p className="text-xs text-[#E8DCC6]/50 mt-1">12 credits left • 1 hour ago</p></div></div>
+                  </div>
+                  <div className="p-3 rounded-xl bg-[#1F1F1F] border border-[#D4A574]/10 hover:bg-[#2A2A2A] cursor-pointer">
+                    <div className="flex gap-3"><span className="text-green-400">✅</span><div><p className="text-sm text-white">Export {exportFormat} ready</p><p className="text-xs text-[#E8DCC6]/50 mt-1">2048x2048 • {fileName} • 3 hours ago</p></div></div>
+                  </div>
+                </div>
+                <div className="p-3 border-t border-[#D4A574]/20"><button className="w-full text-center text-xs text-[#e69f50] hover:underline cursor-pointer">View all notifications</button></div>
               </div>
             )}
           </div>
-          {/* 1. SETTINGS POPUP */}
+
+          {/* 2 - SETTINGS ICON WITH FULL POPUP */}
           <div className="relative">
             <button onClick={() => setActiveDropdown(activeDropdown === "settings" ? null : "settings")} className={`w-9 h-9 rounded-full border flex items-center justify-center transition cursor-pointer ${activeDropdown === "settings" ? "bg-[#e69f50] border-[#e69f50] text-black" : "bg-[#1F1F1F] border-[#D4A574]/20 hover:bg-[#2A2A2A]"}`}>⚙️</button>
             {activeDropdown === "settings" && (
-              <div className="absolute right-0 top-12 w-[320px] bg-[#141414] border border-[#D4A574]/30 rounded-2xl shadow-xl z-50 p-4">
-                <h4 className="font-medium text-white mb-4">Settings & Tools</h4>
-                <div className="space-y-3 text-sm">
-                  <div className="flex justify-between items-center p-2 rounded-xl bg-[#1F1F1F]"><span className="text-[#E8DCC6]/70">High Quality Export</span><div className="w-10 h-5 bg-[#e69f50] rounded-full p-0.5"><div className="w-4 h-4 bg-black rounded-full ml-auto"></div></div></div>
-                  <div className="flex justify-between items-center p-2 rounded-xl bg-[#1F1F1F]"><span className="text-[#E8DCC6]/70">Auto-save Projects</span><div className="w-10 h-5 bg-[#1F1F1F] border border-[#D4A574]/20 rounded-full p-0.5"><div className="w-4 h-4 bg-[#E8DCC6]/50 rounded-full"></div></div></div>
-                  <div className="flex justify-between items-center p-2 rounded-xl bg-[#1F1F1F]"><span className="text-[#E8DCC6]/70">Background Removal</span><span className="text-xs text-[#e69f50]">{isBgRemoved ? "ON" : "OFF"}</span></div>
-                  <div className="pt-2 border-t border-[#D4A574]/10 text-xs text-[#E8DCC6]/50">Active Tool: {tools.find(t=>t.id===activeTool)?.label}</div>
+              <div className="absolute right-0 top-12 w-[320px] bg-[#141414] border border-[#D4A574]/30 rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.6)] z-50 overflow-hidden p-4">
+                <h4 className="font-medium text-white mb-4">Settings</h4>
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between"><span className="text-sm text-[#E8DCC6]/70">High Quality Export</span><div className="w-10 h-5 bg-[#e69f50] rounded-full p-0.5 cursor-pointer"><div className="w-4 h-4 bg-black rounded-full ml-auto"></div></div></div>
+                  <div className="flex items-center justify-between"><span className="text-sm text-[#E8DCC6]/70">Auto-save results</span><div className="w-10 h-5 bg-[#1F1F1F] border border-[#D4A574]/20 rounded-full p-0.5 cursor-pointer"><div className="w-4 h-4 bg-[#E8DCC6]/50 rounded-full"></div></div></div>
+                  <div className="flex items-center justify-between"><span className="text-sm text-[#E8DCC6]/70">Background Removal</span><span className="text-xs text-[#e69f50] font-bold">{isBgRemoved ? "ON" : "OFF"}</span></div>
+                  <div><label className="text-xs text-[#E8DCC6]/50">Default Format</label><select value={exportFormat} onChange={(e)=>setExportFormat(e.target.value)} className="w-full mt-1 bg-[#1F1F1F] border border-[#D4A574]/20 rounded-xl px-3 py-2 text-sm cursor-pointer"><option>PNG</option><option>JPG</option><option>WEBP</option></select></div>
+                  <div><label className="text-xs text-[#E8DCC6]/50">Language</label><select className="w-full mt-1 bg-[#1F1F1F] border border-[#D4A574]/20 rounded-xl px-3 py-2 text-sm cursor-pointer"><option>English</option><option>Hindi</option></select></div>
+                  <div className="pt-2 border-t border-[#D4A574]/10 flex gap-2">
+                    <button className="flex-1 bg-[#1F1F1F] border border-[#D4A574]/20 py-2 rounded-full text-xs hover:bg-[#2A2A2A] cursor-pointer">Reset</button>
+                    <button onClick={() => setActiveDropdown(null)} className={`flex-1 py-2 rounded-full text-xs ${ctaClass}`}>Save</button>
+                  </div>
                 </div>
               </div>
             )}
           </div>
-          {/* 1. PROFILE POPUP */}
+
+          {/* 3 - PROFILE ICON WITH FULL POPUP */}
           <div className="relative">
-            <button onClick={() => setActiveDropdown(activeDropdown === "profile" ? null : "profile")} className="w-9 h-9 rounded-full bg-[#e69f50] border-2 border-[#e69f50] text-black flex items-center justify-center font-medium cursor-pointer">👤</button>
+            <button onClick={() => setActiveDropdown(activeDropdown === "profile" ? null : "profile")} className={`w-9 h-9 rounded-full flex items-center justify-center font-medium cursor-pointer border-2 transition ${activeDropdown === "profile" ? "bg-[#e69f50] border-[#e69f50] text-black" : "bg-[#e69f50] border-[#e69f50]/50 text-black"}`}>👤</button>
             {activeDropdown === "profile" && (
-              <div className="absolute right-0 top-12 w-[300px] bg-[#141414] border border-[#D4A574]/30 rounded-2xl shadow-xl z-50 overflow-hidden">
-                <div className="p-4 border-b border-[#D4A574]/20 flex gap-3">
+              <div className="absolute right-0 top-12 w-[280px] bg-[#141414] border border-[#D4A574]/30 rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.6)] z-50 overflow-hidden">
+                <div className="p-4 border-b border-[#D4A574]/20 flex gap-3 items-center">
                   <div className="w-12 h-12 rounded-full bg-[#e69f50] flex items-center justify-center text-black font-bold">AK</div>
-                  <div><p className="text-sm text-white font-medium">Ankit Kumar</p><p className="text-xs text-[#E8DCC6]/50">ankit@visfora.com</p><p className="text-xs text-[#e69f50] mt-1">112 credits • Pro Plan</p></div>
+                  <div><p className="text-sm font-medium text-white">Ankit Kumar</p><p className="text-xs text-[#E8DCC6]/50">ankit@visfora.com</p><span className="text-[10px] bg-[#e69f50]/20 text-[#e69f50] px-2 py-0.5 rounded-full mt-1 inline-block">PRO PLAN</span></div>
                 </div>
-                <div className="p-2 text-sm">
-                  <button className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-[#1F1F1F] cursor-pointer flex items-center gap-2">👤 My Profile</button>
-                  <button className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-[#1F1F1F] cursor-pointer flex items-center gap-2">💳 Billing & Credits</button>
-                  <button className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-[#1F1F1F] cursor-pointer flex items-center gap-2">🎨 My Projects</button>
-                  <button className="w-full text-left px-3 py-2 rounded-xl hover:bg-red-500/10 hover:text-red-400 cursor-pointer mt-2 border-t border-[#D4A574]/10 flex items-center gap-2">🚪 Logout</button>
+                <div className="p-2">
+                  <button className="w-full text-left px-3 py-2.5 rounded-xl text-sm hover:bg-[#1F1F1F] flex items-center gap-3 cursor-pointer"><span>👤</span> My Profile</button>
+                  <button className="w-full text-left px-3 py-2.5 rounded-xl text-sm hover:bg-[#1F1F1F] flex items-center gap-3 cursor-pointer"><span>💳</span> Billing & Credits <span className="ml-auto text-xs bg-[#1F1F1F] px-2 py-0.5 rounded-full">112 left</span></button>
+                  <button className="w-full text-left px-3 py-2.5 rounded-xl text-sm hover:bg-[#1F1F1F] flex items-center gap-3 cursor-pointer"><span>📁</span> My Projects</button>
+                  <button className="w-full text-left px-3 py-2.5 rounded-xl text-sm hover:bg-[#1F1F1F] flex items-center gap-3 cursor-pointer"><span>❓</span> Help & Support</button>
+                  <div className="border-t border-[#D4A574]/10 mt-2 pt-2"><button className="w-full text-left px-3 py-2.5 rounded-xl text-sm hover:bg-red-500/10 hover:text-red-400 flex items-center gap-3 cursor-pointer"><span>🚪</span> Logout</button></div>
                 </div>
               </div>
             )}
@@ -144,18 +182,22 @@ export default function PhotoStudio() {
       <div className="flex-1 flex flex-col lg:flex-row gap-4 p-4">
         <div className="w-full lg:w-[280px] flex flex-col gap-3">
           <aside className="border border-[#D4A574]/30 rounded-2xl p-4 bg-[#141414] h-fit">
-            <h3 className="text-[#E8DCC6] font-medium mb-4 flex items-center gap-2">⊞ Tools</h3>
+            <h3 className="text-[#E8DCC6] font-medium mb-4 flex items-center gap-2"><span>⊞</span> Tools</h3>
             <div className="space-y-2.5">
               {tools.map((tool) => (
-                <button key={tool.id} onClick={() => setActiveTool(tool.id)} className={`${toolBtnClass} border-2 ${activeTool === tool.id ? "bg-[#e69f50] text-black border-[#e69f50] font-semibold shadow-[0_0_15px_rgba(230,159,80,0.35)]" : "bg-[#1F1F1F] text-[#E8DCC6]/80 border-[#D4A574]/10 hover:bg-[#2A2A2A]"}`}>
+                <button key={tool.id} onClick={() => setActiveTool(tool.id)} className={`${toolBtnClass} border-2 ${activeTool === tool.id ? "bg-[#e69f50] text-black border-[#e69f50] font-semibold shadow-[0_0_15px_rgba(230,159,80,0.35)]" : "bg-[#1F1F1F] text-[#E8DCC6]/80 border-[#D4A574]/10 hover:bg-[#2A2A2A] hover:border-[#D4A574]/30"}`}>
                   <span>{tool.icon}</span> {tool.label}
                 </button>
               ))}
             </div>
           </aside>
           <div className="flex flex-col gap-3">
-            <button onClick={handleProcess} disabled={isProcessing} className={`w-full flex items-center justify-center gap-2 h-[48px] text-[13px] disabled:opacity-50 ${ctaClass}`}>✨ {isProcessing ? "Processing..." : `Run ${tools.find(t=>t.id===activeTool)?.label}`}</button>
-            <button onClick={() => fileInputRef.current?.click()} className={`w-full flex items-center justify-center gap-2 h-[48px] text-[13px] ${ctaClass}`}><span className="text-lg">+</span> Upload New</button>
+            <button onClick={handleProcess} disabled={isProcessing} className={`w-full flex items-center justify-center gap-2 disabled:opacity-50 h-[48px] text-[13px] ${ctaClass}`}>
+              <span>✨</span> {isProcessing ? "Processing..." : `Run ${tools.find(t=>t.id===activeTool)?.label}`}
+            </button>
+            <button onClick={() => fileInputRef.current?.click()} className={`w-full flex items-center justify-center gap-2 h-[48px] text-[13px] ${ctaClass}`}>
+              <span className="text-lg leading-none">+</span> Upload New
+            </button>
           </div>
         </div>
 
@@ -173,26 +215,27 @@ export default function PhotoStudio() {
             </div>
             
             <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* BEFORE - CLEAN EDGE-TO-EDGE, NO EXTRA TEXTS */}
               <div className="relative rounded-xl overflow-hidden bg-[#111] min-h-[480px]">
                 {uploadedImage ? <img src={uploadedImage} className="w-full h-full object-cover absolute inset-0" alt="before" /> : <img src="/sneaker.png" className="w-full h-full object-cover absolute inset-0" alt="sneaker" />}
               </div>
 
+              {/* AFTER - WITH BG REMOVAL TOGGLE INSIDE + PREVIEW + FILE NAME WITH FORMAT */}
               <div className="relative rounded-xl overflow-hidden bg-[#111] min-h-[480px] flex flex-col">
-                {/* 2. ADD BACKGROUND REMOVAL IN AFTER PREVIEW SECTION */}
                 <div className="absolute top-0 left-0 right-0 z-30 p-2.5 flex justify-between items-center bg-gradient-to-b from-black/80 to-transparent">
-                  <span className="text-[10px] text-white/60">Preview Panel</span>
+                  <span className="text-[10px] text-white/50">Preview Panel</span>
                   <div className="flex items-center gap-2 bg-black/70 backdrop-blur border border-[#D4A574]/20 rounded-full px-3 py-1">
                     <span className="text-[10px] text-[#E8DCC6]/70">Background Removal</span>
-                    <button onClick={() => setIsBgRemoved(!isBgRemoved)} className={`relative w-[48px] h-[22px] rounded-full p-0.5 transition-all duration-300 cursor-pointer flex items-center ${isBgRemoved ? "bg-[#e69f50]" : "bg-[#2A2A2A] border border-[#D4A574]/20"}`}>
+                    <button onClick={() => setIsBgRemoved(!isBgRemoved)} className={`relative w-[52px] h-[22px] rounded-full p-0.5 transition-all duration-300 cursor-pointer flex items-center ${isBgRemoved ? "bg-[#e69f50]" : "bg-[#2A2A2A] border border-[#D4A574]/20"}`}>
                       <span className={`absolute text-[8px] font-bold transition-all ${isBgRemoved ? "left-1.5 text-black" : "right-1.5 text-[#E8DCC6]/50"}`}>{isBgRemoved ? "ON" : "OFF"}</span>
-                      <div className={`w-4 h-4 rounded-full shadow-md transition-all duration-300 z-10 ${isBgRemoved ? "translate-x-[26px] bg-black" : "translate-x-0 bg-[#E8DCC6]"}`} />
+                      <div className={`w-4 h-4 rounded-full shadow-md transition-all duration-300 z-10 ${isBgRemoved ? "translate-x-[28px] bg-black" : "translate-x-0 bg-[#E8DCC6]"}`} />
                     </button>
                   </div>
                 </div>
 
                 <div className={`absolute inset-0 ${isBgRemoved ? "bg-[length:20px_20px] bg-[url('https://upload.wikimedia.org/wikipedia/commons/5/5b/Checkerboard_pattern.png')] bg-[#1A1A1A]" : "bg-[#1A1A1A]"}`} />
                 {isProcessing ? (
-                  <div className="absolute inset-0 flex items-center justify-center text-[#e69f50] animate-pulse text-sm z-10">Processing... removing background</div>
+                  <div className="absolute inset-0 flex items-center justify-center text-[#e69f50] animate-pulse text-sm z-10">Processing...</div>
                 ) : afterImage && isBgRemoved ? (
                   <img src={afterImage} className="absolute inset-0 w-full h-full object-contain z-10 pt-10 pb-12" alt="after removed" />
                 ) : uploadedImage && !isBgRemoved ? (
@@ -205,20 +248,15 @@ export default function PhotoStudio() {
                   <div className="absolute inset-0 flex flex-col items-center justify-center z-10"><p className="text-[#E8DCC6]/30 text-sm">Preview</p><p className="text-[#E8DCC6]/20 text-xs mt-1">No preview yet</p></div>
                 )}
 
-                {/* 3+4. FILE NAME WITH FORMAT + PREVIEW REPLACING FILENAME */}
                 <div className="absolute bottom-0 left-0 right-0 z-20 p-2.5 flex justify-between items-center bg-gradient-to-t from-black/90 to-transparent pt-8">
                   <span className="text-[10px] bg-black/80 backdrop-blur px-3 py-1.5 rounded-full border border-[#e69f50]/30 text-white flex items-center gap-1.5">
                     <span>Preview</span>
                     <span className={`font-medium ${isBgRemoved ? "text-[#e69f50]" : "text-white/50"}`}>• {currentAfterText}</span>
                   </span>
                   <div className="flex gap-1.5">
-                    {/* 3. File name with format + 4. Colors exchanged */}
                     <span className="text-[9px] bg-black/80 backdrop-blur px-2.5 py-1.5 rounded-full border border-white/10 text-white/70 truncate max-w-[100px]">{fileName}</span>
                     <span className="text-[9px] bg-black/80 backdrop-blur px-2.5 py-1.5 rounded-full border border-[#e69f50]/30 text-[#e69f50]">2048x2048</span>
                   </div>
-                </div>
-                <div className="absolute bottom-2 left-1/2 -translate-x-1/2 z-20 flex gap-1.5">
-                  <span className="text-[8px] bg-black/70 px-2 py-0.5 rounded-full text-white/50 border border-white/10">{exportFormat}</span>
                 </div>
               </div>
             </div>
@@ -252,7 +290,11 @@ export default function PhotoStudio() {
           <div className="flex-1 flex items-center gap-3 bg-[#0F0F0F] border border-[#D4A574]/20 rounded-full px-5 py-3"><span>✨</span><input value={prompt} onChange={(e) => setPrompt(e.target.value)} placeholder="Describe your edit • e.g., Add golden luxury studio backdrop, soft dramatic shadow, photoreal" className="flex-1 bg-transparent outline-none text-sm placeholder:text-[#E8DCC6]/40" /></div>
           <button onClick={handleProcess} disabled={isProcessing} className={`px-8 py-3 text-sm disabled:opacity-50 ${ctaClass}`}>{isProcessing ? "Working..." : "Generate"}</button>
         </div>
-        <div className="flex gap-2 mt-3 overflow-x-auto justify-center">{["Luxury gold studio","Minimal marble","Dark moody","Outdoor sunlight","Neutral grey backdrop"].map(chip => (<button key={chip} className="whitespace-nowrap px-4 py-2 rounded-full text-xs border border-[#D4A574]/30 bg-[#1F1F1F] hover:bg-[#e69f50] hover:text-black transition cursor-pointer">✨ {chip}</button>))}</div>
+        <div className="flex gap-2 mt-3 overflow-x-auto justify-center">
+          {chips.map(({ chip, bg, tool }) => (
+            <button key={chip} onClick={() => { setPrompt(chip); setBgStyle(bg); setActiveTool(tool); }} className="whitespace-nowrap px-4 py-2 rounded-full text-xs border border-[#D4A574]/30 bg-[#1F1F1F] hover:bg-[#e69f50] hover:text-black transition cursor-pointer">✨ {chip}</button>
+          ))}
+        </div>
       </div>
     </div>
   );
