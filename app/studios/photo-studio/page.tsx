@@ -70,7 +70,8 @@ export default function PhotoStudio() {
     link.click();
   };
 
-  const ctaClass = "bg-[#e69f50] text-black hover:bg-[#d48e40] hover:shadow-[0_0_20px_rgba(230,159,80,0.5)] cursor-pointer transition-all duration-200 font-medium";
+  // 1. ALL CTAS ROUND SHAPED
+  const ctaClass = "bg-[#e69f50] text-black hover:bg-[#d48e40] hover:shadow-[0_0_20px_rgba(230,159,80,0.5)] cursor-pointer transition-all duration-200 font-medium rounded-full";
   const toolBtnClass = "w-full text-left px-4 py-3.5 rounded-xl flex items-center gap-3 transition cursor-pointer text-[13px] h-[48px]";
 
   return (
@@ -82,8 +83,8 @@ export default function PhotoStudio() {
         </Link>
         <div className="flex items-center gap-3 relative">
           <div className="relative"><button onClick={() => setActiveDropdown(activeDropdown === "notif" ? null : "notif")} className={`w-9 h-9 rounded-full border flex items-center justify-center transition cursor-pointer ${activeDropdown === "notif" ? "bg-[#e69f50] border-[#e69f50] text-black" : "bg-[#1F1F1F] border-[#D4A574]/20 hover:bg-[#2A2A2A]"}`}>🔔</button>{activeDropdown === "notif" && (<div className="absolute right-0 top-12 w-[340px] bg-[#141414] border border-[#D4A574]/30 rounded-2xl shadow-xl z-50 p-2"><div className="p-3 rounded-xl bg-[#1F1F1F]"><p className="text-sm text-white">Background removed</p><p className="text-xs text-[#E8DCC6]/50 mt-1">{fileName} • just now</p></div></div>)}</div>
-          <div className="relative"><button onClick={() => setActiveDropdown(activeDropdown === "settings" ? null : "settings")} className={`w-9 h-9 rounded-full border flex items-center justify-center transition cursor-pointer ${activeDropdown === "settings" ? "bg-[#e69f50] border-[#e69f50] text-black" : "bg-[#1F1F1F] border-[#D4A574]/20 hover:bg-[#2A2A2A]"}`}>⚙️</button>{activeDropdown === "settings" && (<div className="absolute right-0 top-12 w-[300px] bg-[#141414] border border-[#D4A574]/30 rounded-2xl shadow-xl z-50 p-4"><h4 className="text-white mb-3">Settings</h4><div className="text-sm text-[#E8DCC6]/60">High Quality Export ON</div></div>)}</div>
-          <div className="relative"><button onClick={() => setActiveDropdown(activeDropdown === "profile" ? null : "profile")} className="w-9 h-9 rounded-full bg-[#e69f50] border-2 border-[#e69f50] text-black flex items-center justify-center font-medium cursor-pointer">👤</button>{activeDropdown === "profile" && (<div className="absolute right-0 top-12 w-[280px] bg-[#141414] border border-[#D4A574]/30 rounded-2xl shadow-xl z-50 p-4"><p className="text-white text-sm">Ankit Kumar</p><p className="text-xs text-[#E8DCC6]/50">ankit@visfora.com</p></div>)}</div>
+          <div className="relative"><button onClick={() => setActiveDropdown(activeDropdown === "settings" ? null : "settings")} className={`w-9 h-9 rounded-full border flex items-center justify-center transition cursor-pointer ${activeDropdown === "settings" ? "bg-[#e69f50] border-[#e69f50] text-black" : "bg-[#1F1F1F] border-[#D4A574]/20 hover:bg-[#2A2A2A]"}`}>⚙️</button>{activeDropdown === "settings" && (<div className="absolute right-0 top-12 w-[300px] bg-[#141414] border border-[#D4A574]/30 rounded-2xl shadow-xl z-50 p-4"><h4 className="text-white mb-3">Settings</h4></div>)}</div>
+          <div className="relative"><button onClick={() => setActiveDropdown(activeDropdown === "profile" ? null : "profile")} className="w-9 h-9 rounded-full bg-[#e69f50] border-2 border-[#e69f50] text-black flex items-center justify-center font-medium cursor-pointer">👤</button>{activeDropdown === "profile" && (<div className="absolute right-0 top-12 w-[280px] bg-[#141414] border border-[#D4A574]/30 rounded-2xl shadow-xl z-50 p-4"><p className="text-white text-sm">Ankit Kumar</p></div>)}</div>
         </div>
       </header>
 
@@ -100,19 +101,19 @@ export default function PhotoStudio() {
             </div>
           </aside>
           <div className="flex flex-col gap-3">
-            <button onClick={handleProcess} disabled={isProcessing} className={`w-full rounded-xl flex items-center justify-center gap-2 h-[48px] text-[13px] disabled:opacity-50 ${ctaClass}`}>✨ {isProcessing ? "Processing..." : `Run ${tools.find(t=>t.id===activeTool)?.label}`}</button>
-            <button onClick={() => fileInputRef.current?.click()} className={`w-full rounded-xl flex items-center justify-center gap-2 h-[48px] text-[13px] ${ctaClass}`}><span className="text-lg">+</span> Upload New</button>
+            {/* 1. ROUND CTA */}
+            <button onClick={handleProcess} disabled={isProcessing} className={`w-full flex items-center justify-center gap-2 h-[48px] text-[13px] disabled:opacity-50 ${ctaClass}`}>✨ {isProcessing ? "Processing..." : `Run ${tools.find(t=>t.id===activeTool)?.label}`}</button>
+            <button onClick={() => fileInputRef.current?.click()} className={`w-full flex items-center justify-center gap-2 h-[48px] text-[13px] ${ctaClass}`}><span className="text-lg">+</span> Upload New</button>
           </div>
         </div>
 
         <main className="flex-1 flex flex-col">
           <div className="flex items-center justify-between mb-3 px-2">
             <h2 className="text-[#E8DCC6] font-medium text-lg">Canvas</h2>
-            {/* 1. NEW SLIDING BG REMOVER TOGGLE */}
             <div className="flex items-center gap-3">
-              <span className="text-xs text-[#E8DCC6]/60 tracking-wide">Add Bg Remover</span>
+              <span className="text-xs text-[#E8DCC6]/60 tracking-wide">BG Remover</span>
               <button onClick={() => setIsBgRemoved(!isBgRemoved)} className={`relative w-[52px] h-[28px] rounded-full p-1 transition-all duration-300 cursor-pointer ${isBgRemoved ? "bg-[#e69f50]" : "bg-[#1F1F1F] border border-[#D4A574]/30"}`}>
-                <div className={`w-5 h-5 rounded-full bg-black shadow-md transition-all duration-300 ${isBgRemoved ? "translate-x-6 bg-black" : "translate-x-0 bg-[#E8DCC6]/60"}`} />
+                <div className={`w-5 h-5 rounded-full shadow-md transition-all duration-300 ${isBgRemoved ? "translate-x-6 bg-black" : "translate-x-0 bg-[#E8DCC6]/60"}`} />
               </button>
               <span className={`text-xs font-medium ${isBgRemoved ? "text-[#e69f50]" : "text-[#E8DCC6]/40"}`}>{isBgRemoved ? "ON" : "OFF"}</span>
             </div>
@@ -126,46 +127,36 @@ export default function PhotoStudio() {
             </div>
             
             <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* 3. EXPANDED TO EDGES */}
-              <div className="relative rounded-xl overflow-hidden bg-[#111] min-h-[460px] flex items-center justify-center">
-                {uploadedImage ? (
-                  <img src={uploadedImage} className="w-full h-full object-cover absolute inset-0" alt="before" />
-                ) : (
-                  <img src="/sneaker.png" className="w-full h-full object-cover absolute inset-0" alt="sneaker" />
-                )}
-                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent px-3 py-2 flex justify-between items-center">
-                  <span className="text-[10px] text-white/70 truncate">{fileName}</span>
-                  <span className="text-[10px] bg-black/50 border border-white/10 px-2 py-0.5 rounded-full text-white/60">{uploadedFile?.type.split("/")[1]?.toUpperCase() || "PNG"} • BEFORE</span>
-                </div>
+              <div className="relative rounded-xl overflow-hidden bg-[#111] min-h-[480px]">
+                {uploadedImage ? <img src={uploadedImage} className="w-full h-full object-cover absolute inset-0" alt="before" /> : <img src="/sneaker.png" className="w-full h-full object-cover absolute inset-0" alt="sneaker" />}
+                <div className="absolute bottom-2 left-2 flex gap-1.5"><span className="text-[9px] bg-black/70 backdrop-blur border border-white/10 px-2.5 py-1 rounded-full text-white/80">PNG • BEFORE</span></div>
               </div>
 
-              {/* 1 + 4. AFTER WITH BG REMOVER TOGGLE + PREVIEW + FILE NAME */}
-              <div className={`relative rounded-xl overflow-hidden min-h-[460px] flex flex-col ${isBgRemoved ? "bg-[length:20px_20px] bg-[url('https://upload.wikimedia.org/wikipedia/commons/5/5b/Checkerboard_pattern.png')] bg-[#1A1A1A]" : "bg-[#1A1A1A]"}`}>
-                <div className="flex-1 relative flex items-center justify-center">
-                  {isProcessing ? (
-                    <div className="text-[#e69f50] animate-pulse text-sm">Processing... removing background</div>
-                  ) : afterImage && isBgRemoved ? (
-                    <img src={afterImage} className="w-full h-full object-contain p-2" alt="after removed" />
-                  ) : uploadedImage && !isBgRemoved ? (
-                    <img src={uploadedImage} className="w-full h-full object-cover absolute inset-0" alt="after with bg" />
-                  ) : afterImage && !isBgRemoved ? (
-                    <div className="w-full h-full relative">
-                      <img src={bgStyle.includes("Gold") ? "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=1000" : "/sneaker.png"} className="w-full h-full object-cover absolute inset-0 opacity-60" alt="bg" />
-                      <img src={afterImage} className="w-full h-full object-contain p-4 relative z-10" alt="after" />
-                    </div>
-                  ) : uploadedImage ? (
-                    <img src={uploadedImage} className="w-full h-full object-contain opacity-60 p-2" alt="preview" />
-                  ) : (
-                    <div className="text-center">
-                      <p className="text-[#E8DCC6]/30 text-sm">Preview</p>
-                      <p className="text-[#E8DCC6]/20 text-xs mt-1">No preview yet</p>
-                    </div>
-                  )}
-                </div>
-                {/* 4. SHOW PREVIEW TEXT AND FILE NAME WITH FORMAT */}
-                <div className="absolute bottom-0 left-0 right-0 bg-[#0A0A0A]/90 border-t border-[#D4A574]/20 px-3 py-2.5 flex justify-between items-center backdrop-blur">
-                  <div className="flex flex-col"><span className="text-[11px] text-white font-medium">Preview • {isBgRemoved ? "BG Removed" : "With Background"}</span><span className="text-[10px] text-[#E8DCC6]/50 truncate max-w-[160px]">{fileName}</span></div>
-                  <div className="flex gap-1.5"><span className="text-[9px] bg-[#1F1F1F] border border-[#D4A574]/20 px-2 py-1 rounded-full text-[#E8DCC6]/70">{exportFormat}</span><span className="text-[9px] bg-[#e69f50]/20 text-[#e69f50] px-2 py-1 rounded-full">2048x2048</span></div>
+              {/* 3. EXPANDED TO EDGES + TEXT OVER IMAGE */}
+              <div className="relative rounded-xl overflow-hidden bg-[#111] min-h-[480px] group">
+                <div className={`absolute inset-0 ${isBgRemoved ? "bg-[length:20px_20px] bg-[url('https://upload.wikimedia.org/wikipedia/commons/5/5b/Checkerboard_pattern.png')] bg-[#1A1A1A]" : "bg-[#1A1A1A]"}`} />
+                
+                {isProcessing ? (
+                  <div className="absolute inset-0 flex items-center justify-center text-[#e69f50] animate-pulse text-sm z-10">Processing...</div>
+                ) : afterImage && isBgRemoved ? (
+                  <img src={afterImage} className="absolute inset-0 w-full h-full object-contain p-0 z-10" alt="after removed" />
+                ) : uploadedImage && !isBgRemoved ? (
+                  <img src={uploadedImage} className="absolute inset-0 w-full h-full object-cover z-10" alt="after with bg" />
+                ) : afterImage ? (
+                  <img src={afterImage} className="absolute inset-0 w-full h-full object-contain z-10" alt="after" />
+                ) : uploadedImage ? (
+                  <img src={uploadedImage} className="absolute inset-0 w-full h-full object-contain opacity-50 z-10" alt="preview" />
+                ) : (
+                  <div className="absolute inset-0 flex flex-col items-center justify-center z-10"><p className="text-[#E8DCC6]/30 text-sm">Preview</p><p className="text-[#E8DCC6]/20 text-xs mt-1">No preview yet</p></div>
+                )}
+
+                {/* 2+3. PREVIEW TEXTS OVER IMAGE, NO FILE NAME */}
+                <div className="absolute bottom-0 left-0 right-0 z-20 p-2.5 flex justify-between items-center">
+                  <span className="text-[10px] bg-black/70 backdrop-blur px-3 py-1.5 rounded-full border border-white/10 text-white">Preview • BG Removed</span>
+                  <div className="flex gap-1.5">
+                    <span className="text-[9px] bg-black/70 backdrop-blur px-2.5 py-1.5 rounded-full border border-white/10 text-white/80">{exportFormat}</span>
+                    <span className="text-[9px] bg-black/70 backdrop-blur px-2.5 py-1.5 rounded-full border border-white/10 text-white/80">2048x2048</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -185,18 +176,23 @@ export default function PhotoStudio() {
           <div className="border border-[#D4A574]/30 rounded-2xl p-5 bg-[#141414] h-fit">
             <h3 className="text-[#E8DCC6] font-medium mb-5 flex items-center justify-between">Output / Export <span>📤</span></h3>
             <div className="space-y-4">
-              <div><label className="text-sm text-[#E8DCC6]/70">Format</label><div className="grid grid-cols-3 gap-2 mt-2">{["PNG","JPG","WEBP"].map(f => (<button key={f} onClick={() => setExportFormat(f)} className={`py-2 rounded-xl text-xs font-medium border transition cursor-pointer ${exportFormat===f ? "bg-[#e69f50] text-black border-[#e69f50]" : "bg-[#1F1F1F] text-[#E8DCC6]/70 border-[#D4A574]/20 hover:bg-[#2A2A2A]"}`}>{f}</button>))}</div></div>
+              <div><label className="text-sm text-[#E8DCC6]/70">Format</label><div className="grid grid-cols-3 gap-2 mt-2">{["PNG","JPG","WEBP"].map(f => (<button key={f} onClick={() => setExportFormat(f)} className={`py-2 rounded-full text-xs font-medium border transition cursor-pointer ${exportFormat===f ? "bg-[#e69f50] text-black border-[#e69f50]" : "bg-[#1F1F1F] text-[#E8DCC6]/70 border-[#D4A574]/20 hover:bg-[#2A2A2A]"}`}>{f}</button>))}</div></div>
               <div><label className="text-sm text-[#E8DCC6]/70">Quality — {exportQuality}%</label><input type="range" min="10" max="100" value={exportQuality} onChange={(e) => setExportQuality(Number(e.target.value))} className="w-full mt-2 accent-[#e69f50] cursor-pointer" /></div>
               <div className="grid grid-cols-2 gap-2"><div className="bg-[#1F1F1F] border border-[#D4A574]/20 rounded-xl px-3 py-2.5 text-xs"><span className="text-[#E8DCC6]/50">Size</span><div className="text-[#E8DCC6] mt-1">2048 x 2048</div></div><div className="bg-[#1F1F1F] border border-[#D4A574]/20 rounded-xl px-3 py-2.5 text-xs"><span className="text-[#E8DCC6]/50">DPI</span><div className="text-[#E8DCC6] mt-1">300 DPI</div></div></div>
-              <button onClick={handleExport} disabled={!afterImage && !uploadedImage} className={`w-full py-3 rounded-xl text-sm disabled:opacity-30 ${ctaClass}`}>⬇️ Export {exportFormat}</button>
+              {/* 1. ROUND EXPORT */}
+              <button onClick={handleExport} disabled={!afterImage && !uploadedImage} className={`w-full py-3 text-sm disabled:opacity-30 ${ctaClass}`}>⬇️ Export {exportFormat}</button>
             </div>
           </div>
         </aside>
       </div>
 
       <div className="border-t border-[#D4A574]/30 p-4 bg-[#141414] mx-4 mb-4 rounded-2xl">
-        <div className="flex gap-3"><div className="flex-1 flex items-center gap-3 bg-[#0F0F0F] border border-[#D4A574]/20 rounded-xl px-4 py-3"><span>✨</span><input value={prompt} onChange={(e) => setPrompt(e.target.value)} placeholder="Describe your edit • e.g., Add golden luxury studio backdrop, soft dramatic shadow, photoreal" className="flex-1 bg-transparent outline-none text-sm placeholder:text-[#E8DCC6]/40" /></div><button onClick={handleProcess} disabled={isProcessing} className={`px-6 py-3 rounded-xl text-sm disabled:opacity-50 ${ctaClass}`}>{isProcessing ? "Working..." : "Generate"}</button></div>
-        <div className="flex gap-2 mt-3 overflow-x-auto justify-center">{["Luxury gold studio","Minimal marble","Dark moody","Outdoor sunlight","Neutral grey backdrop"].map(chip => (<button key={chip} className="whitespace-nowrap px-4 py-2 rounded-xl text-xs border border-[#D4A574]/30 bg-[#1F1F1F] hover:bg-[#e69f50] hover:text-black transition cursor-pointer">✨ {chip}</button>))}</div>
+        <div className="flex gap-3">
+          <div className="flex-1 flex items-center gap-3 bg-[#0F0F0F] border border-[#D4A574]/20 rounded-full px-5 py-3"><span>✨</span><input value={prompt} onChange={(e) => setPrompt(e.target.value)} placeholder="Describe your edit • e.g., Add golden luxury studio backdrop, soft dramatic shadow, photoreal" className="flex-1 bg-transparent outline-none text-sm placeholder:text-[#E8DCC6]/40" /></div>
+          {/* 1. ROUND GENERATE */}
+          <button onClick={handleProcess} disabled={isProcessing} className={`px-8 py-3 text-sm disabled:opacity-50 ${ctaClass}`}>{isProcessing ? "Working..." : "Generate"}</button>
+        </div>
+        <div className="flex gap-2 mt-3 overflow-x-auto justify-center">{["Luxury gold studio","Minimal marble","Dark moody","Outdoor sunlight","Neutral grey backdrop"].map(chip => (<button key={chip} className="whitespace-nowrap px-4 py-2 rounded-full text-xs border border-[#D4A574]/30 bg-[#1F1F1F] hover:bg-[#e69f50] hover:text-black transition cursor-pointer">✨ {chip}</button>))}</div>
       </div>
     </div>
   );
