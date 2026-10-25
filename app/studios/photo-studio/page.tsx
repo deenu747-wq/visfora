@@ -95,7 +95,6 @@ export default function PhotoStudio() {
 
   return (
     <div className="min-h-screen bg-[#0A0A0A] text-[#E8DCC6] flex flex-col p-3 gap-3">
-      {/* TOP BAR - CORRECTED SEQUENCE: U -> Bell -> Settings, same size w-9 h-9 */}
       <header ref={headerRef} className="border border-[#D4A574]/30 rounded-2xl px-6 py-3 flex items-center justify-between bg-[#141414] sticky top-0 z-50">
         <div className="flex items-center gap-8">
           <Link href="/" className="flex items-center gap-3 cursor-pointer">
@@ -109,7 +108,6 @@ export default function PhotoStudio() {
           </nav>
         </div>
         <div className="flex items-center gap-3 relative">
-          {/* 1 - PROFILE - Now first as per screenshot */}
           <div className="relative">
             <button onClick={() => setActiveDropdown(activeDropdown === "profile" ? null : "profile")} className={`w-9 h-9 rounded-full flex items-center justify-center font-medium cursor-pointer border-2 transition ${activeDropdown === "profile" ? "bg-[#e69f50] border-[#e69f50] text-black" : "bg-[#e69f50] border-[#e69f50]/50 text-black"}`}>U</button>
             {activeDropdown === "profile" && (
@@ -119,7 +117,6 @@ export default function PhotoStudio() {
               </div>
             )}
           </div>
-          {/* 2 - NOTIFICATION */}
           <div className="relative">
             <button onClick={() => setActiveDropdown(activeDropdown === "notif" ? null : "notif")} className={`w-9 h-9 rounded-full border flex items-center justify-center transition cursor-pointer ${activeDropdown === "notif" ? "bg-[#e69f50] border-[#e69f50] text-black" : "bg-[#1F1F1F] border-[#D4A574]/20 hover:bg-[#2A2A2A]"}`}>🔔</button>
             {activeDropdown === "notif" && (
@@ -134,7 +131,6 @@ export default function PhotoStudio() {
               </div>
             )}
           </div>
-          {/* 3 - SETTINGS */}
           <div className="relative">
             <button onClick={() => setActiveDropdown(activeDropdown === "settings" ? null : "settings")} className={`w-9 h-9 rounded-full border flex items-center justify-center transition cursor-pointer ${activeDropdown === "settings" ? "bg-[#e69f50] border-[#e69f50] text-black" : "bg-[#1F1F1F] border-[#D4A574]/20 hover:bg-[#2A2A2A]"}`}>⚙️</button>
             {activeDropdown === "settings" && (
@@ -153,17 +149,15 @@ export default function PhotoStudio() {
         </div>
       </header>
 
-      {/* SECOND ROW - GENERATION MODE */}
+      {/* SECOND ROW - 1. Generate button icon removed */}
       <div className="border border-[#D4A574]/20 rounded-2xl bg-[#141414] p-3 flex items-center gap-3">
         <span className="text-sm text-[#E8DCC6]/70">Generation Mode:</span>
         <select className="bg-[#1F1F1F] border border-[#D4A574]/20 rounded-xl px-3 py-2 text-sm cursor-pointer"><option>Edit / Retouch</option><option>Text to 3D Prompt</option></select>
         <div className="flex-1 flex items-center gap-3 bg-[#0F0F0F] border border-[#D4A574]/20 rounded-full px-5 py-2.5"><span>✨</span><input value={prompt} onChange={(e)=>setPrompt(e.target.value)} placeholder="Describe your edit e.g. minimal low poly fox, neon cyan wireframe" className="flex-1 bg-transparent outline-none text-sm placeholder:text-[#E8DCC6]/40" /></div>
-        <button onClick={handleProcess} disabled={isProcessing} className={`px-6 py-2.5 text-sm ${ctaClass}`}>⚡ Generate</button>
+        <button onClick={handleProcess} disabled={isProcessing} className={`px-6 py-2.5 text-sm ${ctaClass}`}>Generate</button>
       </div>
 
-      {/* MAIN 3-COLUMN */}
       <div className="flex-1 grid grid-cols-1 lg:grid-cols-[280px_1fr_320px] gap-3 items-start">
-        {/* LEFT: GENERATE + UPLOAD */}
         <div className="flex flex-col gap-3">
           <div className="border border-[#D4A574]/30 rounded-2xl p-4 bg-[#141414]">
             <span className="text-[11px] bg-[#e69f50]/20 text-[#e69f50] px-3 py-1 rounded-full font-bold tracking-wide">GENERATE</span>
@@ -188,7 +182,6 @@ export default function PhotoStudio() {
           </div>
         </div>
 
-        {/* CENTER: CANVAS - CORRECTED: Reduced height, equal 4 sides */}
         <div className="border border-[#D4A574]/30 rounded-2xl bg-[#141414] flex flex-col overflow-hidden aspect-square max-h-[500px]">
           <div className="p-3 border-b border-[#D4A574]/20 flex items-center justify-between">
             <h3 className="text-[#E8DCC6] font-medium">3D Model Viewer</h3>
@@ -223,21 +216,14 @@ export default function PhotoStudio() {
           <div className="p-2 text-center text-xs text-[#E8DCC6]/40 border-t border-[#D4A574]/20">Model: {fileName} • 12.4k polygons • 1 material • Ready • Loaded in 1.2s</div>
         </div>
 
-        {/* RIGHT: EXPORT & VIEW - CORRECTED: Formats in dropdowns */}
+        {/* RIGHT - 2 & 3 CORRECTED */}
         <div className="border border-[#D4A574]/30 rounded-2xl p-4 bg-[#141414] flex flex-col gap-5">
           <div><span className="text-[11px] bg-[#e69f50]/20 text-[#e69f50] px-3 py-1 rounded-full font-bold">EXPORT & VIEW</span><h4 className="text-sm font-medium mt-3 mb-3">DOWNLOAD FORMATS</h4>
             <div className="grid grid-cols-2 gap-2">
-              <select className="bg-[#1F1F1F] border border-[#D4A574]/20 rounded-xl py-2.5 px-3 text-xs cursor-pointer"><option>⬇️ PNG</option><option>⬇️ JPG</option><option>⬇️ WEBP</option></select>
-              <select className="bg-[#1F1F1F] border border-[#D4A574]/20 rounded-xl py-2.5 px-3 text-xs cursor-pointer"><option>⬇️ PNG</option><option>⬇️ JPG</option><option>⬇️ WEBP</option></select>
-              <select className="bg-[#1F1F1F] border border-[#D4A574]/20 rounded-xl py-2.5 px-3 text-xs cursor-pointer"><option>⬇️ PNG</option><option>⬇️ JPG</option><option>⬇️ TIFF</option></select>
-              <select className="bg-[#1F1F1F] border border-[#D4A574]/20 rounded-xl py-2.5 px-3 text-xs cursor-pointer"><option>⬇️ PNG</option><option>⬇️ JPG</option><option>⬇️ WEBP</option></select>
-              <select className="bg-[#1F1F1F] border border-[#D4A574]/20 rounded-xl py-2.5 px-3 text-xs cursor-pointer bg-[#e69f50]/10 border-[#e69f50]/30"><option>⬇️ PNG</option><option>⬇️ JPG</option><option>⬇️ WEBP</option></select>
-              <select className="bg-[#1F1F1F] border border-[#D4A574]/20 rounded-xl py-2.5 px-3 text-xs cursor-pointer"><option>⬇️ JPG</option><option>⬇️ PNG</option><option>⬇️ WEBP</option></select>
-              <select className="bg-[#1F1F1F] border border-[#D4A574]/20 rounded-xl py-2.5 px-3 text-xs cursor-pointer"><option>⬇️ WEBP</option><option>⬇️ PNG</option><option>⬇️ AVIF</option></select>
-              <select value={exportFormat} onChange={e=>setExportFormat(e.target.value)} className="bg-[#1F1F1F] border border-[#D4A574]/20 rounded-xl py-2.5 px-3 text-xs cursor-pointer"><option>PNG</option><option>JPG</option><option>WEBP</option></select>
+              <select className="bg-[#1F1F1F] border border-[#D4A574]/20 rounded-xl py-2.5 px-3 text-xs cursor-pointer"><option>⬇️ PNG</option><option>JPG</option><option>WEBP</option></select>
+              <select className="bg-[#1F1F1F] border border-[#D4A574]/20 rounded-xl py-2.5 px-3 text-xs cursor-pointer"><option>⬇️ PNG</option><option>JPG</option><option>WEBP</option></select>
             </div>
           </div>
-          <div className="border-t border-[#D4A574]/20 pt-4"><span className="text-[11px] bg-[#e69f50]/20 text-[#e69f50] px-3 py-1 rounded-full font-bold">AR VIEW</span><button className="w-full mt-3 bg-[#e69f50] text-black rounded-xl py-2.5 text-sm font-medium">👓 Launch AR View</button><p className="text-[11px] text-[#E8DCC6]/40 mt-2">View in augmented reality on mobile</p></div>
           <div className="border-t border-[#D4A574]/20 pt-4">
             <h4 className="text-sm font-medium mb-3">EXPORT OPTIONS</h4>
             <div className="space-y-4">
@@ -253,7 +239,6 @@ export default function PhotoStudio() {
         </div>
       </div>
 
-      {/* BOTTOM BAR */}
       <div className="border border-[#D4A574]/30 rounded-2xl bg-[#141414] p-3 flex flex-wrap items-center justify-between gap-4 text-xs">
         <div className="flex items-center gap-3"><span className="flex gap-1"><span className="w-2 h-2 bg-[#e69f50] rounded-full animate-pulse"></span><span className="w-2 h-2 bg-[#e69f50]/50 rounded-full"></span></span><span>AI generating {isProcessing?"62%":"Ready"}</span><div className="w-32 h-2 bg-[#1F1F1F] rounded-full"><div className={`h-2 bg-[#e69f50] rounded-full ${isProcessing?"w-[62%]":"w-full"}`}></div></div><span>Estimated {isProcessing?"18s remaining":"0s"}</span></div>
         <div className="flex items-center gap-6"><span>Completed today 14</span><span>Avg processing 22s</span><span className="flex items-center gap-2">💳 Credits remaining 187</span></div>
