@@ -16,37 +16,72 @@ export default function PhotoStudio() {
   const [shadowIntensity, setShadowIntensity] = useState(70);
   const [bgStyle, setBgStyle] = useState("Luxury Marble • Gold");
   const [lighting, setLighting] = useState("Top-Right");
-  const [activeTool, setActiveTool] = useState("remove-bg");
+  const [activeTool, setActiveTool] = useState("custom-bg");
   const [isProcessing, setIsProcessing] = useState(false);
   const [exportFormat, setExportFormat] = useState("PNG");
   const [exportQuality, setExportQuality] = useState(90);
   const [isBgRemoved, setIsBgRemoved] = useState(true);
   const [activeDropdown, setActiveDropdown] = useState<null | "notif" | "profile">(null);
-  const [activeHeaderTab, setActiveHeaderTab] = useState("Studio");
+  const [activeHeaderTab, setActiveHeaderTab] = useState("Backgrounds");
   const [hoveredHeaderTab, setHoveredHeaderTab] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
 
   const HEADER_TABS: HeaderTab[] = [
-    { name: "Dashboard", path: "#dashboard", items: [ { label: "Overview", desc: "Edits today & credits" }, { label: "Recent Projects", desc: "Last 10 files", tool: "remove-bg" }, { label: "Quick Upload", desc: "Start new edit" }, ] },
-    { name: "Studio", path: "#studio", items: [ { label: "Add / Change Background", desc: "Remove & replace BG", tool: "remove-bg" }, { label: "Enhance", desc: "Auto enhance image", tool: "enhance" }, { label: "AI Backgrounds", desc: "Premium studio BG", tool: "ai-bg", bg: "Luxury Marble • Gold" }, { label: "Magic Eraser", desc: "Remove unwanted object", tool: "eraser" }, { label: "Recolor", desc: "Change product color", tool: "recolor" }, { label: "Shadow Studio", desc: "Add realistic shadow", tool: "shadow" }, ] },
-    { name: "Backgrounds", path: "#backgrounds", items: [ { label: "Luxury Marble • Gold", desc: "Best seller", tool: "ai-bg", bg: "Luxury Marble • Gold", prompt: "Luxury gold studio" }, { label: "White Infinity", desc: "E-com clean", tool: "ai-bg", bg: "White Infinity", prompt: "Minimal marble" }, { label: "Studio Black", desc: "Premium dark", tool: "ai-bg", bg: "Studio Black", prompt: "Dark moody" }, { label: "Minimal Concrete", desc: "Trending", tool: "ai-bg", bg: "Minimal Concrete", prompt: "Neutral grey backdrop" }, { label: "Outdoor Sunlight", desc: "Natural light", tool: "ai-bg", bg: "White Infinity", prompt: "Outdoor sunlight" }, ] },
+    { name: "Dashboard", path: "#dashboard", items: [ { label: "Overview", desc: "Edits today & credits" }, { label: "Recent Projects", desc: "Last 10 files", tool: "custom-bg" }, { label: "Quick Upload", desc: "Start new edit" }, ] },
+    // 1. CORRECTION: Renamed to Custom Background
+    { name: "Studio", path: "#studio", items: [ { label: "Custom Background", desc: "Remove & replace BG", tool: "custom-bg" }, { label: "Enhance", desc: "Auto enhance image", tool: "enhance" }, { label: "AI Backgrounds", desc: "Premium studio BG", tool: "ai-bg", bg: "Luxury Marble • Gold" }, { label: "Magic Eraser", desc: "Remove unwanted object", tool: "eraser" }, { label: "Recolor", desc: "Change product color", tool: "recolor" }, { label: "Shadow Studio", desc: "Add realistic shadow", tool: "shadow" }, ] },
+    // 2. CORRECTION: Added Custom Upload BG
+    { name: "Backgrounds", path: "#backgrounds", items: [ { label: "Custom Background", desc: "Your main BG tool", tool: "custom-bg" }, { label: "Custom Upload BG", desc: "Upload your own BG", tool: "custom-upload" }, { label: "Luxury Marble • Gold", desc: "Best seller", tool: "ai-bg", bg: "Luxury Marble • Gold", prompt: "Luxury gold studio" }, { label: "White Infinity", desc: "E-com clean", tool: "ai-bg", bg: "White Infinity", prompt: "Minimal marble" }, { label: "Studio Black", desc: "Premium dark", tool: "ai-bg", bg: "Studio Black", prompt: "Dark moody" }, { label: "Minimal Concrete", desc: "Trending", tool: "ai-bg", bg: "Minimal Concrete", prompt: "Neutral grey backdrop" }, { label: "Outdoor Sunlight", desc: "Natural light", tool: "ai-bg", bg: "White Infinity", prompt: "Outdoor sunlight" }, ] },
     { name: "Enhance", path: "#enhance", items: [ { label: "Auto Enhance", desc: "One-click fix", tool: "enhance" }, { label: "Upscale 2x / 4x", desc: "HD quality", tool: "enhance" }, { label: "Color Correction", desc: "True colors", tool: "recolor" }, { label: "Lighting Fix", desc: "Studio lights fix", tool: "enhance" }, { label: "Sharpen & Denoise", desc: "Crisp details", tool: "enhance" }, ] },
     { name: "Batch", path: "#batch", items: [ { label: "Bulk Upload (100)", desc: "Process 10-100 images", badge: "PRO" }, { label: "Apply Same BG to All", desc: "Save time", bg: "Luxury Marble • Gold", tool: "ai-bg" }, { label: "Bulk Export ZIP", desc: "Download all at once" }, ] },
     { name: "Export", path: "#export", items: [ { label: "Recent Exports", desc: "Last 20 files" }, { label: "PNG / JPG / WEBP", desc: "Choose format" }, { label: "Quality & DPI", desc: "2048x2048 - 300 DPI" }, { label: "Share Link", desc: "Client preview" }, ] },
   ];
 
-  const tools = [
-    { id: "remove-bg", label: "Add / Change Background", icon: "🎀" },
-    { id: "enhance", label: "Enhance", icon: "✨" },
-    { id: "ai-bg", label: "AI Backgrounds", icon: "🏔️" },
-    { id: "eraser", label: "Magic Eraser", icon: "🪶" },
-    { id: "recolor", label: "Recolor", icon: "🎨" },
-    { id: "shadow", label: "Shadow Studio", icon: "☁️" },
-  ];
+  // 3. CORRECTION: Dynamic left tools based on Tab
+  const ALL_TOOLS_MAP: Record<string, { id: string; label: string; icon: string }[]> = {
+    Dashboard: [
+      { id: "custom-bg", label: "Custom Background", icon: "🎀" },
+      { id: "ai-bg", label: "AI Backgrounds", icon: "🏔️" },
+      { id: "enhance", label: "Enhance", icon: "✨" },
+    ],
+    Studio: [
+      { id: "custom-bg", label: "Custom Background", icon: "🎀" },
+      { id: "enhance", label: "Enhance", icon: "✨" },
+      { id: "ai-bg", label: "AI Backgrounds", icon: "🏔️" },
+      { id: "eraser", label: "Magic Eraser", icon: "🪶" },
+      { id: "recolor", label: "Recolor", icon: "🎨" },
+      { id: "shadow", label: "Shadow Studio", icon: "☁️" },
+    ],
+    Backgrounds: [
+      { id: "custom-bg", label: "Custom Background", icon: "🖼️" },
+      { id: "preset-bg", label: "Preset Backgrounds", icon: "🏜️" },
+      { id: "custom-upload", label: "Custom Upload BG", icon: "⬆️" },
+      { id: "ai-bg", label: "AI Backgrounds", icon: "🏔️" },
+      { id: "luxury-gold", label: "Luxury Marble • Gold", icon: "✨" },
+    ],
+    Enhance: [
+      { id: "enhance", label: "Auto Enhance", icon: "✨" },
+      { id: "upscale", label: "Upscale 2x/4x", icon: "🔍" },
+      { id: "recolor", label: "Color Correction", icon: "🎨" },
+      { id: "shadow", label: "Lighting Fix", icon: "💡" },
+    ],
+    Batch: [
+      { id: "bulk-upload", label: "Bulk Upload", icon: "📦" },
+      { id: "apply-all", label: "Apply Same BG to All", icon: "🔄" },
+      { id: "bulk-export", label: "Bulk Export ZIP", icon: "📁" },
+    ],
+    Export: [
+      { id: "png-export", label: "PNG / JPG / WEBP", icon: "⬇️" },
+      { id: "quality-dpi", label: "Quality & DPI", icon: "⚙️" },
+      { id: "share-link", label: "Share Link", icon: "🔗" },
+    ],
+  };
+
+  const dynamicTools = ALL_TOOLS_MAP[activeHeaderTab] || ALL_TOOLS_MAP["Studio"];
 
   const toolStatus: Record<string, { after: string }> = {
-    "remove-bg": { after: "BG Removed" }, "enhance": { after: "Enhanced" }, "ai-bg": { after: "New BG" }, "eraser": { after: "Erased" }, "recolor": { after: "Recolored" }, "shadow": { after: "Shadow Added" },
+    "custom-bg": { after: "Custom BG" }, "remove-bg": { after: "BG Removed" }, "enhance": { after: "Enhanced" }, "ai-bg": { after: "New BG" }, "eraser": { after: "Erased" }, "recolor": { after: "Recolored" }, "shadow": { after: "Shadow Added" }, "custom-upload": { after: "Custom BG" }, "preset-bg": { after: "Preset BG" },
   };
 
   useEffect(() => {
@@ -63,7 +98,7 @@ export default function PhotoStudio() {
     if (item.tool) setActiveTool(item.tool);
     if (item.bg) setBgStyle(item.bg);
     if (item.prompt) setPrompt(item.prompt);
-    if (item.label === "Quick Upload" || item.label.includes("Bulk Upload")) { fileInputRef.current?.click(); }
+    if (item.label === "Quick Upload" || item.label.includes("Bulk Upload") || item.label.includes("Custom Upload")) { fileInputRef.current?.click(); }
   };
 
   const handleUpload = (file: File) => {
@@ -75,7 +110,6 @@ export default function PhotoStudio() {
     if (!uploadedFile && !uploadedImage) { alert("Please upload image first!"); return; }
     setIsProcessing(true);
     try {
-      const pkg = "@imgly" + "/background-removal"; // @ts-ignore const { removeBackground } = await import(pkg);
       // @ts-ignore
       const { removeBackground } = await import("@imgly/background-removal");
       const src = uploadedFile || (await fetch(uploadedImage!).then(r => r.blob()).then(b => new File([b], fileName))) as File;
@@ -102,7 +136,6 @@ export default function PhotoStudio() {
 
   return (
     <div className="min-h-screen bg-[#0A0A0A] text-[#E8DCC6] flex flex-col p-3 gap-3">
-      {/* HEADER - RECTIFIED - NO ARROWS */}
       <header ref={headerRef} className="border border-[#D4A574]/30 rounded-2xl px-7 py-4 flex items-center justify-between bg-[#141414] sticky top-0 z-50">
         <div className="flex items-center gap-10">
           <Link href="/" className="flex items-center gap-3 cursor-pointer">
@@ -115,15 +148,12 @@ export default function PhotoStudio() {
               const isHovered = hoveredHeaderTab === tab.name;
               return (
                 <div key={tab.name} className="relative" onMouseEnter={() => setHoveredHeaderTab(tab.name)} onMouseLeave={() => setHoveredHeaderTab(null)}>
-                  {/* FIX 1: Removed ▼ triangle */}
                   <button onClick={() => setActiveHeaderTab(tab.name)} className={`px-4 py-2 rounded-full transition cursor-pointer text-[14px] ${isActive ? "border border-[#e69f50] text-white font-medium bg-white/[0.06]" : "border border-transparent text-[#E8DCC6]/60 hover:text-white hover:bg-white/[0.04]"}`}>
                     {tab.name}
                   </button>
                   {isHovered && (
                     <div className="absolute left-0 top-[44px] w-auto min-w-[240px] max-w-[360px] bg-[#141414] border border-[#D4A574]/30 rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.6)] z-50 overflow-hidden p-2">
-                      {/* FIX 3: Removed tab name header */}
                       {tab.items.map((item) => (
-                        // FIX 2: Removed → arrow
                         <button key={item.label} onClick={() => handleHeaderItemClick(tab.name, item)} className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-[#1F1F1F] cursor-pointer">
                           <div>
                             <div className="text-[13px] text-white flex items-center gap-2">{item.label}{item.badge && <span className="text-[9px] bg-[#e69f50] text-black px-1.5 py-0.5 rounded-full font-bold">{item.badge}</span>}</div>
@@ -185,15 +215,16 @@ export default function PhotoStudio() {
       <div className="flex-1 grid grid-cols-1 lg:grid-cols-[280px_1fr_320px] gap-3 items-stretch">
         <div className="flex flex-col gap-3 h-full">
           <div className="border border-[#D4A574]/30 rounded-2xl p-4 bg-[#141414]">
-            <span className="text-[11px] bg-[#e69f50]/20 text-[#e69f50] px-3 py-1 rounded-full font-bold tracking-wide">GENERATE</span>
+            <span className="text-[11px] bg-[#e69f50]/20 text-[#e69f50] px-3 py-1 rounded-full font-bold tracking-wide">{activeHeaderTab.toUpperCase()}</span>
+            <span className="text-[10px] ml-2 text-[#E8DCC6]/40">dynamic change ✓</span>
             <div className="space-y-2 mt-4">
-              {tools.map(tool => (
+              {dynamicTools.map(tool => (
                 <button key={tool.id} onClick={()=>setActiveTool(tool.id)} className={`${toolBtnClass} border-2 ${activeTool===tool.id ? "bg-[#e69f50] text-black border-[#e69f50] font-semibold" : "bg-[#1F1F1F] text-[#E8DCC6]/80 border-[#D4A574]/10 hover:bg-[#2A2A2A]"}`}>
                   <span>{tool.icon}</span> {tool.label}
                 </button>
               ))}
             </div>
-            <button onClick={handleProcess} disabled={isProcessing} className={`w-full mt-4 flex items-center justify-center gap-2 h-[44px] text-[13px] ${ctaClass}`}>✨ Run {tools.find(t=>t.id===activeTool)?.label}</button>
+            <button onClick={handleProcess} disabled={isProcessing} className={`w-full mt-4 flex items-center justify-center gap-2 h-[44px] text-[13px] ${ctaClass}`}>✨ Run {dynamicTools.find(t=>t.id===activeTool)?.label}</button>
           </div>
           <div className="border border-[#D4A574]/30 rounded-2xl p-4 bg-[#141414] flex-1 flex flex-col">
             <div onDragOver={e=>e.preventDefault()} onDrop={handleDrop} className="border-2 border-dashed border-[#e69f50]/70 rounded-xl p-6 text-center bg-[#0F0F0F]/50 flex-1 flex flex-col justify-center">
@@ -250,7 +281,7 @@ export default function PhotoStudio() {
           <div className="border-t border-[#D4A574]/20 pt-4 flex-1">
             <h4 className="text-sm font-medium mb-3">EXPORT OPTIONS</h4>
             <div className="space-y-4">
-              <div><label className="text-xs text-[#E8DCC6]/70">Background Style</label><select value={bgStyle} onChange={e=>setBgStyle(e.target.value)} className="w-full mt-1 bg-[#1F1F1F] border border-[#D4A574]/20 rounded-xl px-3 py-2 text-xs cursor-pointer"><option>Luxury Marble • Gold</option><option>White Infinity</option><option>Minimal Concrete</option><option>Studio Black</option></select></div>
+              <div><label className="text-xs text-[#E8DCC6]/70">Background Style</label><select value={bgStyle} onChange={e=>setBgStyle(e.target.value)} className="w-full mt-1 bg-[#1F1F1F] border border-[#D4A574]/20 rounded-xl px-3 py-2 text-xs cursor-pointer"><option>Luxury Marble • Gold</option><option>White Infinity</option><option>Minimal Concrete</option><option>Studio Black</option><option>Custom Upload BG</option></select></div>
               <div><label className="text-xs text-[#E8DCC6]/70 flex justify-between">Shadow Intensity <span>{shadowIntensity}%</span></label><input type="range" min="0" max="100" value={shadowIntensity} onChange={e=>setShadowIntensity(Number(e.target.value))} className="w-full mt-1 accent-[#e69f50] cursor-pointer" /></div>
               <div><label className="text-xs text-[#E8DCC6]/70">Lighting Direction</label><button className="w-full mt-1 bg-[#1F1F1F] border border-[#D4A574]/20 rounded-xl px-3 py-2 text-xs text-left cursor-pointer">☀️ {lighting}</button></div>
               <div><label className="text-xs text-[#E8DCC6]/70 flex justify-between">Quality — {exportQuality}%</label><input type="range" min="10" max="100" value={exportQuality} onChange={e=>setExportQuality(Number(e.target.value))} className="w-full mt-1 accent-[#e69f50] cursor-pointer" /></div>
