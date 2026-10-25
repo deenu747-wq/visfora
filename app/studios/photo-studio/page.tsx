@@ -149,7 +149,6 @@ export default function PhotoStudio() {
         </div>
       </header>
 
-      {/* 1. CORRECTED: chips in dropdown, removed Edit/Retouch */}
       <div className="border border-[#D4A574]/20 rounded-2xl bg-[#141414] p-3 flex items-center gap-3">
         <span className="text-sm text-[#E8DCC6]/70">Generation Mode:</span>
         <select className="bg-[#1F1F1F] border border-[#D4A574]/20 rounded-xl px-3 py-2 text-sm cursor-pointer min-w-[200px]" value={prompt} onChange={e=>{setPrompt(e.target.value); const c=chips.find(x=>x.chip===e.target.value); if(c){setBgStyle(c.bg); setActiveTool(c.tool);}}}>
@@ -173,9 +172,9 @@ export default function PhotoStudio() {
             </div>
             <button onClick={handleProcess} disabled={isProcessing} className={`w-full mt-4 flex items-center justify-center gap-2 h-[44px] text-[13px] ${ctaClass}`}>✨ Run {tools.find(t=>t.id===activeTool)?.label}</button>
           </div>
-          {/* 2. CORRECTED: UPLOAD text removed */}
+          {/* 2. CORRECTED: Visible dotted border */}
           <div className="border border-[#D4A574]/30 rounded-2xl p-4 bg-[#141414]">
-            <div onDragOver={e=>e.preventDefault()} onDrop={handleDrop} className="border border-dashed border-[#e69f50]/40 rounded-xl p-6 text-center">
+            <div onDragOver={e=>e.preventDefault()} onDrop={handleDrop} className="border-2 border-dashed border-[#e69f50]/70 rounded-xl p-6 text-center bg-[#0F0F0F]/50">
               <div className="text-[#e69f50] text-2xl">☁️</div>
               <p className="text-sm mt-2">Drag & drop image here</p>
               <p className="text-xs text-[#E8DCC6]/50 mt-1">or click to browse • PNG, JPG</p>
@@ -244,10 +243,6 @@ export default function PhotoStudio() {
       <div className="border border-[#D4A574]/30 rounded-2xl bg-[#141414] p-3 flex flex-wrap items-center justify-between gap-4 text-xs">
         <div className="flex items-center gap-3"><span className="flex gap-1"><span className="w-2 h-2 bg-[#e69f50] rounded-full animate-pulse"></span><span className="w-2 h-2 bg-[#e69f50]/50 rounded-full"></span></span><span>AI generating {isProcessing?"62%":"Ready"}</span><div className="w-32 h-2 bg-[#1F1F1F] rounded-full"><div className={`h-2 bg-[#e69f50] rounded-full ${isProcessing?"w-[62%]":"w-full"}`}></div></div><span>Estimated {isProcessing?"18s remaining":"0s"}</span></div>
         <div className="flex items-center gap-6"><span>Completed today 14</span><span>Avg processing 22s</span><span className="flex items-center gap-2">💳 Credits remaining 187</span></div>
-      </div>
-
-      <div className="border border-[#D4A574]/30 p-3 bg-[#141414] rounded-2xl flex gap-2 overflow-x-auto">
-        {chips.map(({chip,bg,tool}) => (<button key={chip} onClick={()=>{setPrompt(chip);setBgStyle(bg);setActiveTool(tool);}} className="whitespace-nowrap px-4 py-2 rounded-full text-xs border border-[#D4A574]/30 bg-[#1F1F1F] hover:bg-[#e69f50] hover:text-black transition cursor-pointer">✨ {chip}</button>))}
       </div>
     </div>
   );
