@@ -219,7 +219,7 @@ export default function PhotoStudio() {
             <span className="text-[10px] ml-2 text-[#E8DCC6]/40">dynamic change ✓</span>
             <div className="space-y-2 mt-4">
               {dynamicTools.map(tool => (
-                <button key={tool.id} onClick={()=>setActiveTool(tool.id)} className={`${toolBtnClass} border-2 ${activeTool===tool.id ? "bg-[#e69f50] text-black border-[#e69f50] font-semibold" : "bg-[#1F1F1F] text-[#E8DCC6]/80 border-[#D4A574]/10 hover:bg-[#2A2A2A]"}`}>
+                <button key={tool.id} onClick={()=>setActiveTool(tool.id)} className={`${toolBtnClass} border-2 ${activeTool===tool.id ? "bg-[#e69f50]/20 text-[#e69f50] border-[#e69f50] font-semibold backdrop-blur-[2px]" : "bg-[#1F1F1F] text-[#E8DCC6]/80 border-[#D4A574]/10 hover:bg-[#2A2A2A]"}`}>
                   <span>{tool.icon}</span> {tool.label}
                 </button>
               ))}
