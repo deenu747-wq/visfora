@@ -29,13 +29,13 @@ export default function PhotoStudio() {
     { id: "shadow", label: "Shadow Studio", icon: "☁️" },
   ];
 
-  const toolStatus: Record<string, { before: string; after: string }> = {
-    "change-bg": { before: "Original", after: "BG Removed" },
-    "enhance": { before: "Original", after: "Enhanced" },
-    "ai-bg": { before: "Original", after: "New BG" },
-    "eraser": { before: "Original", after: "Erased" },
-    "recolor": { before: "Original", after: "Recolored" },
-    "shadow": { before: "Original", after: "Shadow Added" },
+  const toolStatus: Record<string, { after: string }> = {
+    "change-bg": { after: "BG Removed" },
+    "enhance": { after: "Enhanced" },
+    "ai-bg": { after: "New BG" },
+    "eraser": { after: "Erased" },
+    "recolor": { after: "Recolored" },
+    "shadow": { after: "Shadow Added" },
   };
 
   useEffect(() => {
@@ -47,8 +47,7 @@ export default function PhotoStudio() {
   }, []);
 
   const handleUpload = (file: File) => {
-    const url = URL.createObjectURL(file);
-    setUploadedImage(url);
+    setUploadedImage(URL.createObjectURL(file));
     setUploadedFile(file);
     setFileName(file.name);
     setAfterImage(null);
@@ -81,27 +80,63 @@ export default function PhotoStudio() {
 
   const ctaClass = "bg-[#e69f50] text-black hover:bg-[#d48e40] hover:shadow-[0_0_20px_rgba(230,159,80,0.5)] cursor-pointer transition-all duration-200 font-medium rounded-full";
   const toolBtnClass = "w-full text-left px-4 py-3.5 rounded-xl flex items-center gap-3 transition cursor-pointer text-[13px] h-[48px]";
-  const currentStatus = toolStatus[activeTool] || toolStatus["change-bg"];
+  const currentAfterText = isBgRemoved ? toolStatus[activeTool]?.after || "BG Removed" : "Original";
 
   return (
     <div className="min-h-screen bg-[#0A0A0A] text-[#E8DCC6] flex flex-col">
+      {/* HEADER WITH POPUPS RESTORED */}
       <header ref={headerRef} className="border-b border-[#D4A574]/30 px-6 py-3 flex items-center justify-between bg-[#0A0A0A] sticky top-0 z-50">
         <Link href="/" className="flex items-center gap-3 cursor-pointer">
           <img src="/Logo-White.png" alt="VISFORA Logo" className="h-14 w-auto object-contain" />
           <span className="text-[32px] tracking-[0.18em] font-light text-white leading-none flex items-center h-14">VIS<span className="font-semibold text-[#d6a85a]">FORA</span></span>
         </Link>
         <div className="flex items-center gap-3 relative">
+          {/* 1. NOTIF POPUP */}
           <div className="relative">
             <button onClick={() => setActiveDropdown(activeDropdown === "notif" ? null : "notif")} className={`w-9 h-9 rounded-full border flex items-center justify-center transition cursor-pointer ${activeDropdown === "notif" ? "bg-[#e69f50] border-[#e69f50] text-black" : "bg-[#1F1F1F] border-[#D4A574]/20 hover:bg-[#2A2A2A]"}`}>🔔</button>
-            {activeDropdown === "notif" && (<div className="absolute right-0 top-12 w-[340px] bg-[#141414] border border-[#D4A574]/30 rounded-2xl shadow-xl z-50 p-2"><div className="p-3 rounded-xl bg-[#1F1F1F]"><p className="text-sm text-white">Background removed</p><p className="text-xs text-[#E8DCC6]/50 mt-1">{fileName} • just now</p></div></div>)}
+            {activeDropdown === "notif" && (
+              <div className="absolute right-0 top-12 w-[340px] bg-[#141414] border border-[#D4A574]/30 rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.6)] z-50 overflow-hidden">
+                <div className="p-4 border-b border-[#D4A574]/20 flex items-center justify-between"><h4 className="font-medium text-white">Notifications</h4><span className="text-xs bg-[#e69f50] text-black px-2 py-0.5 rounded-full">3 new</span></div>
+                <div className="p-2 space-y-1">
+                  <div className="p-3 rounded-xl bg-[#1F1F1F] border border-[#D4A574]/10"><p className="text-sm text-white">Background removed successfully</p><p className="text-xs text-[#E8DCC6]/50 mt-1">{fileName} • 2 min ago</p></div>
+                  <div className="p-3 rounded-xl bg-[#1F1F1F] border border-[#D4A574]/10"><p className="text-sm text-white">Credits running low</p><p className="text-xs text-[#E8DCC6]/50 mt-1">12 credits left</p></div>
+                  <div className="p-3 rounded-xl bg-[#1F1F1F] border border-[#D4A574]/10"><p className="text-sm text-white">Export {exportFormat} ready</p><p className="text-xs text-[#E8DCC6]/50 mt-1">2048x2048 • {fileName}</p></div>
+                </div>
+              </div>
+            )}
           </div>
+          {/* 1. SETTINGS POPUP */}
           <div className="relative">
             <button onClick={() => setActiveDropdown(activeDropdown === "settings" ? null : "settings")} className={`w-9 h-9 rounded-full border flex items-center justify-center transition cursor-pointer ${activeDropdown === "settings" ? "bg-[#e69f50] border-[#e69f50] text-black" : "bg-[#1F1F1F] border-[#D4A574]/20 hover:bg-[#2A2A2A]"}`}>⚙️</button>
-            {activeDropdown === "settings" && (<div className="absolute right-0 top-12 w-[300px] bg-[#141414] border border-[#D4A574]/30 rounded-2xl shadow-xl z-50 p-4"><h4 className="text-white mb-3">Settings</h4><div className="text-sm text-[#E8DCC6]/60">High Quality Export ON</div></div>)}
+            {activeDropdown === "settings" && (
+              <div className="absolute right-0 top-12 w-[320px] bg-[#141414] border border-[#D4A574]/30 rounded-2xl shadow-xl z-50 p-4">
+                <h4 className="font-medium text-white mb-4">Settings & Tools</h4>
+                <div className="space-y-3 text-sm">
+                  <div className="flex justify-between items-center p-2 rounded-xl bg-[#1F1F1F]"><span className="text-[#E8DCC6]/70">High Quality Export</span><div className="w-10 h-5 bg-[#e69f50] rounded-full p-0.5"><div className="w-4 h-4 bg-black rounded-full ml-auto"></div></div></div>
+                  <div className="flex justify-between items-center p-2 rounded-xl bg-[#1F1F1F]"><span className="text-[#E8DCC6]/70">Auto-save Projects</span><div className="w-10 h-5 bg-[#1F1F1F] border border-[#D4A574]/20 rounded-full p-0.5"><div className="w-4 h-4 bg-[#E8DCC6]/50 rounded-full"></div></div></div>
+                  <div className="flex justify-between items-center p-2 rounded-xl bg-[#1F1F1F]"><span className="text-[#E8DCC6]/70">Background Removal</span><span className="text-xs text-[#e69f50]">{isBgRemoved ? "ON" : "OFF"}</span></div>
+                  <div className="pt-2 border-t border-[#D4A574]/10 text-xs text-[#E8DCC6]/50">Active Tool: {tools.find(t=>t.id===activeTool)?.label}</div>
+                </div>
+              </div>
+            )}
           </div>
+          {/* 1. PROFILE POPUP */}
           <div className="relative">
             <button onClick={() => setActiveDropdown(activeDropdown === "profile" ? null : "profile")} className="w-9 h-9 rounded-full bg-[#e69f50] border-2 border-[#e69f50] text-black flex items-center justify-center font-medium cursor-pointer">👤</button>
-            {activeDropdown === "profile" && (<div className="absolute right-0 top-12 w-[280px] bg-[#141414] border border-[#D4A574]/30 rounded-2xl shadow-xl z-50 p-4"><p className="text-white text-sm">Ankit Kumar</p><p className="text-xs text-[#E8DCC6]/50">ankit@visfora.com</p></div>)}
+            {activeDropdown === "profile" && (
+              <div className="absolute right-0 top-12 w-[300px] bg-[#141414] border border-[#D4A574]/30 rounded-2xl shadow-xl z-50 overflow-hidden">
+                <div className="p-4 border-b border-[#D4A574]/20 flex gap-3">
+                  <div className="w-12 h-12 rounded-full bg-[#e69f50] flex items-center justify-center text-black font-bold">AK</div>
+                  <div><p className="text-sm text-white font-medium">Ankit Kumar</p><p className="text-xs text-[#E8DCC6]/50">ankit@visfora.com</p><p className="text-xs text-[#e69f50] mt-1">112 credits • Pro Plan</p></div>
+                </div>
+                <div className="p-2 text-sm">
+                  <button className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-[#1F1F1F] cursor-pointer flex items-center gap-2">👤 My Profile</button>
+                  <button className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-[#1F1F1F] cursor-pointer flex items-center gap-2">💳 Billing & Credits</button>
+                  <button className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-[#1F1F1F] cursor-pointer flex items-center gap-2">🎨 My Projects</button>
+                  <button className="w-full text-left px-3 py-2 rounded-xl hover:bg-red-500/10 hover:text-red-400 cursor-pointer mt-2 border-t border-[#D4A574]/10 flex items-center gap-2">🚪 Logout</button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </header>
@@ -127,13 +162,7 @@ export default function PhotoStudio() {
         <main className="flex-1 flex flex-col">
           <div className="flex items-center justify-between mb-3 px-2">
             <h2 className="text-[#E8DCC6] font-medium text-lg">Canvas</h2>
-            <div className="flex items-center gap-3">
-              <span className="text-xs text-[#E8DCC6]/70 tracking-wide">Background Removal</span>
-              <button onClick={() => setIsBgRemoved(!isBgRemoved)} className={`relative w-[64px] h-[28px] rounded-full p-1 transition-all duration-300 cursor-pointer flex items-center ${isBgRemoved ? "bg-[#e69f50]" : "bg-[#2A2A2A] border border-[#D4A574]/20"}`}>
-                <span className={`absolute text-[10px] font-bold transition-all ${isBgRemoved ? "left-2.5 text-black" : "right-2.5 text-[#E8DCC6]/50"}`}>{isBgRemoved ? "ON" : "OFF"}</span>
-                <div className={`w-5 h-5 rounded-full shadow-md transition-all duration-300 z-10 ${isBgRemoved ? "translate-x-[36px] bg-black" : "translate-x-0 bg-[#E8DCC6]"}`} />
-              </button>
-            </div>
+            <span className="text-[11px] text-[#E8DCC6]/40">Tool: {tools.find(t=>t.id===activeTool)?.label}</span>
           </div>
 
           <div onDragOver={(e) => e.preventDefault()} onDrop={handleDrop} className="flex-1 border border-dashed border-[#D4A574]/50 rounded-2xl p-4 bg-[#0F0F0F] relative min-h-[580px] flex flex-col">
@@ -148,31 +177,48 @@ export default function PhotoStudio() {
                 {uploadedImage ? <img src={uploadedImage} className="w-full h-full object-cover absolute inset-0" alt="before" /> : <img src="/sneaker.png" className="w-full h-full object-cover absolute inset-0" alt="sneaker" />}
               </div>
 
-              <div className="relative rounded-xl overflow-hidden bg-[#111] min-h-[480px]">
+              <div className="relative rounded-xl overflow-hidden bg-[#111] min-h-[480px] flex flex-col">
+                {/* 2. ADD BACKGROUND REMOVAL IN AFTER PREVIEW SECTION */}
+                <div className="absolute top-0 left-0 right-0 z-30 p-2.5 flex justify-between items-center bg-gradient-to-b from-black/80 to-transparent">
+                  <span className="text-[10px] text-white/60">Preview Panel</span>
+                  <div className="flex items-center gap-2 bg-black/70 backdrop-blur border border-[#D4A574]/20 rounded-full px-3 py-1">
+                    <span className="text-[10px] text-[#E8DCC6]/70">Background Removal</span>
+                    <button onClick={() => setIsBgRemoved(!isBgRemoved)} className={`relative w-[48px] h-[22px] rounded-full p-0.5 transition-all duration-300 cursor-pointer flex items-center ${isBgRemoved ? "bg-[#e69f50]" : "bg-[#2A2A2A] border border-[#D4A574]/20"}`}>
+                      <span className={`absolute text-[8px] font-bold transition-all ${isBgRemoved ? "left-1.5 text-black" : "right-1.5 text-[#E8DCC6]/50"}`}>{isBgRemoved ? "ON" : "OFF"}</span>
+                      <div className={`w-4 h-4 rounded-full shadow-md transition-all duration-300 z-10 ${isBgRemoved ? "translate-x-[26px] bg-black" : "translate-x-0 bg-[#E8DCC6]"}`} />
+                    </button>
+                  </div>
+                </div>
+
                 <div className={`absolute inset-0 ${isBgRemoved ? "bg-[length:20px_20px] bg-[url('https://upload.wikimedia.org/wikipedia/commons/5/5b/Checkerboard_pattern.png')] bg-[#1A1A1A]" : "bg-[#1A1A1A]"}`} />
                 {isProcessing ? (
                   <div className="absolute inset-0 flex items-center justify-center text-[#e69f50] animate-pulse text-sm z-10">Processing... removing background</div>
                 ) : afterImage && isBgRemoved ? (
-                  <img src={afterImage} className="absolute inset-0 w-full h-full object-contain z-10" alt="after removed" />
+                  <img src={afterImage} className="absolute inset-0 w-full h-full object-contain z-10 pt-10 pb-12" alt="after removed" />
                 ) : uploadedImage && !isBgRemoved ? (
                   <img src={uploadedImage} className="absolute inset-0 w-full h-full object-cover z-10" alt="after with bg" />
                 ) : afterImage ? (
-                  <img src={afterImage} className="absolute inset-0 w-full h-full object-contain z-10" alt="after" />
+                  <img src={afterImage} className="absolute inset-0 w-full h-full object-contain z-10 pt-10" alt="after" />
                 ) : uploadedImage ? (
-                  <img src={uploadedImage} className="absolute inset-0 w-full h-full object-contain opacity-50 z-10" alt="preview" />
+                  <img src={uploadedImage} className="absolute inset-0 w-full h-full object-contain opacity-50 z-10 pt-10" alt="preview" />
                 ) : (
                   <div className="absolute inset-0 flex flex-col items-center justify-center z-10"><p className="text-[#E8DCC6]/30 text-sm">Preview</p><p className="text-[#E8DCC6]/20 text-xs mt-1">No preview yet</p></div>
                 )}
 
-                <div className="absolute bottom-0 left-0 right-0 z-20 p-2.5 flex justify-between items-center">
+                {/* 3+4. FILE NAME WITH FORMAT + PREVIEW REPLACING FILENAME */}
+                <div className="absolute bottom-0 left-0 right-0 z-20 p-2.5 flex justify-between items-center bg-gradient-to-t from-black/90 to-transparent pt-8">
                   <span className="text-[10px] bg-black/80 backdrop-blur px-3 py-1.5 rounded-full border border-[#e69f50]/30 text-white flex items-center gap-1.5">
-                    <span className="truncate max-w-[80px] text-white/70">{fileName}</span>
-                    <span className="text-[#e69f50]">• {currentStatus.after}</span>
+                    <span>Preview</span>
+                    <span className={`font-medium ${isBgRemoved ? "text-[#e69f50]" : "text-white/50"}`}>• {currentAfterText}</span>
                   </span>
                   <div className="flex gap-1.5">
-                    <span className="text-[9px] bg-black/80 backdrop-blur px-2.5 py-1.5 rounded-full border border-white/10 text-white/70">{exportFormat}</span>
+                    {/* 3. File name with format + 4. Colors exchanged */}
+                    <span className="text-[9px] bg-black/80 backdrop-blur px-2.5 py-1.5 rounded-full border border-white/10 text-white/70 truncate max-w-[100px]">{fileName}</span>
                     <span className="text-[9px] bg-black/80 backdrop-blur px-2.5 py-1.5 rounded-full border border-[#e69f50]/30 text-[#e69f50]">2048x2048</span>
                   </div>
+                </div>
+                <div className="absolute bottom-2 left-1/2 -translate-x-1/2 z-20 flex gap-1.5">
+                  <span className="text-[8px] bg-black/70 px-2 py-0.5 rounded-full text-white/50 border border-white/10">{exportFormat}</span>
                 </div>
               </div>
             </div>
