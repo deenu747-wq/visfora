@@ -1,5 +1,5 @@
 "use client";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import Link from "next/link";
 
 const AI_MODE = process.env.NEXT_PUBLIC_AI_MODE || "free";
@@ -27,6 +27,18 @@ export default function PhotoStudio() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
 
+  const [bgColor, setBgColor] = useState("#e69f50");
+  const [bgColorInput, setBgColorInput] = useState("#e69f50");
+  const [red, setRed] = useState(230);
+  const [green, setGreen] = useState(159);
+  const [blue, setBlue] = useState(80);
+  const [bgMode, setBgMode] = useState<"solid" | "gradient">("solid");
+  const [gradientColor1, setGradientColor1] = useState("#e69f50");
+  const [gradientColor2, setGradientColor2] = useState("#1a1a1a");
+  const [cutoutImage, setCutoutImage] = useState<string | null>(null);
+  const [compositeImage, setCompositeImage] = useState<string | null>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
   const HEADER_TABS: HeaderTab[] = [
     { name: "Dashboard", path: "#dashboard", items: [ { label: "Overview", desc: "Edits today & credits" }, { label: "Recent Projects", desc: "Last 10 files", tool: "custom-bg" }, { label: "Quick Upload", desc: "Start new edit" }, ] },
     { name: "Studio", path: "#studio", items: [ { label: "Custom Background", desc: "Remove & replace BG", tool: "custom-bg" }, { label: "Enhance", desc: "Auto enhance image", tool: "enhance" }, { label: "AI Backgrounds", desc: "Premium studio BG", tool: "ai-bg", bg: "Luxury Marble • Gold" }, { label: "Magic Eraser", desc: "Remove unwanted object", tool: "eraser" }, { label: "Recolor", desc: "Change product color", tool: "recolor" }, { label: "Shadow Studio", desc: "Add realistic shadow", tool: "shadow" }, ] },
@@ -52,6 +64,32 @@ export default function PhotoStudio() {
     "custom-bg": { after: "Custom BG" }, "remove-bg": { after: "BG Removed" }, "enhance": { after: "Enhanced" }, "ai-bg": { after: "New BG" }, "eraser": { after: "Erased" }, "recolor": { after: "Recolored" }, "shadow": { after: "Shadow Added" }, "custom-upload": { after: "Custom BG" }, "preset-bg": { after: "Preset BG" },
   };
 
+  const isValidHex = (hex: string) => /^#([0-9A-F]{3}){1,2}$/i.test(hex);
+  const hexToRgb = (hex: string) => ({ r: parseInt(hex.slice(1,3),16), g: parseInt(hex.slice(3,5),16), b: parseInt(hex.slice(5,7),16) });
+  const updateFromHex = (hex: string) => {
+    if(!isValidHex(hex)) return;
+    setBgColor(hex); setBgColorInput(hex);
+    const {r,g,b}=hexToRgb(hex); setRed(r); setGreen(g); setBlue(b);
+  };
+
+  const updateComposite = useCallback(async () => {
+    if (!cutoutImage || !canvasRef.current) return;
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    const img = new Image(); img.crossOrigin = "anonymous"; img.src = cutoutImage;
+    await new Promise(r => img.onload = r);
+    canvas.width = img.width; canvas.height = img.height;
+    if(bgMode==="solid"){ ctx.fillStyle = bgColor; }
+    else { const g = ctx.createLinearGradient(0,0,canvas.width,canvas.height); g.addColorStop(0,gradientColor1); g.addColorStop(1,gradientColor2); ctx.fillStyle = g; }
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+    ctx.drawImage(img,0,0,canvas.width,canvas.height);
+    const url = canvas.toDataURL(`image/${exportFormat.toLowerCase()}`, exportQuality/100);
+    setCompositeImage(url); setAfterImage(url);
+  }, [cutoutImage, bgColor, bgMode, gradientColor1, gradientColor2, exportFormat, exportQuality]);
+
+  useEffect(() => { if(cutoutImage) updateComposite(); }, [updateComposite, cutoutImage]);
+
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (headerRef.current && !headerRef.current.contains(e.target as Node)) { setActiveDropdown(null); setHoveredHeaderTab(null); }
@@ -61,8 +99,7 @@ export default function PhotoStudio() {
   }, []);
 
   const handleHeaderItemClick = (tabName: string, item: TabAction) => {
-    setActiveHeaderTab(tabName);
-    setHoveredHeaderTab(null);
+    setActiveHeaderTab(tabName); setHoveredHeaderTab(null);
     if (item.tool) setActiveTool(item.tool);
     if (item.bg) setBgStyle(item.bg);
     if (item.prompt) setPrompt(item.prompt);
@@ -71,7 +108,7 @@ export default function PhotoStudio() {
 
   const handleUpload = (file: File) => {
     const url = URL.createObjectURL(file);
-    setUploadedImage(url); setUploadedFile(file); setFileName(file.name); setAfterImage(null);
+    setUploadedImage(url); setUploadedFile(file); setFileName(file.name); setAfterImage(null); setCutoutImage(null); setCompositeImage(null);
   };
   const handleDrop = (e: React.DragEvent) => { e.preventDefault(); const file = e.dataTransfer.files[0]; if (file) handleUpload(file); };
   const handleProcess = async () => {
@@ -82,12 +119,13 @@ export default function PhotoStudio() {
       const { removeBackground } = await import("@imgly/background-removal");
       const src = uploadedFile || (await fetch(uploadedImage!).then(r => r.blob()).then(b => new File([b], fileName))) as File;
       const blob = await removeBackground(src as File);
-      setAfterImage(URL.createObjectURL(blob)); setIsBgRemoved(true);
+      const cutoutUrl = URL.createObjectURL(blob);
+      setCutoutImage(cutoutUrl); setAfterImage(cutoutUrl); setIsBgRemoved(true);
     } catch (err: any) { alert("Error: " + err.message); }
     setIsProcessing(false);
   };
   const handleExport = () => {
-    const link = document.createElement("a"); link.href = afterImage || uploadedImage!; link.download = `visfora-${activeTool}.${exportFormat.toLowerCase()}`; link.click();
+    const link = document.createElement("a"); link.href = compositeImage || afterImage || uploadedImage!; link.download = `visfora-${activeTool}.${exportFormat.toLowerCase()}`; link.click();
   };
 
   const chips = [
@@ -102,55 +140,52 @@ export default function PhotoStudio() {
   const toolBtnClass = "w-full text-left px-4 py-3.5 rounded-xl flex items-center gap-3 transition cursor-pointer text-[13px] h-[48px]";
   const currentAfterText = isBgRemoved ? toolStatus[activeTool]?.after || "BG Removed" : "Original";
 
-  // RIGHT DYNAMIC RENDERER - Mirrors left structure, content changes with activeTool
   const renderRightDynamicContent = () => {
     const baseCard = "bg-[#1F1F1F] border border-[#D4A574]/10 rounded-xl px-3 py-2.5 text-xs";
     switch(activeTool) {
       case "custom-bg":
         return (
           <div className="space-y-3">
+            <div className="flex gap-2 bg-[#0F0F0F] border border-[#D4A574]/20 rounded-full p-1">
+              <button onClick={()=>setBgMode("solid")} className={`flex-1 py-2 rounded-full text-xs font-medium transition ${bgMode==="solid" ? "bg-[#e69f50] text-black" : "text-[#E8DCC6]/50 hover:text-white"}`}>Solid</button>
+              <button onClick={()=>setBgMode("gradient")} className={`flex-1 py-2 rounded-full text-xs font-medium transition ${bgMode==="gradient" ? "bg-[#e69f50] text-black" : "text-[#E8DCC6]/50 hover:text-white"}`}>Gradient</button>
+            </div>
+            <div className="bg-[#1F1F1F] border border-[#D4A574]/20 rounded-xl p-3">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-[11px] text-[#E8DCC6]/60">Background Color</span>
+                <div className="flex items-center gap-2">
+                  <div className="w-6 h-6 rounded-full border border-white/20" style={{background: bgMode==="solid" ? bgColor : gradientColor1}} />
+                  <span className="text-[11px] font-mono">{bgMode==="solid" ? bgColor : gradientColor1}</span>
+                </div>
+              </div>
+              {bgMode==="solid" ? (
+                <>
+                  <div className="h-[28px] rounded-full border border-[#D4A574]/20 relative cursor-pointer overflow-hidden" style={{background: "linear-gradient(to right, #ff0000, #ff9900, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000)"}} onClick={(e)=>{const rect=e.currentTarget.getBoundingClientRect(); const p=(e.clientX-rect.left)/rect.width; const hues=["#ff0000","#ff9900","#ffff00","#00ff00","#00ffff","#0000ff","#ff00ff"]; const idx=Math.floor(p*6); updateFromHex(hues[idx]||"#e69f50");}} />
+                  <div className="mt-3 h-[10px] rounded-full border border-[#D4A574]/20" style={{background: `linear-gradient(to right, #000, ${bgColor}, #fff)`}} />
+                  <input type="range" min="0" max="100" value={shadowIntensity} onChange={e=>setShadowIntensity(Number(e.target.value))} className="w-full mt-2 accent-[#e69f50] cursor-pointer h-[4px]" />
+                </>
+              ) : (
+                <>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="flex items-center gap-2 bg-[#0F0F0F] border border-[#D4A574]/20 rounded-xl px-2 py-2"><input type="color" value={gradientColor1} onChange={e=>setGradientColor1(e.target.value)} className="w-6 h-6 bg-transparent" /><span className="text-[11px] font-mono">{gradientColor1}</span></div>
+                    <div className="flex items-center gap-2 bg-[#0F0F0F] border border-[#D4A574]/20 rounded-xl px-2 py-2"><input type="color" value={gradientColor2} onChange={e=>setGradientColor2(e.target.value)} className="w-6 h-6 bg-transparent" /><span className="text-[11px] font-mono">{gradientColor2}</span></div>
+                  </div>
+                  <div className="mt-3 h-[32px] rounded-xl border border-[#D4A574]/20" style={{background: `linear-gradient(90deg, ${gradientColor1}, ${gradientColor2})`}} />
+                </>
+              )}
+              <div className="mt-3 grid grid-cols-2 gap-2">
+                <input value={bgColorInput} onChange={e=>setBgColorInput(e.target.value)} onBlur={()=>updateFromHex(bgColorInput)} className="bg-[#0F0F0F] border border-[#D4A574]/20 rounded-xl px-3 py-2 text-xs font-mono" placeholder="#e69f50" />
+                <div className="flex gap-1">{["#e69f50","#ffffff","#000000","#59F7FF"].map(c=> <button key={c} onClick={()=>updateFromHex(c)} className="flex-1 rounded-lg border border-white/10" style={{background:c}} />)}</div>
+              </div>
+              <div className="mt-2 grid grid-cols-3 gap-2">
+                <div className="flex gap-1 items-center"><input value={red} onChange={e=>{const v=Math.min(255,Math.max(0,Number(e.target.value)||0)); setRed(v); const hex=`#${v.toString(16).padStart(2,"0")}${green.toString(16).padStart(2,"0")}${blue.toString(16).padStart(2,"0")}`; setBgColor(hex);}} className="w-full bg-[#0F0F0F] border border-[#D4A574]/20 rounded-lg px-2 py-1.5 text-xs" /><span className="text-[9px] text-[#E8DCC6]/40">R</span></div>
+                <div className="flex gap-1 items-center"><input value={green} onChange={e=>{const v=Math.min(255,Math.max(0,Number(e.target.value)||0)); setGreen(v); const hex=`#${red.toString(16).padStart(2,"0")}${v.toString(16).padStart(2,"0")}${blue.toString(16).padStart(2,"0")}`; setBgColor(hex);}} className="w-full bg-[#0F0F0F] border border-[#D4A574]/20 rounded-lg px-2 py-1.5 text-xs" /><span className="text-[9px] text-[#E8DCC6]/40">G</span></div>
+                <div className="flex gap-1 items-center"><input value={blue} onChange={e=>{const v=Math.min(255,Math.max(0,Number(e.target.value)||0)); setBlue(v); const hex=`#${red.toString(16).padStart(2,"0")}${green.toString(16).padStart(2,"0")}${blue.toString(16).padStart(2,"0")}`; setBgColor(hex);}} className="w-full bg-[#0F0F0F] border border-[#D4A574]/20 rounded-lg px-2 py-1.5 text-xs" /><span className="text-[9px] text-[#E8DCC6]/40">B</span></div>
+              </div>
+            </div>
             <div><label className="text-xs text-[#E8DCC6]/70">Background Style</label><select value={bgStyle} onChange={e=>setBgStyle(e.target.value)} className="w-full mt-1 bg-[#1F1F1F] border border-[#D4A574]/20 rounded-xl px-3 py-2.5 text-xs cursor-pointer h-[48px]"><option>Luxury Marble • Gold</option><option>White Infinity</option><option>Minimal Concrete</option><option>Studio Black</option><option>Custom Upload BG</option></select></div>
             <div className={baseCard}><span className="text-[#E8DCC6]/50">Mode</span><div className="mt-1 text-white">Custom Background • AI Remove</div></div>
             <div><label className="text-xs text-[#E8DCC6]/70 flex justify-between">Shadow Intensity <span>{shadowIntensity}%</span></label><input type="range" min="0" max="100" value={shadowIntensity} onChange={e=>setShadowIntensity(Number(e.target.value))} className="w-full mt-2 accent-[#e69f50] cursor-pointer" /></div>
-          </div>
-        );
-      case "custom-upload":
-        return (
-          <div className="space-y-3">
-            <div className="border-2 border-dashed border-[#D4A574]/30 rounded-xl p-6 text-center bg-[#0F0F0F]"><p className="text-sm">Upload Custom BG</p><p className="text-[11px] text-[#E8DCC6]/40 mt-1">PNG, JPG up to 10MB</p><button onClick={()=>fileInputRef.current?.click()} className="mt-3 bg-[#1F1F1F] border border-[#D4A574]/20 rounded-full px-4 py-1.5 text-xs">Choose File</button></div>
-            <div className={baseCard}><span className="text-[#E8DCC6]/50">Placement</span><div className="flex gap-2 mt-2"><select className="flex-1 bg-[#0F0F0F] border border-[#D4A574]/20 rounded-xl py-2 px-2 text-xs"><option>Cover</option><option>Contain</option></select><select className="flex-1 bg-[#0F0F0F] border border-[#D4A574]/20 rounded-xl py-2 px-2 text-xs"><option>Center</option><option>Top</option></select></div></div>
-          </div>
-        );
-      case "ai-bg":
-      case "luxury-gold":
-      case "preset-bg":
-        return (
-          <div className="space-y-3">
-            <div><label className="text-xs text-[#E8DCC6]/70">AI Background</label><select value={bgStyle} onChange={e=>setBgStyle(e.target.value)} className="w-full mt-1 bg-[#1F1F1F] border border-[#D4A574]/20 rounded-xl px-3 py-2.5 text-xs cursor-pointer h-[48px]"><option>Luxury Marble • Gold</option><option>White Infinity</option><option>Minimal Concrete</option><option>Studio Black</option></select></div>
-            <div className="grid grid-cols-2 gap-2">{["Gold", "Marble", "Black", "Concrete"].map(p=> <button key={p} onClick={()=>setBgStyle(p)} className={`h-[48px] rounded-xl border text-xs ${bgStyle.includes(p) ? "bg-[#e69f50]/20 border-[#e69f50] text-[#e69f50]" : "bg-[#1F1F1F] border-[#D4A574]/10"}`}>{p}</button>)}</div>
-            <div><label className="text-xs text-[#E8DCC6]/70 flex justify-between">Lighting Direction <span>{lighting}</span></label><select value={lighting} onChange={e=>setLighting(e.target.value)} className="w-full mt-1 bg-[#1F1F1F] border border-[#D4A574]/20 rounded-xl px-3 py-2.5 text-xs h-[48px]"><option>Top-Right</option><option>Top-Left</option><option>Center</option><option>Soft Box</option></select></div>
-          </div>
-        );
-      case "enhance":
-      case "upscale":
-        return (
-          <div className="space-y-3">
-            <div className={baseCard}><span className="text-[#E8DCC6]/50">Auto Enhance</span><div className="mt-1">Brightness, Contrast, Sharpness auto</div></div>
-            <div className="grid grid-cols-2 gap-2"><div className={baseCard}>Upscale: 2x / 4x</div><div className={baseCard}>Denoise: ON</div></div>
-          </div>
-        );
-      case "recolor":
-        return (
-          <div className="space-y-3">
-            <div className={baseCard}>Pick Product Color<input type="color" className="w-full h-[40px] mt-2 rounded-xl cursor-pointer bg-transparent" /></div>
-            <div className={baseCard}>Preserve Shadows: ON</div>
-          </div>
-        );
-      case "shadow":
-        return (
-          <div className="space-y-3">
-            <div><label className="text-xs text-[#E8DCC6]/70 flex justify-between">Shadow Intensity <span>{shadowIntensity}%</span></label><input type="range" min="0" max="100" value={shadowIntensity} onChange={e=>setShadowIntensity(Number(e.target.value))} className="w-full mt-2 accent-[#e69f50]" /></div>
-            <div><label className="text-xs text-[#E8DCC6]/70">Direction</label><select className="w-full mt-1 bg-[#1F1F1F] border border-[#D4A574]/20 rounded-xl px-3 py-2.5 text-xs h-[48px]"><option>Bottom</option><option>Bottom Right</option><option>Floating</option></select></div>
           </div>
         );
       default:
@@ -158,7 +193,6 @@ export default function PhotoStudio() {
           <div className="space-y-3">
             <div><label className="text-xs text-[#E8DCC6]/70">Background Style</label><select value={bgStyle} onChange={e=>setBgStyle(e.target.value)} className="w-full mt-1 bg-[#1F1F1F] border border-[#D4A574]/20 rounded-xl px-3 py-2 text-xs cursor-pointer h-[48px]"><option>Luxury Marble • Gold</option><option>White Infinity</option><option>Minimal Concrete</option></select></div>
             <div><label className="text-xs text-[#E8DCC6]/70 flex justify-between">Shadow Intensity <span>{shadowIntensity}%</span></label><input type="range" min="0" max="100" value={shadowIntensity} onChange={e=>setShadowIntensity(Number(e.target.value))} className="w-full mt-1 accent-[#e69f50]" /></div>
-            <div><label className="text-xs text-[#E8DCC6]/70 flex justify-between">Quality — {exportQuality}%</label><input type="range" min="10" max="100" value={exportQuality} onChange={e=>setExportQuality(Number(e.target.value))} className="w-full mt-1 accent-[#e69f50]" /></div>
           </div>
         );
     }
@@ -170,7 +204,7 @@ export default function PhotoStudio() {
         <div className="flex items-center gap-10">
           <Link href="/" className="flex items-center gap-3 cursor-pointer">
             <img src="/Logo-White.png" alt="VISFORA Logo" className="h-11 w-auto object-contain" />
-            <span className="text-[26px] tracking-[0.18em] font-light text-white leading-none">VIS<span className="font-semibold text-[#d6a85a]">FORA</span> Studio</span>
+            <span className="text-[26px] tracking-[0.18em] font-light text-white leading-none">VIS<span className="font-semibold text-[#d6a85a]">FORA</span> <span className="font-light text-[#E8DCC6]"> - Photo Studio</span></span>
           </Link>
           <nav className="hidden lg:flex items-center gap-1 text-[15px]">
             {HEADER_TABS.map((tab) => {
@@ -185,10 +219,7 @@ export default function PhotoStudio() {
                     <div className="absolute left-0 top-[44px] w-auto min-w-[240px] max-w-[360px] bg-[#141414] border border-[#D4A574]/30 rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.6)] z-50 overflow-hidden p-2">
                       {tab.items.map((item) => (
                         <button key={item.label} onClick={() => handleHeaderItemClick(tab.name, item)} className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-[#1F1F1F] cursor-pointer">
-                          <div>
-                            <div className="text-[13px] text-white flex items-center gap-2">{item.label}{item.badge && <span className="text-[9px] bg-[#e69f50] text-black px-1.5 py-0.5 rounded-full font-bold">{item.badge}</span>}</div>
-                            <div className="text-[11px] text-[#E8DCC6]/40">{item.desc}</div>
-                          </div>
+                          <div><div className="text-[13px] text-white flex items-center gap-2">{item.label}{item.badge && <span className="text-[9px] bg-[#e69f50] text-black px-1.5 py-0.5 rounded-full font-bold">{item.badge}</span>}</div><div className="text-[11px] text-[#E8DCC6]/40">{item.desc}</div></div>
                         </button>
                       ))}
                     </div>
@@ -206,23 +237,12 @@ export default function PhotoStudio() {
                 <div className="p-4 border-b border-[#D4A574]/20 flex items-center justify-between"><h4 className="font-medium text-white">Notifications</h4><span className="text-xs bg-[#e69f50] text-black px-2 py-0.5 rounded-full">3 new</span></div>
                 <div className="p-2 space-y-1 max-h-[300px] overflow-y-auto">
                   <div className="p-3 rounded-xl bg-[#1F1F1F] border border-[#D4A574]/10"><div className="flex gap-3"><span className="text-[#e69f50]">✨</span><div><p className="text-sm text-white">Background removed successfully</p><p className="text-xs text-[#E8DCC6]/50 mt-1">{fileName} • 2 min ago</p></div></div></div>
-                  <div className="p-3 rounded-xl bg-[#1F1F1F] border border-[#D4A574]/10"><div className="flex gap-3"><span className="text-yellow-400">⚠️</span><div><p className="text-sm text-white">Credits running low</p><p className="text-xs text-[#E8DCC6]/50 mt-1">12 credits left • 1 hour ago</p></div></div></div>
-                  <div className="p-3 rounded-xl bg-[#1F1F1F] border border-[#D4A574]/10"><div className="flex gap-3"><span className="text-green-400">✅</span><div><p className="text-sm text-white">Export WEBP ready</p><p className="text-xs text-[#E8DCC6]/50 mt-1">2048x2048 • 3 hours ago</p></div></div></div>
                 </div>
               </div>
             )}
           </div>
           <div className="relative">
             <button onClick={() => setActiveDropdown(activeDropdown === "profile" ? null : "profile")} className={`w-11 h-11 rounded-full flex items-center justify-center font-medium cursor-pointer border-2 transition text-[15px] ${activeDropdown === "profile" ? "bg-[#e69f50] border-[#e69f50] text-black" : "bg-[#e69f50] border-[#e69f50]/50 text-black hover:border-[#e69f50]"}`}>U</button>
-            {activeDropdown === "profile" && (
-              <div className="absolute right-0 top-12 w-[280px] bg-[#141414] border border-[#D4A574]/30 rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.6)] z-50 overflow-hidden">
-                <div className="p-4 border-b border-[#D4A574]/20 flex gap-3 items-center"><div className="w-12 h-12 rounded-full bg-[#e69f50] flex items-center justify-center text-black font-bold">AK</div><div><p className="text-sm font-medium text-white">Ankit Kumar</p><p className="text-xs text-[#E8DCC6]/50">ankit@visfora.com</p></div></div>
-                <div className="p-2">
-                  <button className="w-full text-left px-3 py-2.5 rounded-xl text-sm hover:bg-[#1F1F1F] flex items-center gap-3 cursor-pointer">My Profile</button>
-                  <button className="w-full text-left px-3 py-2.5 rounded-xl text-sm hover:bg-[#1F1F1F] flex items-center gap-3 cursor-pointer">Billing & Credits</button>
-                </div>
-              </div>
-            )}
           </div>
         </div>
       </header>
@@ -237,8 +257,9 @@ export default function PhotoStudio() {
         <button onClick={handleProcess} disabled={isProcessing} className={`px-6 py-2.5 text-sm ${ctaClass}`}>Generate</button>
       </div>
 
+      {/* ✅ LOCKED GRID - FIXED TO STRETCH */}
       <div className="flex-1 grid grid-cols-1 lg:grid-cols-[280px_1fr_320px] gap-3 items-stretch">
-        {/* LEFT - Same as before but NO ICON on bottom buttons */}
+        {/* LEFT COLUMN */}
         <div className="flex flex-col gap-3 h-full">
           <div className="border border-[#D4A574]/30 rounded-2xl p-4 bg-[#141414]">
             <span className="text-[11px] bg-[#e69f50]/20 text-[#e69f50] px-3 py-1 rounded-full font-bold tracking-wide">{activeHeaderTab.toUpperCase()}</span>
@@ -250,24 +271,28 @@ export default function PhotoStudio() {
                 </button>
               ))}
             </div>
-            {/* NO ICON */}
             <button onClick={handleProcess} disabled={isProcessing} className={`w-full mt-4 flex items-center justify-center gap-2 h-[44px] text-[13px] ${ctaClass}`}>Run {activeToolLabel}</button>
           </div>
-          {/* FIXED BOTTOM - Upload New - NO ICON */}
-          <div className="border border-[#D4A574]/30 rounded-2xl p-4 bg-[#141414] flex-1 flex flex-col">
-            <div onDragOver={e=>e.preventDefault()} onDrop={handleDrop} className="border-2 border-dashed border-[#e69f50]/70 rounded-xl p-6 text-center bg-[#0F0F0F]/50 flex-1 flex flex-col justify-center">
-              <p className="text-sm mt-2">Drag & drop image here</p>
-              <p className="text-xs text-[#E8DCC6]/50 mt-1">or click to browse • PNG, JPG</p>
+
+          {/* ✅ FIX 1: REDUCED & LOCKED UPLOAD - 220px ONLY */}
+          <div className="border border-[#D4A574]/30 rounded-2xl p-4 bg-[#141414] flex flex-col h-[304px] min-h-[304px] max-h-[304px] shrink-0 overflow-hidden">
+            <div 
+              onDragOver={e=>e.preventDefault()} 
+              onDrop={handleDrop} 
+              className="border-2 border-dashed border-[#e69f50]/70 rounded-xl text-center bg-[#0F0F0F]/50 flex flex-col items-center justify-center h-[220px] min-h-[220px] max-h-[220px] w-full shrink-0 overflow-hidden"
+            >
+              <p className="text-[13px]">Drag & drop image here</p>
+              <p className="text-[11px] text-[#E8DCC6]/50 mt-1">or click to browse • PNG, JPG</p>
             </div>
-            <button onClick={()=>fileInputRef.current?.click()} className={`w-full mt-4 h-[40px] text-[13px] ${ctaClass}`}>Upload Image</button>
+            <button onClick={()=>fileInputRef.current?.click()} className={`w-full mt-3 h-[40px] min-h-[40px] text-[13px] shrink-0 ${ctaClass}`}>Upload Image</button>
             <input ref={fileInputRef} type="file" accept="image/*" hidden onChange={e=>e.target.files && handleUpload(e.target.files[0])} />
           </div>
         </div>
 
-        {/* CENTER */}
-        <div className="border border-[#D4A574]/30 rounded-2xl bg-[#141414] flex flex-col overflow-hidden w-full h-full min-h-[640px]">
-          <div className="p-3 border-b border-[#D4A574]/20 flex items-center justify-between">
-            <h3 className="text-[#E8DCC6] font-medium">3D Model Viewer</h3>
+        {/* ✅ FIX 2: CENTER EXPANDED TO FOOTER & LOCKED */}
+        <div className="border border-[#D4A574]/30 rounded-2xl bg-[#141414] flex flex-col overflow-hidden w-full h-[calc(100vh-200px)] min-h-[calc(100vh-200px)] max-h-[calc(100vh-200px)] self-stretch">
+          <div className="p-3 border-b border-[#D4A574]/20 flex items-center justify-between shrink-0">
+            <h3 className="text-[#E8DCC6] font-medium">Canva</h3>
             <div className="flex items-center gap-2">
               <div className="flex items-center gap-2 bg-[#1F1F1F] border border-[#D4A574]/30 rounded-full pl-3 pr-1 py-1 ml-2">
                 <span className="text-[10px] text-[#E8DCC6]/70">Background Removal</span>
@@ -280,13 +305,14 @@ export default function PhotoStudio() {
               <button className="px-3 py-1 rounded-full text-xs bg-[#1F1F1F] border border-[#D4A574]/20">Fullscreen</button>
             </div>
           </div>
-          <div className="flex-1 relative bg-[#0F0F0F] flex min-h-0">
+          <div className="flex-1 relative bg-[#0F0F0F] flex min-h-0 overflow-hidden">
             <div className="flex-1 relative">
               <div className="absolute top-3 left-3 z-10 text-[11px] font-bold tracking-[0.2em] text-[#e69f50] bg-black/60 px-3 py-1 rounded-full">BEFORE</div>
               {uploadedImage ? <img src={uploadedImage} className="w-full h-full object-cover absolute inset-0" alt="before" /> : <img src="/sneaker.png" className="w-full h-full object-cover absolute inset-0" alt="sneaker" />}
             </div>
             <div className="flex-1 relative border-l border-[#D4A574]/20">
               <div className="absolute top-3 right-3 z-10 text-[11px] font-bold tracking-[0.2em] text-[#e69f50] bg-black/60 px-3 py-1 rounded-full">AFTER</div>
+              <canvas ref={canvasRef} hidden />
               <div className={`absolute inset-0 ${isBgRemoved ? "bg-[length:20px_20px] bg-[url('https://upload.wikimedia.org/wikipedia/commons/5/5b/Checkerboard_pattern.png')] bg-[#1A1A1A]" : "bg-[#1A1A1A]"}`} />
               {isProcessing ? <div className="absolute inset-0 flex items-center justify-center text-[#e69f50] animate-pulse text-sm z-10">Processing...</div> : afterImage && isBgRemoved ? <img src={afterImage} className="absolute inset-0 w-full h-full object-contain z-10 p-4 pb-12" alt="after" /> : <div className="absolute inset-0 flex items-center justify-center text-[#E8DCC6]/20 text-sm z-10">No preview yet</div>}
               <div className="absolute bottom-0 left-0 right-0 z-20 p-2.5 flex justify-between items-center bg-gradient-to-t from-black/90 to-transparent">
@@ -295,22 +321,16 @@ export default function PhotoStudio() {
               </div>
             </div>
           </div>
-          <div className="p-2 text-center text-xs text-[#E8DCC6]/40 border-t border-[#D4A574]/20">Model: {fileName} • 12.4k polygons • 1 material • Ready • Loaded in 1.2s</div>
+          <div className="p-2 text-center text-xs text-[#E8DCC6]/40 border-t border-[#D4A574]/20 shrink-0">Model: {fileName} • 12.4k polygons • 1 material • Ready • Loaded in 1.2s</div>
         </div>
 
-        {/* RIGHT - SAME STRUCTURE AS LEFT, DYNAMIC TOP + FIXED BOTTOM */}
         <div className="flex flex-col gap-3 h-full">
-          {/* DYNAMIC PART - Same partition as Left Top */}
           <div className="border border-[#D4A574]/30 rounded-2xl p-4 bg-[#141414]">
             <span className="text-[11px] bg-[#e69f50]/20 text-[#e69f50] px-3 py-1 rounded-full font-bold tracking-wide">PROPERTIES</span>
             <span className="text-[10px] ml-2 text-[#E8DCC6]/40">{activeToolLabel} • dynamic</span>
             <h4 className="text-sm font-medium mt-3 mb-3">TOOLS / PROPERTIES</h4>
-            <div className="mt-2">
-              {renderRightDynamicContent()}
-            </div>
+            <div className="mt-2">{renderRightDynamicContent()}</div>
           </div>
-
-          {/* FIXED BOTTOM - Export All Formats - NO ICON - Same structure as Left Bottom */}
           <div className="border border-[#D4A574]/30 rounded-2xl p-4 bg-[#141414] flex-1 flex flex-col">
             <h4 className="text-sm font-medium mb-3">EXPORT & VIEW</h4>
             <div className="space-y-4 flex-1">
@@ -322,7 +342,6 @@ export default function PhotoStudio() {
               <div className="grid grid-cols-2 gap-2 text-xs"><div className="bg-[#1F1F1F] border border-[#D4A574]/10 rounded-xl px-3 py-2.5 h-[48px]"><span className="text-[#E8DCC6]/50">Size</span><div>2048 x 2048</div></div><div className="bg-[#1F1F1F] border border-[#D4A574]/10 rounded-xl px-3 py-2.5 h-[48px]"><span className="text-[#E8DCC6]/50">DPI</span><div>300 DPI</div></div></div>
               <div className="flex gap-2 text-[11px]"><span className="bg-[#e69f50] text-black px-2 py-1 rounded-full">Include Textures</span><span className="bg-[#1F1F1F] border border-[#D4A574]/20 px-2 py-1 rounded-full">Compressed</span></div>
             </div>
-            {/* NO ICON - FIXED */}
             <button onClick={handleExport} className={`w-full py-3 text-sm mt-4 h-[48px] ${ctaClass}`}>Export All Formats</button>
           </div>
         </div>
