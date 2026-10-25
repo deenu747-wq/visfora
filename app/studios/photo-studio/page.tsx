@@ -4,6 +4,10 @@ import Link from "next/link";
 
 const AI_MODE = process.env.NEXT_PUBLIC_AI_MODE || "free";
 
+type TabAction = { label: string; desc: string; tool?: string; bg?: string; prompt?: string; badge?: string; };
+
+type HeaderTab = { name: string; path: string; items: TabAction[]; };
+
 export default function PhotoStudio() {
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const [afterImage, setAfterImage] = useState<string | null>(null);
@@ -19,8 +23,76 @@ export default function PhotoStudio() {
   const [exportQuality, setExportQuality] = useState(90);
   const [isBgRemoved, setIsBgRemoved] = useState(true);
   const [activeDropdown, setActiveDropdown] = useState<null | "notif" | "profile">(null);
+  const [activeHeaderTab, setActiveHeaderTab] = useState("Studio");
+  const [hoveredHeaderTab, setHoveredHeaderTab] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
+
+  // NEW DYNAMIC HEADER CONFIG - Option 1
+  const HEADER_TABS: HeaderTab[] = [
+    {
+      name: "Dashboard",
+      path: "#dashboard",
+      items: [
+        { label: "Overview", desc: "Edits today & credits" },
+        { label: "Recent Projects", desc: "Last 10 files", tool: "remove-bg" },
+        { label: "Quick Upload", desc: "Start new edit" },
+      ],
+    },
+    {
+      name: "Studio",
+      path: "#studio",
+      items: [
+        { label: "Add / Change Background", desc: "Remove & replace BG", tool: "remove-bg" },
+        { label: "Enhance", desc: "Auto enhance image", tool: "enhance" },
+        { label: "AI Backgrounds", desc: "Premium studio BG", tool: "ai-bg", bg: "Luxury Marble • Gold" },
+        { label: "Magic Eraser", desc: "Remove unwanted object", tool: "eraser" },
+        { label: "Recolor", desc: "Change product color", tool: "recolor" },
+        { label: "Shadow Studio", desc: "Add realistic shadow", tool: "shadow" },
+      ],
+    },
+    {
+      name: "Backgrounds",
+      path: "#backgrounds",
+      items: [
+        { label: "Luxury Marble • Gold", desc: "Best seller", tool: "ai-bg", bg: "Luxury Marble • Gold", prompt: "Luxury gold studio" },
+        { label: "White Infinity", desc: "E-com clean", tool: "ai-bg", bg: "White Infinity", prompt: "Minimal marble" },
+        { label: "Studio Black", desc: "Premium dark", tool: "ai-bg", bg: "Studio Black", prompt: "Dark moody" },
+        { label: "Minimal Concrete", desc: "Trending", tool: "ai-bg", bg: "Minimal Concrete", prompt: "Neutral grey backdrop" },
+        { label: "Outdoor Sunlight", desc: "Natural light", tool: "ai-bg", bg: "White Infinity", prompt: "Outdoor sunlight" },
+      ],
+    },
+    {
+      name: "Enhance",
+      path: "#enhance",
+      items: [
+        { label: "Auto Enhance", desc: "One-click fix", tool: "enhance" },
+        { label: "Upscale 2x / 4x", desc: "HD quality", tool: "enhance" },
+        { label: "Color Correction", desc: "True colors", tool: "recolor" },
+        { label: "Lighting Fix", desc: "Studio lights fix", tool: "enhance" },
+        { label: "Sharpen & Denoise", desc: "Crisp details", tool: "enhance" },
+      ],
+    },
+    {
+      name: "Batch",
+      path: "#batch",
+      items: [
+        { label: "Bulk Upload (100)", desc: "Process 10-100 images", badge: "PRO" },
+        { label: "Apply Same BG to All", desc: "Save time", bg: "Luxury Marble • Gold", tool: "ai-bg" },
+        { label: "Bulk Export ZIP", desc: "Download all at once" },
+      ],
+    },
+    {
+      name: "Export",
+      path: "#export",
+      items: [
+        { label: "Recent Exports", desc: "Last 20 files" },
+        { label: "PNG / JPG / WEBP", desc: "Choose format" },
+        { label: "Quality & DPI", desc: "2048x2048 - 300 DPI" },
+        { label: "Share Link", desc: "Client preview" },
+      ],
+    },
+  ];
 
   const tools = [
     { id: "remove-bg", label: "Add / Change Background", icon: "🎀" },
@@ -42,11 +114,25 @@ export default function PhotoStudio() {
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      if (headerRef.current && !headerRef.current.contains(e.target as Node)) setActiveDropdown(null);
+      if (headerRef.current && !headerRef.current.contains(e.target as Node)) {
+        setActiveDropdown(null);
+        setHoveredHeaderTab(null);
+      }
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  const handleHeaderItemClick = (tabName: string, item: TabAction) => {
+    setActiveHeaderTab(tabName);
+    setHoveredHeaderTab(null);
+    if (item.tool) setActiveTool(item.tool);
+    if (item.bg) setBgStyle(item.bg);
+    if (item.prompt) setPrompt(item.prompt);
+    if (item.label === "Quick Upload" || item.label.includes("Bulk Upload")) {
+      fileInputRef.current?.click();
+    }
+  };
 
   const handleUpload = (file: File) => {
     const url = URL.createObjectURL(file);
@@ -95,21 +181,49 @@ export default function PhotoStudio() {
 
   return (
     <div className="min-h-screen bg-[#0A0A0A] text-[#E8DCC6] flex flex-col p-3 gap-3">
-      {/* HEADER - UPDATED PER YOUR 4 POINTS */}
+      {/* HEADER - NEW DYNAMIC TABS */}
       <header ref={headerRef} className="border border-[#D4A574]/30 rounded-2xl px-7 py-4 flex items-center justify-between bg-[#141414] sticky top-0 z-50">
         <div className="flex items-center gap-10">
           <Link href="/" className="flex items-center gap-3 cursor-pointer">
             <img src="/Logo-White.png" alt="VISFORA Logo" className="h-11 w-auto object-contain" />
             <span className="text-[26px] tracking-[0.18em] font-light text-white leading-none">VIS<span className="font-semibold text-[#d6a85a]">FORA</span> Studio</span>
           </Link>
-          <nav className="hidden lg:flex items-center gap-8 text-[15px]">
-            {["Project","Studio","Assets","Scene","Render","Settings"].map(tab => (
-              <button key={tab} className={`pb-1 border-b-2 transition cursor-pointer text-[15px] ${tab==="Studio" ? "border-[#e69f50] text-white font-medium" : "border-transparent text-[#E8DCC6]/60 hover:text-white"}`}>{tab}</button>
-            ))}
+          <nav className="hidden lg:flex items-center gap-1 text-[15px]">
+            {HEADER_TABS.map((tab) => {
+              const isActive = activeHeaderTab === tab.name;
+              const isHovered = hoveredHeaderTab === tab.name;
+              return (
+                <div key={tab.name} className="relative" onMouseEnter={() => setHoveredHeaderTab(tab.name)} onMouseLeave={() => setHoveredHeaderTab(null)}>
+                  <button
+                    onClick={() => setActiveHeaderTab(tab.name)}
+                    className={`px-4 py-2 rounded-full border-b-2 transition cursor-pointer text-[14px] flex items-center gap-1.5 ${isActive ? "border-[#e69f50] text-white font-medium bg-white/[0.06]" : "border-transparent text-[#E8DCC6]/60 hover:text-white hover:bg-white/[0.04]"}`}
+                  >
+                    {tab.name}
+                    <span className={`text-[10px] transition ${isHovered ? "rotate-180" : ""}`}>▼</span>
+                  </button>
+                  {isHovered && (
+                    <div className="absolute left-0 top-[44px] w-[300px] bg-[#141414] border border-[#D4A574]/30 rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.6)] z-50 overflow-hidden p-2">
+                      <div className="px-3 py-2 text-[11px] tracking-widest text-[#e69f50]/70 font-bold">{tab.name.toUpperCase()} TOOLS</div>
+                      {tab.items.map((item) => (
+                        <button key={item.label} onClick={() => handleHeaderItemClick(tab.name, item)} className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-[#1F1F1F] flex justify-between items-center group cursor-pointer">
+                          <div>
+                            <div className="text-[13px] text-white flex items-center gap-2">
+                              {item.label}
+                              {item.badge && <span className="text-[9px] bg-[#e69f50] text-black px-1.5 py-0.5 rounded-full font-bold">{item.badge}</span>}
+                            </div>
+                            <div className="text-[11px] text-[#E8DCC6]/40">{item.desc}</div>
+                          </div>
+                          <span className="text-[#E8DCC6]/20 group-hover:text-white text-[12px]">→</span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </nav>
         </div>
         <div className="flex items-center gap-1 relative">
-          {/* 1. NOTIFICATION FIRST - 3. NO CIRCLE, ONLY HOVER EFFECT */}
           <div className="relative">
             <button onClick={() => setActiveDropdown(activeDropdown === "notif" ? null : "notif")} className={`w-11 h-11 flex items-center justify-center text-[20px] transition-all cursor-pointer bg-transparent border-0 rounded-xl ${activeDropdown === "notif" ? "bg-white/10 shadow-[0_2px_12px_rgba(255,255,255,0.15)] text-white" : "text-[#E8DCC6]/80 hover:bg-white/10 hover:shadow-[0_4px_20px_rgba(255,255,255,0.12)] hover:text-white"}`}>🔔</button>
             {activeDropdown === "notif" && (
@@ -124,7 +238,6 @@ export default function PhotoStudio() {
               </div>
             )}
           </div>
-          {/* 2. PROFILE SECOND - BIGGER */}
           <div className="relative">
             <button onClick={() => setActiveDropdown(activeDropdown === "profile" ? null : "profile")} className={`w-11 h-11 rounded-full flex items-center justify-center font-medium cursor-pointer border-2 transition text-[15px] ${activeDropdown === "profile" ? "bg-[#e69f50] border-[#e69f50] text-black" : "bg-[#e69f50] border-[#e69f50]/50 text-black hover:border-[#e69f50] hover:shadow-[0_0_15px_rgba(230,159,80,0.4)]"}`}>U</button>
             {activeDropdown === "profile" && (
@@ -134,7 +247,6 @@ export default function PhotoStudio() {
                   <button className="w-full text-left px-3 py-2.5 rounded-xl text-sm hover:bg-[#1F1F1F] flex items-center gap-3 cursor-pointer"><span>👤</span> My Profile</button>
                   <button className="w-full text-left px-3 py-2.5 rounded-xl text-sm hover:bg-[#1F1F1F] flex items-center gap-3 cursor-pointer"><span>💳</span> Billing & Credits <span className="ml-auto text-xs bg-[#1F1F1F] px-2 py-0.5 rounded-full">112 left</span></button>
                   <button className="w-full text-left px-3 py-2.5 rounded-xl text-sm hover:bg-[#1F1F1F] flex items-center gap-3 cursor-pointer"><span>📁</span> My Projects</button>
-                  {/* 4. SETTINGS MOVED INSIDE PROFILE DROPDOWN - CONTENT UNCHANGED */}
                   <button className="w-full text-left px-3 py-2.5 rounded-xl text-sm hover:bg-[#1F1F1F] flex items-center gap-3 cursor-pointer"><span>⚙️</span> Settings</button>
                   <button className="w-full text-left px-3 py-2.5 rounded-xl text-sm hover:bg-[#1F1F1F] flex items-center gap-3 cursor-pointer"><span>❓</span> Help & Support</button>
                   <div className="border-t border-[#D4A574]/10 mt-2 pt-2"><button className="w-full text-left px-3 py-2.5 rounded-xl text-sm hover:bg-red-500/10 hover:text-red-400 flex items-center gap-3 cursor-pointer"><span>🚪</span> Logout</button></div>
