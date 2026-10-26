@@ -2,7 +2,6 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import Link from "next/link";
 
-const AI_MODE = process.env.NEXT_PUBLIC_AI_MODE || "free";
 type TabAction = { label: string; desc: string; tool?: string; bg?: string; prompt?: string; badge?: string; };
 type HeaderTab = { name: string; path: string; items: TabAction[]; };
 
@@ -15,7 +14,7 @@ export default function PhotoStudio() {
   const [shadowIntensity, setShadowIntensity] = useState(70);
   const [bgStyle, setBgStyle] = useState("Luxury Marble • Gold");
   const [lighting, setLighting] = useState("Top-Right");
-  const [activeTool, setActiveTool] = useState("custom-bg");
+  const [activeTool, setActiveTool] = useState("remove-bg");
   const [isProcessing, setIsProcessing] = useState(false);
   const [exportFormat, setExportFormat] = useState("PNG");
   const [exportQuality, setExportQuality] = useState(90);
@@ -27,7 +26,7 @@ export default function PhotoStudio() {
   const customBgInputRef = useRef<HTMLInputElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
 
-  // Color Engine from Second file
+  // Color Engine
   const [bgColor, setBgColor] = useState("#e69f50");
   const [bgColorInput, setBgColorInput] = useState("#e69f50");
   const [red, setRed] = useState(230);
@@ -42,36 +41,32 @@ export default function PhotoStudio() {
   const [position, setPosition] = useState("Center");
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  // RECTIFIED HEADER - custom-upload removed, merged
+  // === LOCKED FINAL 8 TABS ===
   const HEADER_TABS: HeaderTab[] = [
-    { name: "Dashboard", path: "#dashboard", items: [ { label: "Overview", desc: "Edits today & credits" }, { label: "Recent Projects", desc: "Last 10 files", tool: "custom-bg" }, { label: "Quick Upload", desc: "Start new edit" }, ] },
-    { name: "Studio", path: "#studio", items: [ { label: "Custom background", desc: "Remove, color & upload BG", tool: "custom-bg" }, { label: "Enhance", desc: "Auto enhance image", tool: "enhance" }, { label: "AI Backgrounds", desc: "Premium studio BG", tool: "ai-bg", bg: "Luxury Marble • Gold" }, { label: "Magic Eraser", desc: "Remove unwanted object", tool: "eraser" }, { label: "Recolor", desc: "Change product color", tool: "recolor" }, { label: "Shadow Studio", desc: "Add realistic shadow", tool: "shadow" }, ] },
-    { name: "Backgrounds", path: "#backgrounds", items: [ 
-      { label: "Custom background", desc: "Color + upload your BG", tool: "custom-bg" }, 
-      { label: "Luxury Marble • Gold", desc: "Best seller", tool: "ai-bg", bg: "Luxury Marble • Gold", prompt: "Luxury gold studio" }, 
-      { label: "White Infinity", desc: "E-com clean", tool: "ai-bg", bg: "White Infinity", prompt: "Minimal marble" }, 
-      { label: "Studio Black", desc: "Premium dark", tool: "ai-bg", bg: "Studio Black", prompt: "Dark moody" }, 
-      { label: "Minimal Concrete", desc: "Trending", tool: "ai-bg", bg: "Minimal Concrete", prompt: "Neutral grey backdrop" }, 
-      { label: "Outdoor Sunlight", desc: "Natural light", tool: "ai-bg", bg: "White Infinity", prompt: "Outdoor sunlight" }, 
-    ] },
-    { name: "Enhance", path: "#enhance", items: [ { label: "Auto Enhance", desc: "One-click fix", tool: "enhance" }, { label: "Upscale 2x / 4x", desc: "HD quality", tool: "enhance" }, { label: "Color Correction", desc: "True colors", tool: "recolor" }, { label: "Lighting Fix", desc: "Studio lights fix", tool: "enhance" }, { label: "Sharpen & Denoise", desc: "Crisp details", tool: "enhance" }, ] },
-    { name: "Batch", path: "#batch", items: [ { label: "Bulk Upload (100)", desc: "Process 10-100 images", badge: "PRO" }, { label: "Apply Same BG to All", desc: "Save time", bg: "Luxury Marble • Gold", tool: "ai-bg" }, { label: "Bulk Export ZIP", desc: "Download all at once" }, ] },
-    { name: "Export", path: "#export", items: [ { label: "Recent Exports", desc: "Last 20 files" }, { label: "PNG / JPG / WEBP", desc: "Choose format" }, { label: "Quality & DPI", desc: "2048x2048 - 300 DPI" }, { label: "Share Link", desc: "Client preview" }, ] },
+    { name: "Dashboard", path: "#dashboard", items: [ { label: "Overview", desc: "Edits today & credits", tool: "overview" }, { label: "Recent Projects", desc: "Last 10 files", tool: "recent" }, { label: "Quick Upload", desc: "Start new edit", tool: "quick-upload" }, ] },
+    { name: "Create", path: "#create", items: [ { label: "Product Staging", desc: "Lifestyle + flat lay", tool: "product-staging", badge: "AI" }, { label: "Templates", desc: "Amazon, Shopify, Insta", tool: "templates" }, { label: "Custom Background", desc: "Color + upload own", tool: "color-bg" }, { label: "Virtual Model", desc: "Ghost mannequin AI", tool: "virtual-model", badge: "NEW" }, { label: "Product Video", desc: "Image to video", tool: "product-video", badge: "2026" }, ] },
+    { name: "Backgrounds", path: "#backgrounds", items: [ { label: "Remove Background", desc: "One-tap AI cutout", tool: "remove-bg", badge: "CORE" }, { label: "AI Backgrounds", desc: "Marble, Gold, Studio", tool: "ai-bgs", bg: "Luxury Marble • Gold" }, { label: "Color Background", desc: "Solid + Brand Kit", tool: "color-bg" }, { label: "Custom Upload", desc: "Upload your BG", tool: "custom-bg-upload" }, { label: "Relight", desc: "Virtual studio lighting", tool: "relight", badge: "MUST" }, ] },
+    { name: "Retouch", path: "#retouch", items: [ { label: "Magic Eraser", desc: "Prompt-free remove", tool: "magic-eraser", badge: "AI" }, { label: "Generative Fill", desc: "Inpaint missing area", tool: "generative-fill", badge: "NEW" }, { label: "Object Removal", desc: "Clean clutter", tool: "object-removal" }, { label: "Ironing", desc: "Remove wrinkles", tool: "ironing", badge: "Fashion" }, { label: "Product Fixer", desc: "Preserve logo & texture", tool: "product-fixer", badge: "MUST" }, ] },
+    { name: "Adjust", path: "#adjust", items: [ { label: "Auto Enhance", desc: "Exposure + WB fix", tool: "auto-enhance" }, { label: "Upscale 4K", desc: "HD up to 4x", tool: "upscale-4k", badge: "HD" }, { label: "Color Match", desc: "Match to reference", tool: "color-match", badge: "MUST" }, { label: "Recolor Variants", desc: "New product colors", tool: "recolor-variants" }, { label: "AI Expand", desc: "Uncrop / Outpaint", tool: "ai-expand", badge: "NEW" }, { label: "Color & Light", desc: "True color correction", tool: "color-light" }, ] },
+    { name: "Shadows", path: "#shadows", items: [ { label: "AI Shadows", desc: "Soft / Hard / None", tool: "ai-shadows", badge: "CORE" }, { label: "Reflection", desc: "Floor reflection", tool: "reflection", badge: "NEW" }, { label: "Relight Studio", desc: "Dynamic relighting", tool: "relight-studio" }, ] },
+    { name: "Batch", path: "#batch", items: [ { label: "Bulk Edit (100)", desc: "Process catalog", tool: "bulk-edit", badge: "PRO" }, { label: "Apply Same Settings", desc: "Same BG + Shadow", tool: "apply-same" }, { label: "Resize Marketplace", desc: "Amazon, Shopify, Insta", tool: "resize-market" }, { label: "Bulk Color Normalize", desc: "Batch WB fix", tool: "bulk-color" }, { label: "Bulk Export ZIP", desc: "Download all", tool: "bulk-zip" }, ] },
+    { name: "Export", path: "#export", items: [ { label: "PNG / JPG / WEBP", desc: "Format + transparent", tool: "format" }, { label: "Quality & DPI", desc: "72-300 DPI + Size", tool: "quality-dpi" }, { label: "Brand Kit", desc: "Logo + Colors + Fonts", tool: "brand-kit" }, { label: "Text Overlay", desc: "Watermark + Info", tool: "text-overlay" }, { label: "Video Export", desc: "Product video out", tool: "video-export", badge: "2026" }, ] },
   ];
 
-  // RECTIFIED LEFT TOOLS - custom-upload removed
+  // === LOCKED LEFT PANEL DYNAMIC MAP ===
   const ALL_TOOLS_MAP: Record<string, { id: string; label: string; icon: string }[]> = {
-    Dashboard: [ { id: "custom-bg", label: "Custom background", icon: "🎀" }, { id: "ai-bg", label: "AI Backgrounds", icon: "🏔️" }, { id: "enhance", label: "Enhance", icon: "✨" }, ],
-    Studio: [ { id: "custom-bg", label: "Custom background", icon: "🎀" }, { id: "enhance", label: "Enhance", icon: "✨" }, { id: "ai-bg", label: "AI Backgrounds", icon: "🏔️" }, { id: "eraser", label: "Magic Eraser", icon: "🪶" }, { id: "recolor", label: "Recolor", icon: "🎨" }, { id: "shadow", label: "Shadow Studio", icon: "☁️" }, ],
-    Backgrounds: [ { id: "custom-bg", label: "Custom background", icon: "🖼️" }, { id: "preset-bg", label: "Preset Backgrounds", icon: "🏜️" }, { id: "ai-bg", label: "AI Backgrounds", icon: "🏔️" }, { id: "luxury-gold", label: "Luxury Marble • Gold", icon: "✨" }, ],
-    Enhance: [ { id: "enhance", label: "Auto Enhance", icon: "✨" }, { id: "upscale", label: "Upscale 2x/4x", icon: "🔍" }, { id: "recolor", label: "Color Correction", icon: "🎨" }, { id: "shadow", label: "Lighting Fix", icon: "💡" }, ],
-    Batch: [ { id: "bulk-upload", label: "Bulk Upload", icon: "📦" }, { id: "apply-all", label: "Apply Same BG to All", icon: "🔄" }, { id: "bulk-export", label: "Bulk Export ZIP", icon: "📁" }, ],
-    Export: [ { id: "png-export", label: "PNG / JPG / WEBP", icon: "⬇️" }, { id: "quality-dpi", label: "Quality & DPI", icon: "⚙️" }, { id: "share-link", label: "Share Link", icon: "🔗" }, ],
+    Dashboard: [ { id: "overview", label: "Overview", icon: "📊" }, { id: "recent", label: "Recent Projects", icon: "🕘" }, { id: "quick-upload", label: "Quick Upload", icon: "⚡" }, ],
+    Create: [ { id: "product-staging", label: "Product Staging", icon: "🏔️" }, { id: "templates", label: "Templates", icon: "📐" }, { id: "color-bg", label: "Custom Background", icon: "🎀" }, { id: "virtual-model", label: "Virtual Model", icon: "👕" }, { id: "product-video", label: "Product Video", icon: "🎬" }, ],
+    Backgrounds: [ { id: "remove-bg", label: "Remove Background", icon: "✂️" }, { id: "ai-bgs", label: "AI Backgrounds", icon: "✨" }, { id: "color-bg", label: "Color Background", icon: "🎨" }, { id: "custom-bg-upload", label: "Custom Upload", icon: "🖼️" }, { id: "relight", label: "Relight", icon: "💡" }, ],
+    Retouch: [ { id: "magic-eraser", label: "Magic Eraser", icon: "🪶" }, { id: "generative-fill", label: "Generative Fill", icon: "🧩" }, { id: "object-removal", label: "Object Removal", icon: "🧹" }, { id: "ironing", label: "Ironing", icon: "👔" }, { id: "product-fixer", label: "Product Fixer", icon: "🔒" }, ],
+    Adjust: [ { id: "auto-enhance", label: "Auto Enhance", icon: "⚡" }, { id: "upscale-4k", label: "Upscale 4K", icon: "🔍" }, { id: "color-match", label: "Color Match", icon: "🎯" }, { id: "recolor-variants", label: "Recolor Variants", icon: "🌈" }, { id: "ai-expand", label: "AI Expand", icon: "↔️" }, { id: "color-light", label: "Color & Light", icon: "☀️" }, ],
+    Shadows: [ { id: "ai-shadows", label: "AI Shadows", icon: "☁️" }, { id: "reflection", label: "Reflection", icon: "💧" }, { id: "relight-studio", label: "Relight Studio", icon: "🔦" }, ],
+    Batch: [ { id: "bulk-edit", label: "Bulk Edit (100)", icon: "📦" }, { id: "apply-same", label: "Apply Same Settings", icon: "🔄" }, { id: "resize-market", label: "Resize Marketplace", icon: "📏" }, { id: "bulk-color", label: "Bulk Color Normalize", icon: "🎨" }, { id: "bulk-zip", label: "Bulk Export ZIP", icon: "📁" }, ],
+    Export: [ { id: "format", label: "PNG / JPG / WEBP", icon: "⬇️" }, { id: "quality-dpi", label: "Quality & DPI", icon: "⚙️" }, { id: "brand-kit", label: "Brand Kit", icon: "🏷️" }, { id: "text-overlay", label: "Text Overlay", icon: "🔤" }, { id: "video-export", label: "Video Export", icon: "🎞️" }, ],
   };
 
-  const dynamicTools = ALL_TOOLS_MAP[activeHeaderTab] || ALL_TOOLS_MAP["Studio"];
+  const dynamicTools = ALL_TOOLS_MAP[activeHeaderTab] || ALL_TOOLS_MAP["Backgrounds"];
   const activeToolLabel = dynamicTools.find(t=>t.id===activeTool)?.label || activeTool;
-  const toolStatus: Record<string, { after: string }> = { "custom-bg": { after: "Custom BG" }, "enhance": { after: "Enhanced" }, "ai-bg": { after: "New BG" }, "eraser": { after: "Erased" }, "recolor": { after: "Recolored" }, "shadow": { after: "Shadow Added" }, "preset-bg": { after: "Preset BG" }, };
 
   const isValidHex = (hex: string) => /^#([0-9A-F]{3}){1,2}$/i.test(hex);
   const hexToRgb = (hex: string) => ({ r: parseInt(hex.slice(1,3),16), g: parseInt(hex.slice(3,5),16), b: parseInt(hex.slice(5,7),16) });
@@ -92,12 +87,10 @@ export default function PhotoStudio() {
     if (customBgUrl) {
       const bgImg = new Image(); bgImg.crossOrigin="anonymous"; bgImg.src=customBgUrl;
       await new Promise(r => bgImg.onload=r);
-      // Placement logic Cover/Contain
       if(placement==="Cover") ctx.drawImage(bgImg,0,0,canvas.width,canvas.height);
       else { ctx.fillStyle=bgColor; ctx.fillRect(0,0,canvas.width,canvas.height); const scale=Math.min(canvas.width/bgImg.width, canvas.height/bgImg.height); const w=bgImg.width*scale, h=bgImg.height*scale; ctx.drawImage(bgImg,(canvas.width-w)/2,(canvas.height-h)/2,w,h); }
     } else {
-      ctx.fillStyle = bgColor;
-      ctx.fillRect(0,0,canvas.width,canvas.height);
+      ctx.fillStyle = bgColor; ctx.fillRect(0,0,canvas.width,canvas.height);
     }
     ctx.drawImage(img,0,0,canvas.width,canvas.height);
     const url = canvas.toDataURL(`image/${exportFormat.toLowerCase()}`, exportQuality/100);
@@ -105,7 +98,6 @@ export default function PhotoStudio() {
   }, [cutoutImage, bgColor, exportFormat, exportQuality, customBgUrl, placement]);
 
   useEffect(() => { if(cutoutImage) updateComposite(); }, [updateComposite, cutoutImage]);
-
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (headerRef.current && !headerRef.current.contains(e.target as Node)) { setActiveDropdown(null); setHoveredHeaderTab(null); }
@@ -130,7 +122,6 @@ export default function PhotoStudio() {
     const url = URL.createObjectURL(file); setCustomBgUrl(url);
   };
   const handleDrop = (e: React.DragEvent) => { e.preventDefault(); const file = e.dataTransfer.files[0]; if (file) handleUpload(file); };
-
   const handleProcess = async () => {
     if (!uploadedFile && !uploadedImage) { alert("Please upload image first!"); return; }
     setIsProcessing(true);
@@ -145,116 +136,43 @@ export default function PhotoStudio() {
     } catch (err: any) { alert("Error: " + err.message); }
     setIsProcessing(false);
   };
+  const handleApply = async () => { if(!cutoutImage){ alert("Process image first"); return; } setPrevBgColor(bgColor); setPrevComposite(compositeImage || afterImage); await updateComposite(); };
+  const handleReset = () => { const def="#e69f50"; updateFromHex(def); setBgStyle("Luxury Marble • Gold"); setShadowIntensity(70); setPlacement("Cover"); setPosition("Center"); setCustomBgUrl(null); if(cutoutImage){ setTimeout(()=>updateComposite(),50); } };
+  const handleCancel = () => { updateFromHex(prevBgColor); if(prevComposite){ setCompositeImage(prevComposite); setAfterImage(prevComposite); } };
+  const handleExport = () => { const link = document.createElement("a"); link.href = compositeImage || afterImage || uploadedImage!; link.download = `visfora-${activeTool}.${exportFormat.toLowerCase()}`; link.click(); };
 
-  const handleApply = async () => {
-    if(!cutoutImage){ alert("Process image first"); return; }
-    setPrevBgColor(bgColor); setPrevComposite(compositeImage || afterImage);
-    await updateComposite();
-  };
-  const handleReset = () => {
-    const def="#e69f50"; updateFromHex(def); setBgStyle("Luxury Marble • Gold"); setShadowIntensity(70); setPlacement("Cover"); setPosition("Center"); setCustomBgUrl(null);
-    if(cutoutImage){ setTimeout(()=>updateComposite(),50); }
-  };
-  const handleCancel = () => {
-    updateFromHex(prevBgColor);
-    if(prevComposite){ setCompositeImage(prevComposite); setAfterImage(prevComposite); }
-  };
-
-  const handleExport = () => {
-    const link = document.createElement("a"); link.href = compositeImage || afterImage || uploadedImage!; link.download = `visfora-${activeTool}.${exportFormat.toLowerCase()}`; link.click();
-  };
-
-  const chips = [
-    { chip: "Luxury gold studio", bg: "Luxury Marble • Gold", tool: "ai-bg" },
-    { chip: "Minimal marble", bg: "White Infinity", tool: "ai-bg" },
-    { chip: "Dark moody", bg: "Studio Black", tool: "ai-bg" },
-    { chip: "Outdoor sunlight", bg: "White Infinity", tool: "ai-bg" },
-    { chip: "Neutral grey backdrop", bg: "Minimal Concrete", tool: "ai-bg" },
-  ];
-
+  const chips = [ { chip: "Luxury gold studio", bg: "Luxury Marble • Gold", tool: "ai-bgs" }, { chip: "Minimal marble", bg: "White Infinity", tool: "ai-bgs" }, { chip: "Dark moody", bg: "Studio Black", tool: "ai-bgs" }, ];
   const ctaClass = "bg-[#e69f50] text-black hover:bg-[#d48e40] hover:shadow-[0_0_20px_rgba(230,159,80,0.5)] cursor-pointer transition-all duration-200 font-medium rounded-full";
   const toolBtnClass = "w-full text-left px-4 py-3.5 rounded-xl flex items-center gap-3 transition cursor-pointer text-[13px] h-[48px]";
-  const currentAfterText = isBgRemoved ? toolStatus[activeTool]?.after || "BG Removed" : "Original";
 
+  // === RIGHT DYNAMIC CONTENT - NEW FLOW ===
   const renderRightDynamicContent = () => {
     const baseCard = "bg-[#1F1F1F] border border-[#D4A574]/10 rounded-xl px-3 py-2.5 text-xs";
     switch(activeTool) {
+      case "remove-bg": return <div className="space-y-3"><div className={baseCard}>✂️ AI Cutout: Background removed. Toggle ON/OFF from center header.</div><button onClick={handleProcess} className={`w-full h-[44px] text-sm ${ctaClass}`}>{isProcessing?"Processing...":"Remove Background"}</button></div>;
+      case "color-bg":
       case "custom-bg":
         return (
           <div className="space-y-3">
             <div className="bg-[#1F1F1F] border border-[#D4A574]/20 rounded-xl p-3">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-[11px] text-[#E8DCC6]/60">Background Color</span>
-                <div className="flex items-center gap-2">
-                  <div className="w-6 h-6 rounded-full border border-white/20" style={{background: bgColor}} />
-                  <span className="text-[11px] font-mono">{bgColor}</span>
-                </div>
-              </div>
-              <div className="h-[28px] rounded-full border border-[#D4A574]/20 relative cursor-pointer overflow-hidden" 
-                style={{background: "linear-gradient(to right, #ff0000, #ff9900, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000)"}} 
-                onClick={(e)=>{
-                  const rect = e.currentTarget.getBoundingClientRect();
-                  const percent = (e.clientX - rect.left)/rect.width;
-                  const hues = ["#ff0000","#ff9900","#ffff00","#00ff00","#00ffff","#0000ff","#ff00ff","#ff0000"];
-                  const idx = Math.floor(percent*7);
-                  updateFromHex(hues[idx] || "#e69f50");
-                }}
-              />
-              <div className="mt-3">
-                <div className="h-[10px] rounded-full border border-[#D4A574]/20" style={{background: `linear-gradient(to right, #000, ${bgColor}, #fff)`}} />
-                <input type="range" min="0" max="100" value={shadowIntensity} onChange={e=>setShadowIntensity(Number(e.target.value))} className="w-full mt-2 accent-[#e69f50] cursor-pointer h-[4px]" />
-              </div>
-              <div className="mt-3 grid grid-cols-2 gap-2">
-                <input value={bgColorInput} onChange={e=>setBgColorInput(e.target.value)} onBlur={()=>updateFromHex(bgColorInput)} className="bg-[#0F0F0F] border border-[#D4A574]/20 rounded-xl px-3 py-2 text-xs font-mono" placeholder="#e69f50" />
-                <div className="flex gap-1">
-                  {["#e69f50","#ffffff","#000000","#59F7FF"].map(c=> <button key={c} onClick={()=>updateFromHex(c)} className="flex-1 rounded-lg border border-white/10" style={{background:c}} />)}
-                </div>
-              </div>
-              <div className="mt-2 grid grid-cols-3 gap-2">
-                <div className="flex gap-1 items-center"><input value={red} onChange={e=>{const v=Math.min(255,Math.max(0,Number(e.target.value)||0)); setRed(v); const hex=`#${v.toString(16).padStart(2,"0")}${green.toString(16).padStart(2,"0")}${blue.toString(16).padStart(2,"0")}`; setBgColor(hex);}} className="w-full bg-[#0F0F0F] border border-[#D4A574]/20 rounded-lg px-2 py-1.5 text-xs" /><span className="text-[9px] text-[#E8DCC6]/40">R</span></div>
-                <div className="flex gap-1 items-center"><input value={green} onChange={e=>{const v=Math.min(255,Math.max(0,Number(e.target.value)||0)); setGreen(v); const hex=`#${red.toString(16).padStart(2,"0")}${v.toString(16).padStart(2,"0")}${blue.toString(16).padStart(2,"0")}`; setBgColor(hex);}} className="w-full bg-[#0F0F0F] border border-[#D4A574]/20 rounded-lg px-2 py-1.5 text-xs" /><span className="text-[9px] text-[#E8DCC6]/40">G</span></div>
-                <div className="flex gap-1 items-center"><input value={blue} onChange={e=>{const v=Math.min(255,Math.max(0,Number(e.target.value)||0)); setBlue(v); const hex=`#${red.toString(16).padStart(2,"0")}${green.toString(16).padStart(2,"0")}${blue.toString(16).padStart(2,"0")}`; setBgColor(hex);}} className="w-full bg-[#0F0F0F] border border-[#D4A574]/20 rounded-lg px-2 py-1.5 text-xs" /><span className="text-[9px] text-[#E8DCC6]/40">B</span></div>
-              </div>
+              <div className="flex items-center justify-between mb-2"><span className="text-[11px] text-[#E8DCC6]/60">Background Color</span><div className="flex items-center gap-2"><div className="w-6 h-6 rounded-full border border-white/20" style={{background: bgColor}} /><span className="text-[11px] font-mono">{bgColor}</span></div></div>
+              <div className="h-[28px] rounded-full border border-[#D4A574]/20 relative cursor-pointer overflow-hidden" style={{background: "linear-gradient(to right, #ff0000, #ff9900, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000)"}} onClick={(e)=>{ const rect = e.currentTarget.getBoundingClientRect(); const percent = (e.clientX - rect.left)/rect.width; const hues = ["#ff0000","#ff9900","#ffff00","#00ff00","#00ffff","#0000ff","#ff00ff","#ff0000"]; updateFromHex(hues[Math.floor(percent*7)] || "#e69f50"); }} />
+              <div className="mt-3 grid grid-cols-2 gap-2"><input value={bgColorInput} onChange={e=>setBgColorInput(e.target.value)} onBlur={()=>updateFromHex(bgColorInput)} className="bg-[#0F0F0F] border border-[#D4A574]/20 rounded-xl px-3 py-2 text-xs font-mono" /><div className="flex gap-1">{["#e69f50","#ffffff","#000000","#59F7FF"].map(c=> <button key={c} onClick={()=>updateFromHex(c)} className="flex-1 rounded-lg border border-white/10" style={{background:c}} />)}</div></div>
             </div>
-
-            <div className="border-2 border-dashed border-[#D4A574]/30 rounded-xl p-4 text-center bg-[#0F0F0F]">
-              <p className="text-xs">Upload Custom BG</p>
-              {customBgUrl ? <img src={customBgUrl} className="w-full h-16 object-cover rounded-lg mt-2"/> : <p className="text-[10px] text-[#E8DCC6]/40 mt-1">PNG, JPG up to 10MB</p>}
-              <button onClick={()=>customBgInputRef.current?.click()} className="mt-2 bg-[#1F1F1F] border border-[#D4A574]/20 rounded-full px-4 py-1.5 text-[11px] cursor-pointer">Choose File</button>
-              <input ref={customBgInputRef} type="file" accept="image/*" hidden onChange={e=>e.target.files && handleCustomBgUpload(e.target.files[0])} />
-            </div>
-
             <div className={baseCard}><span className="text-[#E8DCC6]/50">Placement</span><div className="flex gap-2 mt-2"><select value={placement} onChange={e=>setPlacement(e.target.value)} className="flex-1 bg-[#0F0F0F] border border-[#D4A574]/20 rounded-xl py-2 px-2 text-xs"><option>Cover</option><option>Contain</option></select><select value={position} onChange={e=>setPosition(e.target.value)} className="flex-1 bg-[#0F0F0F] border border-[#D4A574]/20 rounded-xl py-2 px-2 text-xs"><option>Center</option><option>Top</option></select></div></div>
-
-            <div><label className="text-xs text-[#E8DCC6]/70">Background Style</label><select value={bgStyle} onChange={e=>setBgStyle(e.target.value)} className="w-full mt-1 bg-[#1F1F1F] border border-[#D4A574]/20 rounded-xl px-3 py-2.5 text-xs cursor-pointer h-[48px]"><option>Luxury Marble • Gold</option><option>White Infinity</option><option>Minimal Concrete</option><option>Studio Black</option></select></div>
-            <div className={baseCard}><span className="text-[#E8DCC6]/50">Mode</span><div className="mt-1 text-white">Custom background • AI Remove • Color + Upload</div></div>
-            <div><label className="text-xs text-[#E8DCC6]/70 flex justify-between">Shadow Intensity <span>{shadowIntensity}%</span></label><input type="range" min="0" max="100" value={shadowIntensity} onChange={e=>setShadowIntensity(Number(e.target.value))} className="w-full mt-2 accent-[#e69f50] cursor-pointer" /></div>
-
-            <div className="grid grid-cols-3 gap-2 pt-2 border-t border-[#D4A574]/10">
-              <button onClick={handleCancel} className="h-[40px] rounded-xl border border-[#D4A574]/20 bg-[#1F1F1F] text-xs hover:bg-[#2A2A2A] cursor-pointer">Cancel</button>
-              <button onClick={handleReset} className="h-[40px] rounded-xl border border-[#D4A574]/20 bg-[#1F1F1F] text-xs hover:bg-[#2A2A2A] cursor-pointer">Reset</button>
-              <button onClick={handleApply} className={`h-[40px] rounded-xl text-xs ${ctaClass}`}>Apply</button>
-            </div>
+            <div className="grid grid-cols-3 gap-2 pt-2 border-t border-[#D4A574]/10"><button onClick={handleCancel} className="h-[40px] rounded-xl border border-[#D4A574]/20 bg-[#1F1F1F] text-xs">Cancel</button><button onClick={handleReset} className="h-[40px] rounded-xl border border-[#D4A574]/20 bg-[#1F1F1F] text-xs">Reset</button><button onClick={handleApply} className={`h-[40px] rounded-xl text-xs ${ctaClass}`}>Apply</button></div>
           </div>
         );
-      case "ai-bg":
-      case "luxury-gold":
-      case "preset-bg":
-        return (
-          <div className="space-y-3">
-            <div><label className="text-xs text-[#E8DCC6]/70">AI Background</label><select value={bgStyle} onChange={e=>setBgStyle(e.target.value)} className="w-full mt-1 bg-[#1F1F1F] border border-[#D4A574]/20 rounded-xl px-3 py-2.5 text-xs cursor-pointer h-[48px]"><option>Luxury Marble • Gold</option><option>White Infinity</option><option>Minimal Concrete</option><option>Studio Black</option></select></div>
-            <div className="grid grid-cols-2 gap-2">{["Gold", "Marble", "Black", "Concrete"].map(p=> <button key={p} onClick={()=>setBgStyle(p)} className={`h-[48px] rounded-xl border text-xs ${bgStyle.includes(p) ? "bg-[#e69f50]/20 border-[#e69f50] text-[#e69f50]" : "bg-[#1F1F1F] border-[#D4A574]/10"}`}>{p}</button>)}</div>
-            <div><label className="text-xs text-[#E8DCC6]/70 flex justify-between">Lighting Direction <span>{lighting}</span></label><select value={lighting} onChange={e=>setLighting(e.target.value)} className="w-full mt-1 bg-[#1F1F1F] border border-[#D4A574]/20 rounded-xl px-3 py-2.5 text-xs h-[48px]"><option>Top-Right</option><option>Top-Left</option><option>Center</option><option>Soft Box</option></select></div>
-          </div>
-        );
-      default:
-        return (
-          <div className="space-y-3">
-            <div><label className="text-xs text-[#E8DCC6]/70">Background Style</label><select value={bgStyle} onChange={e=>setBgStyle(e.target.value)} className="w-full mt-1 bg-[#1F1F1F] border border-[#D4A574]/20 rounded-xl px-3 py-2 text-xs cursor-pointer h-[48px]"><option>Luxury Marble • Gold</option><option>White Infinity</option><option>Minimal Concrete</option></select></div>
-            <div><label className="text-xs text-[#E8DCC6]/70 flex justify-between">Shadow Intensity <span>{shadowIntensity}%</span></label><input type="range" min="0" max="100" value={shadowIntensity} onChange={e=>setShadowIntensity(Number(e.target.value))} className="w-full mt-1 accent-[#e69f50]" /></div>
-            <div><label className="text-xs text-[#E8DCC6]/70 flex justify-between">Quality — {exportQuality}%</label><input type="range" min="10" max="100" value={exportQuality} onChange={e=>setExportQuality(Number(e.target.value))} className="w-full mt-1 accent-[#e69f50]" /></div>
-          </div>
-        );
+      case "ai-bgs": return <div className="space-y-3"><div><label className="text-xs text-[#E8DCC6]/70">AI Background</label><select value={bgStyle} onChange={e=>setBgStyle(e.target.value)} className="w-full mt-1 bg-[#1F1F1F] border border-[#D4A574]/20 rounded-xl px-3 py-2.5 text-xs h-[48px]"><option>Luxury Marble • Gold</option><option>White Infinity</option><option>Minimal Concrete</option><option>Studio Black</option></select></div><div className="grid grid-cols-2 gap-2">{["Gold", "Marble", "Black", "Concrete"].map(p=> <button key={p} onClick={()=>setBgStyle(p)} className={`h-[48px] rounded-xl border text-xs ${bgStyle.includes(p) ? "bg-[#e69f50]/20 border-[#e69f50] text-[#e69f50]" : "bg-[#1F1F1F] border-[#D4A574]/10"}`}>{p}</button>)}</div></div>;
+      case "custom-bg-upload": return <div className="space-y-3"><div className="border-2 border-dashed border-[#D4A574]/30 rounded-xl p-4 text-center bg-[#0F0F0F]"><p className="text-xs">Upload Custom BG</p>{customBgUrl ? <img src={customBgUrl} className="w-full h-16 object-cover rounded-lg mt-2"/> : <p className="text-[10px] text-[#E8DCC6]/40 mt-1">PNG, JPG up to 10MB</p>}<button onClick={()=>customBgInputRef.current?.click()} className="mt-2 bg-[#1F1F1F] border border-[#D4A574]/20 rounded-full px-4 py-1.5 text-[11px]">Choose File</button><input ref={customBgInputRef} type="file" accept="image/*" hidden onChange={e=>e.target.files && handleCustomBgUpload(e.target.files[0])} /></div><button onClick={handleApply} className={`w-full h-[40px] text-xs ${ctaClass}`}>Apply Custom BG</button></div>;
+      case "relight": case "relight-studio": return <div className="space-y-3"><div><label className="text-xs text-[#E8DCC6]/70 flex justify-between">Lighting Direction <span>{lighting}</span></label><select value={lighting} onChange={e=>setLighting(e.target.value)} className="w-full mt-1 bg-[#1F1F1F] border border-[#D4A574]/20 rounded-xl px-3 py-2.5 text-xs h-[48px]"><option>Top-Right</option><option>Top-Left</option><option>Center</option><option>Soft Box</option></select></div><div><label className="text-xs flex justify-between">Shadow Intensity <span>{shadowIntensity}%</span></label><input type="range" min="0" max="100" value={shadowIntensity} onChange={e=>setShadowIntensity(Number(e.target.value))} className="w-full accent-[#e69f50]" /></div></div>;
+      case "magic-eraser": case "generative-fill": case "object-removal": return <div className="space-y-3"><div className={baseCard}>🪶 {activeToolLabel}: Brush over object to remove. AI will fill background.</div><div className="grid grid-cols-2 gap-2"><button className="h-[40px] bg-[#1F1F1F] border border-[#D4A574]/20 rounded-xl text-xs">Brush Size</button><button className="h-[40px] bg-[#1F1F1F] border border-[#D4A574]/20 rounded-xl text-xs">Feather: 20px</button></div><button className={`w-full h-[44px] ${ctaClass}`}>Erase Selected</button></div>;
+      case "ironing": return <div className="space-y-3"><div className={baseCard}>👔 Auto wrinkle detection for apparel. Preserves fabric texture.</div><div><label className="text-xs">Strength — {shadowIntensity}%</label><input type="range" min="0" max="100" value={shadowIntensity} onChange={e=>setShadowIntensity(Number(e.target.value))} className="w-full accent-[#e69f50]" /></div><button className={`w-full h-[44px] ${ctaClass}`}>Smooth Wrinkles</button></div>;
+      case "product-fixer": return <div className="space-y-3"><div className={baseCard}>🔒 Fidelity Lock: Protect logo, text, texture from AI distortion.</div><div className="flex gap-2"><button className="flex-1 h-[40px] bg-[#1F1F1F] border rounded-xl text-xs border-[#e69f50]/50 text-[#e69f50]">Lock Logo ON</button><button className="flex-1 h-[40px] bg-[#1F1F1F] border border-[#D4A574]/20 rounded-xl text-xs">Lock Text ON</button></div></div>;
+      case "ai-shadows": return <div className="space-y-3"><div className="grid grid-cols-3 gap-2">{["Soft","Hard","None"].map(s=> <button key={s} className={`h-[40px] rounded-xl border text-xs ${s==="Soft" ? "bg-[#e69f50]/20 border-[#e69f50] text-[#e69f50]" : "bg-[#1F1F1F] border-[#D4A574]/10"}`}>{s}</button>)}</div><div><label className="text-xs flex justify-between">Intensity <span>{shadowIntensity}%</span></label><input type="range" min="0" max="100" value={shadowIntensity} onChange={e=>setShadowIntensity(Number(e.target.value))} className="w-full accent-[#e69f50]" /></div></div>;
+      case "reflection": return <div className="space-y-3"><div className={baseCard}>💧 Floor reflection for premium look.</div><div><label className="text-xs flex justify-between">Opacity <span>{shadowIntensity}%</span></label><input type="range" min="0" max="100" value={shadowIntensity} onChange={e=>setShadowIntensity(Number(e.target.value))} className="w-full accent-[#e69f50]" /></div></div>;
+      case "auto-enhance": case "upscale-4k": case "color-match": case "recolor-variants": case "ai-expand": case "color-light": return <div className="space-y-3"><div className={baseCard}>✨ {activeToolLabel} active. Adjustments apply to AFTER preview.</div><div><label className="text-xs flex justify-between">Quality — {exportQuality}%</label><input type="range" min="10" max="100" value={exportQuality} onChange={e=>setExportQuality(Number(e.target.value))} className="w-full accent-[#e69f50]" /></div><button onClick={handleApply} className={`w-full h-[40px] ${ctaClass}`}>Apply {activeToolLabel}</button></div>;
+      default: return <div className="space-y-3"><div className={baseCard}>Tool: {activeToolLabel} — Coming from {activeHeaderTab} tab. Right panel shows sub-tools dynamically.</div></div>;
     }
   };
 
@@ -263,20 +181,17 @@ export default function PhotoStudio() {
       <header ref={headerRef} className="shrink-0 border border-[#D4A574]/30 rounded-2xl px-7 py-4 flex items-center justify-between bg-[#141414] z-50">
         <div className="flex items-center gap-10">
           <div className="flex items-center gap-3">
-  <Link href="/" className="flex items-center gap-3 cursor-pointer">
-    <img src="/Logo-White.png" alt="VISFORA Logo" className="h-11 w-auto object-contain" />
-    <span className="text-[26px] tracking-[0.18em] font-light text-white leading-none">VIS<span className="font-semibold text-[#d6a85a]">FORA</span></span>
-  </Link>
-    <span className="text-[26px] font-light text-[#d6a85a] leading-none select-none mx-1">-</span>
-  <span className="text-[26px] tracking-normal font-light text-white leading-none select-none cursor-default">Photo Studio</span>
-</div>
+            <Link href="/" className="flex items-center gap-3 cursor-pointer"><img src="/Logo-White.png" alt="VISFORA Logo" className="h-11 w-auto object-contain" /><span className="text-[26px] tracking-[0.18em] font-light text-white leading-none">VIS<span className="font-semibold text-[#d6a85a]">FORA</span></span></Link>
+            <span className="text-[26px] font-light text-[#d6a85a] leading-none select-none mx-1">-</span>
+            <span className="text-[26px] tracking-normal font-light text-white leading-none select-none cursor-default">Photo Studio</span>
+          </div>
           <nav className="hidden lg:flex items-center gap-1 text-[15px]">
             {HEADER_TABS.map((tab) => {
               const isActive = activeHeaderTab === tab.name;
               const isHovered = hoveredHeaderTab === tab.name;
               return (
                 <div key={tab.name} className="relative" onMouseEnter={() => setHoveredHeaderTab(tab.name)} onMouseLeave={() => setHoveredHeaderTab(null)}>
-                  <button onClick={() => setActiveHeaderTab(tab.name)} className={`px-4 py-2 rounded-full transition cursor-pointer text-[14px] ${isActive ? "border border-[#e69f50] text-white font-medium bg-white/[0.06]" : "border border-transparent text-[#E8DCC6]/60 hover:text-white hover:bg-white/[0.04]"}`}>{tab.name}</button>
+                  <button onClick={() => { setActiveHeaderTab(tab.name); const first = ALL_TOOLS_MAP[tab.name]?.[0]?.id; if(first) setActiveTool(first); }} className={`px-4 py-2 rounded-full transition cursor-pointer text-[14px] ${isActive ? "border border-[#e69f50] text-white font-medium bg-white/[0.06]" : "border border-transparent text-[#E8DCC6]/60 hover:text-white hover:bg-white/[0.04]"}`}>{tab.name}</button>
                   {isHovered && (
                     <div className="absolute left-0 top-[44px] w-auto min-w-[240px] max-w-[360px] bg-[#141414] border border-[#D4A574]/30 rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.6)] z-50 overflow-hidden p-2">
                       {tab.items.map((item) => (
@@ -297,7 +212,7 @@ export default function PhotoStudio() {
 
       <div className="shrink-0 border border-[#D4A574]/20 rounded-2xl bg-[#141414] p-3 flex items-center gap-3">
         <span className="text-sm text-[#E8DCC6]/70">Generation Mode:</span>
-        <select className="bg-[#1F1F1F] border border-[#D4A574]/20 rounded-xl px-3 py-2 text-sm cursor-pointer min-w-[200px]" value={prompt} onChange={e=>{setPrompt(e.target.value); const c=chips.find(x=>x.chip===e.target.value); if(c){setBgStyle(c.bg); setActiveTool(c.tool);}}}>
+        <select className="bg-[#1F1F1F] border border-[#D4A574]/20 rounded-xl px-3 py-2 text-sm cursor-pointer min-w-[200px]" value={prompt} onChange={e=>{setPrompt(e.target.value);}}>
           <option value="">Select chip...</option>
           {chips.map(c=><option key={c.chip} value={c.chip}>{c.chip}</option>)}
         </select>
@@ -306,10 +221,11 @@ export default function PhotoStudio() {
       </div>
 
       <div className="flex-1 min-h-0 grid grid-cols-1 lg:grid-cols-[280px_1fr_320px] gap-3 items-start">
+        {/* LEFT SECTION - DYNAMIC */}
         <div className="flex flex-col gap-3 h-full overflow-y-auto pr-1">
           <div className="border border-[#D4A574]/30 rounded-2xl p-4 bg-[#141414] shrink-0">
             <span className="text-[11px] bg-[#e69f50]/20 text-[#e69f50] px-3 py-1 rounded-full font-bold tracking-wide">{activeHeaderTab.toUpperCase()}</span>
-            <span className="text-[10px] ml-2 text-[#E8DCC6]/40">dynamic change</span>
+            <span className="text-[10px] ml-2 text-[#E8DCC6]/40">dynamic • active</span>
             <div className="space-y-2 mt-4">
               {dynamicTools.map(tool => (
                 <button key={tool.id} onClick={()=>setActiveTool(tool.id)} className={`${toolBtnClass} border-2 ${activeTool===tool.id ? "bg-[#e69f50]/20 text-[#e69f50] border-[#e69f50] font-semibold" : "bg-[#1F1F1F] text-[#E8DCC6]/80 border-[#D4A574]/10 hover:bg-[#2A2A2A]"}`}>
@@ -319,7 +235,9 @@ export default function PhotoStudio() {
             </div>
             <button onClick={handleProcess} disabled={isProcessing} className={`w-full mt-4 flex items-center justify-center gap-2 h-[44px] text-[13px] ${ctaClass}`}>Run {activeToolLabel}</button>
           </div>
+          {/* UPLOAD LOCKED ON LEFT */}
           <div className="border border-[#D4A574]/30 rounded-2xl p-4 bg-[#141414] flex-1 flex flex-col shrink-0">
+            <h4 className="text-[11px] font-bold tracking-wide text-[#e69f50] mb-3">UPLOAD • LOCKED</h4>
             <div onDragOver={e=>e.preventDefault()} onDrop={handleDrop} className="border-2 border-dashed border-[#e69f50]/70 rounded-xl p-6 text-center bg-[#0F0F0F]/50 flex-1 flex flex-col justify-center">
               <p className="text-sm mt-2">Drag & drop image here</p><p className="text-xs text-[#E8DCC6]/50 mt-1">or click to browse • PNG, JPG</p>
             </div>
@@ -328,45 +246,32 @@ export default function PhotoStudio() {
           </div>
         </div>
 
+        {/* CENTER CANVAS - SAME */}
         <div id="studio-canvas-wrapper" className="shrink-0 border border-[#D4A574]/30 rounded-2xl bg-[#141414] flex flex-col overflow-hidden w-full h-[640px] min-h-[640px] max-h-[640px]">
-                    <div className="p-3 border-b border-[#D4A574]/20 flex items-center justify-between shrink-0">
-            <h3 className="text-[#E8DCC6] font-medium tracking-wide flex items-center gap-2">
-              <span className="w-2 h-2 bg-[#e69f50] rounded-full animate-pulse"></span>
-              Studio Canvas
-            </h3>
+          <div className="p-3 border-b border-[#D4A574]/20 flex items-center justify-between shrink-0">
+            <h3 className="text-[#E8DCC6] font-medium tracking-wide flex items-center gap-2"><span className="w-2 h-2 bg-[#e69f50] rounded-full animate-pulse"></span>Studio Canvas</h3>
             <div className="flex items-center gap-2.5">
-              {/* 2. RESET MOVED BEFORE + SIZE MATCHED TO TOGGLE 32px */}
               <button onClick={handleReset} title="Reset" className="w-[32px] h-[32px] flex items-center justify-center rounded-full bg-[#1F1F1F] border border-[#D4A574]/30 hover:bg-[#e69f50]/15 hover:border-[#e69f50]/50 hover:text-[#e69f50] text-[#E8DCC6]/70 cursor-pointer transition-all active:scale-90">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
               </button>
-
-              {/* 4. NEW TRENDY CATCHY SLIDING BUTTON - NO TEXT CUT, ACTIVE */}
               <div className="flex items-center gap-2.5 bg-[#0F0F0F] border border-[#D4A574]/20 rounded-full pl-3.5 pr-1.5 py-1.5">
                 <span className="text-[11px] tracking-wide font-medium text-[#E8DCC6]/80">BG Remove</span>
-                <button
-                  onClick={()=>setIsBgRemoved(!isBgRemoved)}
-                  className={`relative w-[68px] h-[28px] rounded-full p-[3px] transition-all duration-300 cursor-pointer flex items-center shadow-inner ${isBgRemoved ? "bg-gradient-to-r from-[#e69f50] to-[#d48e40] shadow-[0_0_12px_rgba(230,159,80,0.4)]" : "bg-[#1F1F1F] border border-white/10"}`}
-                >
-                  <div className={`w-[22px] h-[22px] rounded-full bg-white shadow-[0_2px_8px_rgba(0,0,0,0.4)] flex items-center justify-center text-[10px] font-bold transition-all duration-300 ${isBgRemoved ? "translate-x-[40px] text-black" : "translate-x-0 text-[#E8DCC6]/40"}`}>
-                    {isBgRemoved ? "✓" : "○"}
-                  </div>
-                  <span className={`absolute text-[9px] font-black tracking-widest transition-all ${isBgRemoved ? "left-[10px] text-black/80" : "right-[10px] text-[#E8DCC6]/40"}`}>
-                    {isBgRemoved ? "ON" : "OFF"}
-                  </span>
+                <button onClick={()=>setIsBgRemoved(!isBgRemoved)} className={`relative w-[68px] h-[28px] rounded-full p-[3px] transition-all duration-300 cursor-pointer flex items-center shadow-inner ${isBgRemoved ? "bg-gradient-to-r from-[#e69f50] to-[#d48e40] shadow-[0_0_12px_rgba(230,159,80,0.4)]" : "bg-[#1F1F1F] border border-white/10"}`}>
+                  <div className={`w-[22px] h-[22px] rounded-full bg-white shadow-[0_2px_8px_rgba(0,0,0,0.4)] flex items-center justify-center text-[10px] font-bold transition-all duration-300 ${isBgRemoved ? "translate-x-[40px] text-black" : "translate-x-0 text-[#E8DCC6]/40"}`}>{isBgRemoved ? "✓" : "○"}</div>
+                  <span className={`absolute text-[9px] font-black tracking-widest transition-all ${isBgRemoved ? "left-[10px] text-black/80" : "right-[10px] text-[#E8DCC6]/40"}`}>{isBgRemoved ? "ON" : "OFF"}</span>
                 </button>
               </div>
-              {/* 3. FULLSCREEN REMOVED */}
             </div>
           </div>
           <div className="flex-1 relative bg-[#0F0F0F] flex min-h-0">
             <div className="flex-1 relative"><div className="absolute top-3 left-3 z-10 text-[11px] font-bold tracking-[0.2em] text-[#e69f50] bg-black/60 px-3 py-1 rounded-full">BEFORE</div>{uploadedImage ? <img src={uploadedImage} className="w-full h-full object-cover absolute inset-0" alt="before" /> : <img src="/sneaker.png" className="w-full h-full object-cover absolute inset-0" alt="sneaker" />}</div>
             <div className="flex-1 relative border-l border-[#D4A574]/20">
-              <div className="absolute top-3 right-3 z-10 text-[11px] font-bold tracking-[0.2em] text-[#e69f50] bg-black/60 px-3 py-1 rounded-full">AFTER</div>
+              <div className="absolute top-3 right-3 z-10 text-[11px] font-bold tracking-[0.2em] text-[#e69f50] bg-black/60 px-3 py-1 rounded-full">AFTER • {activeToolLabel}</div>
               <canvas ref={canvasRef} hidden />
-              <div className={`absolute inset-0 ${isBgRemoved ? "bg-[#1A1A1A]" : "bg-[#1A1A1A]"}`} />
+              <div className="absolute inset-0 bg-[#1A1A1A]" />
               {isProcessing ? <div className="absolute inset-0 flex items-center justify-center text-[#e69f50] animate-pulse text-sm z-10">Processing...</div> : afterImage && isBgRemoved ? <img src={afterImage} className="absolute inset-0 w-full h-full object-contain z-10 p-4 pb-12" alt="after" /> : <div className="absolute inset-0 flex items-center justify-center text-[#E8DCC6]/20 text-sm z-10">No preview yet</div>}
               <div className="absolute bottom-0 left-0 right-0 z-20 p-2.5 flex justify-between items-center bg-gradient-to-t from-black/90 to-transparent">
-                <span className="text-[10px] bg-black/80 backdrop-blur px-3 py-1.5 rounded-full border border-[#e69f50]/30 text-white flex gap-1.5"><span className="truncate max-w-[100px]">{fileName}</span><span className="text-[#e69f50]">• {currentAfterText}</span></span>
+                <span className="text-[10px] bg-black/80 backdrop-blur px-3 py-1.5 rounded-full border border-[#e69f50]/30 text-white flex gap-1.5"><span className="truncate max-w-[100px]">{fileName}</span><span className="text-[#e69f50]">• {activeToolLabel}</span></span>
                 <div className="flex gap-1.5"><span className="text-[9px] bg-black/80 px-2.5 py-1.5 rounded-full border border-white/10 text-white/70">{exportFormat}</span><span className="text-[9px] bg-black/80 px-2.5 py-1.5 rounded-full border border-[#e69f50]/30 text-[#e69f50]">2048x2048</span></div>
               </div>
             </div>
@@ -374,6 +279,7 @@ export default function PhotoStudio() {
           <div className="p-2 text-center text-xs text-[#E8DCC6]/40 border-t border-[#D4A574]/20 shrink-0">Model: {fileName} • 12.4k polygons • 1 material • Ready • Loaded in 1.2s</div>
         </div>
 
+        {/* RIGHT SECTION - DYNAMIC + EXPORT LOCKED */}
         <div className="flex flex-col gap-3 h-full overflow-y-auto pr-1">
           <div className="border border-[#D4A574]/30 rounded-2xl p-4 bg-[#141414] shrink-0">
             <span className="text-[11px] bg-[#e69f50]/20 text-[#e69f50] px-3 py-1 rounded-full font-bold tracking-wide">PROPERTIES</span>
@@ -381,8 +287,9 @@ export default function PhotoStudio() {
             <h4 className="text-sm font-medium mt-3 mb-3">TOOLS / PROPERTIES</h4>
             <div className="mt-2">{renderRightDynamicContent()}</div>
           </div>
+          {/* EXPORT LOCKED ON RIGHT */}
           <div className="border border-[#D4A574]/30 rounded-2xl p-4 bg-[#141414] flex-1 flex flex-col shrink-0">
-            <h4 className="text-sm font-medium mb-3">EXPORT & VIEW</h4>
+            <h4 className="text-[11px] font-bold tracking-wide text-[#e69f50] mb-3">EXPORT • LOCKED</h4>
             <div className="space-y-4 flex-1">
               <div className="grid grid-cols-2 gap-2">
                 <select value={exportFormat} onChange={e=>setExportFormat(e.target.value)} className="bg-[#1F1F1F] border border-[#D4A574]/20 rounded-xl py-2.5 px-3 text-xs cursor-pointer h-[48px]"><option>PNG</option><option>JPG</option><option>WEBP</option></select>
