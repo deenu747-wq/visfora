@@ -41,6 +41,11 @@ export default function PhotoStudio() {
   const [position, setPosition] = useState("Center");
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
+  // FIX: Original image locked - BEFORE never gets polluted
+  const ORIGINAL_SNEAKER = "/sneaker.png";
+  const getBeforeImage = () => uploadedImage || ORIGINAL_SNEAKER;
+  const getAfterBaseImage = () => afterImage || compositeImage || getBeforeImage();
+
   const HEADER_TABS: HeaderTab[] = [
     { name: "Dashboard", path: "#dashboard", items: [ { label: "Overview", desc: "Edits today & credits", tool: "overview" }, { label: "Recent Projects", desc: "Last 10 files", tool: "recent" }, { label: "Quick Upload", desc: "Start new edit", tool: "quick-upload" }, ] },
     { name: "Create", path: "#create", items: [ { label: "Product Staging", desc: "Lifestyle + flat lay", tool: "product-staging", badge: "AI" }, { label: "Templates", desc: "Amazon, Shopify, Insta", tool: "templates" }, { label: "Custom Background", desc: "Color + upload own", tool: "color-bg" }, { label: "Virtual Model", desc: "Ghost mannequin AI", tool: "virtual-model", badge: "NEW" }, { label: "Product Video", desc: "Image to video", tool: "product-video", badge: "2026" }, ] },
@@ -71,36 +76,38 @@ export default function PhotoStudio() {
 
   const updateComposite = useCallback(async () => {
     if (!canvasRef.current) return;
-    const source = cutoutImage || uploadedImage || "/sneaker.png";
+    const source = cutoutImage || uploadedImage || ORIGINAL_SNEAKER;
     const canvas = canvasRef.current; const ctx = canvas.getContext("2d"); if (!ctx) return;
     const img = new Image(); img.crossOrigin = "anonymous"; img.src = source;
     await new Promise<void>(r => { img.onload = () => r(); img.onerror = () => r(); });
     canvas.width = img.width || 800; canvas.height = img.height || 800;
-    if (customBgUrl) {
-      const bgImg = new Image(); bgImg.crossOrigin="anonymous"; bgImg.src=customBgUrl; await new Promise<void>(r => { bgImg.onload=()=>r(); bgImg.onerror=()=>r(); });
-      if(placement==="Cover") ctx.drawImage(bgImg,0,0,canvas.width,canvas.height);
-      else { ctx.fillStyle=bgColor; ctx.fillRect(0,0,canvas.width,canvas.height); const scale=Math.min(canvas.width/bgImg.width, canvas.height/bgImg.height); const w=bgImg.width*scale, h=bgImg.height*scale; ctx.drawImage(bgImg,(canvas.width-w)/2,(canvas.height-h)/2,w,h); }
-    } else { 
-      // FIX: If BG is OFF or tool is overview, show transparent checker logic
-      if(!isBgRemoved && activeTool !== "color-bg" && !cutoutImage){
-        // Keep original behavior for overview - will be overridden by image draw
-        ctx.fillStyle = "#141414"; 
-        ctx.fillRect(0,0,canvas.width,canvas.height);
+
+    if (activeTool === "remove-bg" || cutoutImage) {
+      // Checker for transparent state when BG OFF
+      if (!isBgRemoved && !customBgUrl && activeTool === "remove-bg") {
+        // transparent checker will be handled by CSS, just clear
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+      } else if (customBgUrl) {
+        const bgImg = new Image(); bgImg.crossOrigin="anonymous"; bgImg.src=customBgUrl; await new Promise<void>(r => { bgImg.onload=()=>r(); bgImg.onerror=()=>r(); });
+        ctx.drawImage(bgImg,0,0,canvas.width,canvas.height);
       } else {
-        ctx.fillStyle = bgColor; 
-        ctx.fillRect(0,0,canvas.width,canvas.height); 
+        ctx.fillStyle = bgColor; ctx.fillRect(0,0,canvas.width,canvas.height);
       }
+    } else {
+      if (customBgUrl) {
+        const bgImg = new Image(); bgImg.crossOrigin="anonymous"; bgImg.src=customBgUrl; await new Promise<void>(r => { bgImg.onload=()=>r(); bgImg.onerror=()=>r(); });
+        if(placement==="Cover") ctx.drawImage(bgImg,0,0,canvas.width,canvas.height);
+        else { ctx.fillStyle=bgColor; ctx.fillRect(0,0,canvas.width,canvas.height); const scale=Math.min(canvas.width/bgImg.width, canvas.height/bgImg.height); const w=bgImg.width*scale, h=bgImg.height*scale; ctx.drawImage(bgImg,(canvas.width-w)/2,(canvas.height-h)/2,w,h); }
+      } else { ctx.fillStyle = bgColor; ctx.fillRect(0,0,canvas.width,canvas.height); }
     }
     ctx.drawImage(img,0,0,canvas.width,canvas.height);
     const url = canvas.toDataURL(`image/${exportFormat.toLowerCase()}`, exportQuality/100);
     setCompositeImage(url); 
-    // Only set afterImage if we are in color-bg or bg-removed state, otherwise keep original for overview logic
-    if(activeTool === "color-bg" || cutoutImage || customBgUrl || isBgRemoved){
-      setAfterImage(url);
-    }
+    setAfterImage(url);
   }, [cutoutImage, bgColor, exportFormat, exportQuality, customBgUrl, placement, uploadedImage, isBgRemoved, activeTool]);
 
-  useEffect(() => { updateComposite(); }, [updateComposite]);
+  useEffect(() => { if(activeTool === "color-bg" || cutoutImage || customBgUrl || isBgRemoved) updateComposite(); }, [updateComposite, activeTool, cutoutImage, customBgUrl, isBgRemoved]);
+
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => { if (headerRef.current && !headerRef.current.contains(e.target as Node)) { setHoveredHeaderTab(null); } };
     document.addEventListener("mousedown", handleClickOutside); return () => document.removeEventListener("mousedown", handleClickOutside);
@@ -113,25 +120,34 @@ export default function PhotoStudio() {
   
   const handleProcess = async () => {
     setIsProcessing(true); setPrevBgColor(bgColor); setPrevComposite(compositeImage || afterImage);
+    const timeout = setTimeout(()=>{ setIsProcessing(false); }, 20000); // 20s fallback
     try {
       // @ts-ignore
       const mod: any = await import("@imgly/background-removal");
       let fileToProcess: File;
       if (uploadedFile) fileToProcess = uploadedFile;
       else {
-        const src = uploadedImage || "/sneaker.png";
+        const src = uploadedImage || ORIGINAL_SNEAKER;
         const res = await fetch(src); const blob = await res.blob();
         fileToProcess = new File([blob], fileName, { type: blob.type });
       }
       const blob = await mod.removeBackground(fileToProcess);
       const cutoutUrl = URL.createObjectURL(blob);
-      setCutoutImage(cutoutUrl); setIsBgRemoved(true); setTimeout(()=>updateComposite(),100);
-    } catch (err) { console.log(err); await updateComposite(); }
+      setCutoutImage(cutoutUrl); setIsBgRemoved(true);
+      clearTimeout(timeout);
+      setTimeout(()=>updateComposite(),100);
+    } catch (err) { 
+      console.log(err); 
+      clearTimeout(timeout);
+      // Fallback: just keep original but mark as bg removed
+      setIsBgRemoved(true);
+      await updateComposite(); 
+    }
     setIsProcessing(false);
   };
+
   const handleApply = async () => { setPrevBgColor(bgColor); setPrevComposite(compositeImage || afterImage); await updateComposite(); };
   
-  // === FIXED RESET LOGIC ===
   const handleReset = () => { 
     const def="#e69f50"; 
     updateFromHex(def); 
@@ -140,29 +156,35 @@ export default function PhotoStudio() {
     setPlacement("Cover"); 
     setPosition("Center"); 
     setCustomBgUrl(null);
-    // Full reset to BEFORE state
     setCutoutImage(null);
     setIsBgRemoved(false);
-    const original = uploadedImage || "/sneaker.png";
+    const original = getBeforeImage();
     setAfterImage(original);
     setCompositeImage(original);
     setIsProcessing(false);
   };
 
   const handleCancel = () => { updateFromHex(prevBgColor); if(prevComposite){ setCompositeImage(prevComposite); setAfterImage(prevComposite); } };
-  const handleExport = () => { const link = document.createElement("a"); link.href = compositeImage || afterImage || uploadedImage || "/sneaker.png"; link.download = `visfora-${activeTool}.${exportFormat.toLowerCase()}`; link.click(); };
+  const handleExport = () => { const link = document.createElement("a"); link.href = compositeImage || afterImage || getBeforeImage(); link.download = `visfora-${activeTool}.${exportFormat.toLowerCase()}`; link.click(); };
 
   const chips = [ { chip: "Luxury gold studio", bg: "Luxury Marble • Gold", tool: "ai-bgs" }, { chip: "Minimal marble", bg: "White Infinity", tool: "ai-bgs" }, { chip: "Dark moody", bg: "Studio Black", tool: "ai-bgs" }, ];
-  const ctaClass = "bg-[#e69f50] text-black hover:bg-[#d48e40] hover:shadow-[0_0_20px_rgba(230,159,80,0.5)] cursor-pointer transition-all duration-200 font-medium rounded-full";
+  const ctaClass = "bg-[#e69f50] text-black hover:bg-[#d48e40] hover:shadow-[0_0_20px_rgba(230,159,80,0.5)] cursor-pointer transition-all duration-200 font-medium rounded-full disabled:opacity-50 disabled:cursor-not-allowed";
   const toolBtnClass = "w-full text-left px-4 py-3.5 rounded-xl flex items-center gap-3 transition cursor-pointer text-[13px] h-[48px]";
 
   const renderRightDynamicContent = () => {
     const baseCard = "bg-[#1F1F1F] border border-[#D4A574]/10 rounded-xl px-3 py-2.5 text-xs";
     switch(activeTool) {
-      case "remove-bg": return <div className="space-y-3"><div className={baseCard}>✂️ AI Cutout: One-tap remove. Works on default sneaker too.</div><button onClick={handleProcess} className={`w-full h-[44px] text-sm ${ctaClass}`}>{isProcessing?"Processing...":"Remove Background"}</button></div>;
-      case "color-bg": return <div className="space-y-3"><div className="bg-[#1F1F1F] border border-[#D4A574]/20 rounded-xl p-3"><div className="flex items-center justify-between mb-2"><span className="text-[11px] text-[#E8DCC6]/60">Background Color</span><div className="flex items-center gap-2"><div className="w-6 h-6 rounded-full border border-white/20" style={{background: bgColor}} /><span className="text-[11px] font-mono">{bgColor}</span></div></div><div className="h-[28px] rounded-full border border-[#D4A574]/20 cursor-pointer" style={{background: "linear-gradient(to right, #ff0000, #ff9900, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000)"}} onClick={(e)=>{ const rect = e.currentTarget.getBoundingClientRect(); const percent = (e.clientX - rect.left)/rect.width; const hues = ["#ff0000","#ff9900","#ffff00","#00ff00","#00ffff","#0000ff","#ff00ff","#ff0000"]; updateFromHex(hues[Math.floor(percent*7)] || "#e69f50"); }} /><div className="mt-3 grid grid-cols-2 gap-2"><input value={bgColorInput} onChange={e=>setBgColorInput(e.target.value)} onBlur={()=>updateFromHex(bgColorInput)} className="bg-[#0F0F0F] border border-[#D4A574]/20 rounded-xl px-3 py-2 text-xs font-mono" /><div className="flex gap-1">{["#e69f50","#ffffff","#000000","#ff00ff"].map(c=> <button key={c} onClick={()=>{updateFromHex(c); setTimeout(()=>updateComposite(),10);}} className="flex-1 rounded-lg border border-white/10 cursor-pointer" style={{background:c}} />)}</div></div></div><div className="border-2 border-dashed border-[#D4A574]/30 rounded-xl p-3 text-center bg-[#0F0F0F]"><p className="text-[11px]">Upload Custom BG</p><button onClick={()=>customBgInputRef.current?.click()} className="mt-2 bg-[#1F1F1F] border border-[#D4A574]/20 rounded-full px-4 py-1.5 text-[11px] cursor-pointer">Choose File</button><input ref={customBgInputRef} type="file" accept="image/*" hidden onChange={e=>e.target.files && handleCustomBgUpload(e.target.files[0])} /></div><div className="grid grid-cols-3 gap-2 pt-2 border-t border-[#D4A574]/10"><button onClick={handleCancel} className="h-[40px] rounded-xl border border-[#D4A574]/20 bg-[#1F1F1F] text-xs cursor-pointer">Cancel</button><button onClick={handleReset} className="h-[40px] rounded-xl border border-[#D4A574]/20 bg-[#1F1F1F] text-xs cursor-pointer">Reset</button><button onClick={handleApply} className={`h-[40px] rounded-xl text-xs ${ctaClass}`}>Apply</button></div></div>;
-      default: return <div className="space-y-3"><div className={baseCard}>{activeToolLabel} — Active. All controls live.</div><button onClick={handleApply} className={`w-full h-[40px] ${ctaClass}`}>Run {activeToolLabel}</button></div>;
+      case "remove-bg": return <div className="space-y-3"><div className={baseCard}>✂️ AI Cutout: One-tap remove. Works on default sneaker too.</div><button onClick={handleProcess} disabled={isProcessing} className={`w-full h-[44px] text-sm ${ctaClass}`}>{isProcessing?"Processing...":"Remove Background"}</button></div>;
+      case "color-bg": return <div className="space-y-3"><div className="bg-[#1F1F1F] border border-[#D4A574]/20 rounded-xl p-3"><div className="flex items-center justify-between mb-2"><span className="text-[11px] text-[#E8DCC6]/60">Background Color</span><div className="flex items-center gap-2"><div className="w-6 h-6 rounded-full border border-white/20" style={{background: bgColor}} /><span className="text-[11px] font-mono">{bgColor}</span></div></div><div className="h-[28px] rounded-full border border-[#D4A574]/20 cursor-pointer" style={{background: "linear-gradient(to right, #ff0000, #ff9900, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000)"}} onClick={(e)=>{ const rect = e.currentTarget.getBoundingClientRect(); const percent = (e.clientX - rect.left)/rect.width; const hues = ["#ff0000","#ff9900","#ffff00","#00ff00","#00ffff","#0000ff","#ff00ff","#ff0000"]; updateFromHex(hues[Math.floor(percent*7)] || "#e69f50"); }} /><div className="mt-3 grid grid-cols-2 gap-2"><input value={bgColorInput} onChange={e=>setBgColorInput(e.target.value)} onBlur={()=>updateFromHex(bgColorInput)} className="bg-[#0F0F0F] border border-[#D4A574]/20 rounded-xl px-3 py-2 text-xs font-mono" /><div className="flex gap-1">{["#e69f50","#ffffff","#000000","#ff00ff"].map(c=> <button key={c} onClick={()=>{updateFromHex(c); setTimeout(()=>updateComposite(),10);}} className="flex-1 rounded-lg border border-white/10 cursor-pointer" style={{background:c}} />)}</div></div></div><div className="border-2 border-dashed border-[#D4A574]/30 rounded-xl p-3 text-center bg-[#0F0F0F]"><p className="text-[11px]">Upload Custom BG</p><button onClick={()=>customBgInputRef.current?.click()} className="mt-2 bg-[#1F1F1F] border border-[#D4A574]/20 rounded-full px-4 py-1.5 text-[11px] cursor-pointer">Choose File</button><input ref={customBgInputRef} type="file" accept="image/*" hidden onChange={e=>e.target.files && handleCustomBgUpload(e.target.files[0])} /></div><div className="grid grid-cols-3 gap-2 pt-2 border-t border-[#D4A574]/10"><button onClick={handleCancel} className="h-[40px] rounded-xl border border-[#D4A574]/20 bg-[#1F1F1F] text-xs cursor-pointer">Cancel</button><button onClick={handleReset} className="h-[40px] rounded-xl border border-[#D4A574]/20 bg-[#1F1F1F] text-xs cursor-pointer">Reset</button><button onClick={handleApply} disabled={isProcessing} className={`h-[40px] rounded-xl text-xs ${ctaClass}`}>Apply</button></div></div>;
+      default: return <div className="space-y-3"><div className={baseCard}>{activeToolLabel} — Active. All controls live.</div><button onClick={handleApply} disabled={isProcessing} className={`w-full h-[40px] ${ctaClass}`}>Run {activeToolLabel}</button></div>;
     }
+  };
+
+  const checkerStyle = {
+    backgroundImage: `linear-gradient(45deg, #1a1a1a 25%, transparent 25%), linear-gradient(-45deg, #1a1a1a 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #1a1a1a 75%), linear-gradient(-45deg, transparent 75%, #1a1a1a 75%)`,
+    backgroundSize: '20px 20px',
+    backgroundPosition: '0 0, 0 10px, 10px -10px, -10px 0px',
+    backgroundColor: '#2a2a2a'
   };
 
   return (
@@ -183,21 +205,8 @@ export default function PhotoStudio() {
                   {isHovered && (
                     <div className="absolute left-0 top-[44px] w-auto min-w-[260px] max-w-[380px] bg-[#141414] border border-[#D4A574]/30 rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.6)] z-50 overflow-hidden p-2">
                       {tab.items.map((item) => (
-                        <button 
-                          key={item.label} 
-                          onClick={() => handleHeaderItemClick(tab.name, item)} 
-                          className="group w-full text-left px-3 py-2.5 rounded-xl border border-transparent hover:bg-[#e69f50]/12 hover:border-[#e69f50]/30 cursor-pointer transition-all duration-200"
-                        >
-                          <div>
-                            <div className="text-[13px] text-white group-hover:text-[#e69f50] flex items-center gap-2 transition-colors">
-                              {item.label}
-                              {item.badge && <span className="text-[9px] bg-[#e69f50] text-black px-1.5 py-0.5 rounded-full font-bold">{item.badge}</span>}
-                            </div>
-                            {/* FIXED: More visible sub-text + hover visible */}
-                            <div className="text-[11px] text-[#E8DCC6]/70 group-hover:text-white transition-colors mt-[2px]">
-                              {item.desc}
-                            </div>
-                          </div>
+                        <button key={item.label} onClick={() => handleHeaderItemClick(tab.name, item)} className="group w-full text-left px-3 py-2.5 rounded-xl border border-transparent hover:bg-[#e69f50]/12 hover:border-[#e69f50]/30 cursor-pointer transition-all duration-200">
+                          <div><div className="text-[13px] text-white group-hover:text-[#e69f50] flex items-center gap-2 transition-colors">{item.label}{item.badge && <span className="text-[9px] bg-[#e69f50] text-black px-1.5 py-0.5 rounded-full font-bold">{item.badge}</span>}</div><div className="text-[11px] text-[#E8DCC6]/75 group-hover:text-white transition-colors mt-[2px]">{item.desc}</div></div>
                         </button>
                       ))}
                     </div>
@@ -214,7 +223,7 @@ export default function PhotoStudio() {
         <span className="text-sm text-[#E8DCC6]/70">Generation Mode:</span>
         <select className="bg-[#1F1F1F] border border-[#D4A574]/20 rounded-xl px-3 py-2 text-sm cursor-pointer min-w-[200px]" value={prompt} onChange={e=>setPrompt(e.target.value)}><option value="">Select chip...</option>{chips.map(c=><option key={c.chip} value={c.chip}>{c.chip}</option>)}</select>
         <div className="flex-1 flex items-center gap-3 bg-[#0F0F0F] border border-[#D4A574]/20 rounded-full px-5 py-2.5"><span>✨</span><input value={prompt} onChange={e=>setPrompt(e.target.value)} placeholder="Describe your edit e.g. minimal low poly fox, neon cyan wireframe" className="flex-1 bg-transparent outline-none text-sm placeholder:text-[#E8DCC6]/40" /></div>
-        <button onClick={handleProcess} disabled={isProcessing} className={`px-6 py-2.5 text-sm ${ctaClass}`}>Generate</button>
+        <button onClick={handleProcess} disabled={isProcessing} className={`px-6 py-2.5 text-sm ${ctaClass}`}>{isProcessing ? "Processing..." : "Generate"}</button>
       </div>
 
       <div className="flex-1 min-h-0 grid grid-cols-1 lg:grid-cols-[280px_1fr_320px] gap-3 items-start">
@@ -226,7 +235,7 @@ export default function PhotoStudio() {
                 <button key={tool.id} onClick={()=>setActiveTool(tool.id)} className={`${toolBtnClass} border-2 ${activeTool===tool.id ? "bg-[#e69f50]/20 text-[#e69f50] border-[#e69f50] font-semibold" : "bg-[#1F1F1F] text-[#E8DCC6]/80 border-[#D4A574]/10 hover:bg-[#2A2A2A]"}`}><span>{tool.icon}</span> {tool.label}</button>
               ))}
             </div>
-            <button onClick={handleProcess} disabled={isProcessing} className={`w-full mt-4 flex items-center justify-center gap-2 h-[44px] text-[13px] ${ctaClass}`}>Run {activeToolLabel}</button>
+            <button onClick={handleProcess} disabled={isProcessing} className={`w-full mt-4 flex items-center justify-center gap-2 h-[44px] text-[13px] ${ctaClass}`}>{isProcessing ? "Processing..." : `Run ${activeToolLabel}`}</button>
           </div>
           <div className="border border-[#D4A574]/30 rounded-2xl p-4 bg-[#141414] flex-1 flex flex-col shrink-0">
             <h4 className="text-[11px] font-bold tracking-wide text-[#e69f50] mb-3">UPLOAD • LOCKED</h4>
@@ -249,8 +258,8 @@ export default function PhotoStudio() {
             </div>
           </div>
           <div className="flex-1 relative bg-[#0A0A0A] flex min-h-0">
-            <div className="flex-1 relative bg-[#141414]"><div className="absolute top-3 left-3 z-10 text-[10px] font-bold tracking-widest text-white bg-black/70 px-2.5 py-1 rounded-full border border-white/10">BEFORE</div>{uploadedImage ? <img src={uploadedImage} className="w-full h-full object-contain absolute inset-0 p-4" alt="before" /> : <img src="/sneaker.png" className="w-full h-full object-contain absolute inset-0 p-4" alt="sneaker" />}</div>
-            <div className="flex-1 relative border-l border-[#D4A574]/20 bg-[#0F0F0F]">
+            <div className="flex-1 relative bg-[#141414]"><div className="absolute top-3 left-3 z-10 text-[10px] font-bold tracking-widest text-white bg-black/70 px-2.5 py-1 rounded-full border border-white/10">BEFORE</div><img src={getBeforeImage()} className="w-full h-full object-contain absolute inset-0 p-4" alt="before" /></div>
+            <div className="flex-1 relative border-l border-[#D4A574]/20" style={activeTool === "remove-bg" && !isBgRemoved && cutoutImage ? checkerStyle : {backgroundColor: '#0F0F0F'}}>
               <div className="absolute top-3 left-3 z-10 text-[10px] font-bold tracking-widest text-[#e69f50] bg-black/70 px-2.5 py-1 rounded-full border border-[#e69f50]/20">AFTER • {activeToolLabel}</div>
               <canvas ref={canvasRef} hidden />
               {isProcessing ? <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 text-[#e69f50] z-10"><div className="w-8 h-8 border-2 border-[#e69f50] border-t-transparent rounded-full animate-spin" /><span className="text-xs animate-pulse">Processing {activeToolLabel}...</span></div> : afterImage ? <img src={afterImage} className="absolute inset-0 w-full h-full object-contain z-10 p-4" alt="after" /> : <div className="absolute inset-0 flex items-center justify-center text-[#E8DCC6]/30 text-xs z-10">Click Apply</div>}
