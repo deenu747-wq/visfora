@@ -100,8 +100,8 @@ export default function PhotoStudio() {
   const handleProcess = async () => {
     setIsProcessing(true); setPrevBgColor(bgColor); setPrevComposite(compositeImage || afterImage);
     try {
-      // @ts-expect-error no types
-      const mod = await import("@imgly/background-removal");
+  // @ts-ignore - bg removal has no types
+      const mod: any = await import("@imgly/background-removal");
       let fileToProcess: File;
       if (uploadedFile) fileToProcess = uploadedFile;
       else {
