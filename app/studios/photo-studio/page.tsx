@@ -80,11 +80,25 @@ export default function PhotoStudio() {
       const bgImg = new Image(); bgImg.crossOrigin="anonymous"; bgImg.src=customBgUrl; await new Promise<void>(r => { bgImg.onload=()=>r(); bgImg.onerror=()=>r(); });
       if(placement==="Cover") ctx.drawImage(bgImg,0,0,canvas.width,canvas.height);
       else { ctx.fillStyle=bgColor; ctx.fillRect(0,0,canvas.width,canvas.height); const scale=Math.min(canvas.width/bgImg.width, canvas.height/bgImg.height); const w=bgImg.width*scale, h=bgImg.height*scale; ctx.drawImage(bgImg,(canvas.width-w)/2,(canvas.height-h)/2,w,h); }
-    } else { ctx.fillStyle = bgColor; ctx.fillRect(0,0,canvas.width,canvas.height); }
+    } else { 
+      // FIX: If BG is OFF or tool is overview, show transparent checker logic
+      if(!isBgRemoved && activeTool !== "color-bg" && !cutoutImage){
+        // Keep original behavior for overview - will be overridden by image draw
+        ctx.fillStyle = "#141414"; 
+        ctx.fillRect(0,0,canvas.width,canvas.height);
+      } else {
+        ctx.fillStyle = bgColor; 
+        ctx.fillRect(0,0,canvas.width,canvas.height); 
+      }
+    }
     ctx.drawImage(img,0,0,canvas.width,canvas.height);
     const url = canvas.toDataURL(`image/${exportFormat.toLowerCase()}`, exportQuality/100);
-    setCompositeImage(url); setAfterImage(url);
-  }, [cutoutImage, bgColor, exportFormat, exportQuality, customBgUrl, placement, uploadedImage]);
+    setCompositeImage(url); 
+    // Only set afterImage if we are in color-bg or bg-removed state, otherwise keep original for overview logic
+    if(activeTool === "color-bg" || cutoutImage || customBgUrl || isBgRemoved){
+      setAfterImage(url);
+    }
+  }, [cutoutImage, bgColor, exportFormat, exportQuality, customBgUrl, placement, uploadedImage, isBgRemoved, activeTool]);
 
   useEffect(() => { updateComposite(); }, [updateComposite]);
   useEffect(() => {
@@ -100,7 +114,7 @@ export default function PhotoStudio() {
   const handleProcess = async () => {
     setIsProcessing(true); setPrevBgColor(bgColor); setPrevComposite(compositeImage || afterImage);
     try {
-  // @ts-ignore - bg removal has no types
+      // @ts-ignore
       const mod: any = await import("@imgly/background-removal");
       let fileToProcess: File;
       if (uploadedFile) fileToProcess = uploadedFile;
@@ -116,7 +130,25 @@ export default function PhotoStudio() {
     setIsProcessing(false);
   };
   const handleApply = async () => { setPrevBgColor(bgColor); setPrevComposite(compositeImage || afterImage); await updateComposite(); };
-  const handleReset = () => { const def="#e69f50"; updateFromHex(def); setBgStyle("Luxury Marble • Gold"); setShadowIntensity(70); setPlacement("Cover"); setPosition("Center"); setCustomBgUrl(null); setTimeout(()=>updateComposite(),50); };
+  
+  // === FIXED RESET LOGIC ===
+  const handleReset = () => { 
+    const def="#e69f50"; 
+    updateFromHex(def); 
+    setBgStyle("Luxury Marble • Gold"); 
+    setShadowIntensity(70); 
+    setPlacement("Cover"); 
+    setPosition("Center"); 
+    setCustomBgUrl(null);
+    // Full reset to BEFORE state
+    setCutoutImage(null);
+    setIsBgRemoved(false);
+    const original = uploadedImage || "/sneaker.png";
+    setAfterImage(original);
+    setCompositeImage(original);
+    setIsProcessing(false);
+  };
+
   const handleCancel = () => { updateFromHex(prevBgColor); if(prevComposite){ setCompositeImage(prevComposite); setAfterImage(prevComposite); } };
   const handleExport = () => { const link = document.createElement("a"); link.href = compositeImage || afterImage || uploadedImage || "/sneaker.png"; link.download = `visfora-${activeTool}.${exportFormat.toLowerCase()}`; link.click(); };
 
@@ -149,9 +181,24 @@ export default function PhotoStudio() {
                 <div key={tab.name} className="relative" onMouseEnter={() => setHoveredHeaderTab(tab.name)} onMouseLeave={() => setHoveredHeaderTab(null)}>
                   <button onClick={() => { setActiveHeaderTab(tab.name); const first = ALL_TOOLS_MAP[tab.name]?.[0]?.id; if(first) setActiveTool(first); }} className={`px-4 py-2 rounded-full transition cursor-pointer text-[14px] ${isActive ? "border border-[#e69f50] text-white font-medium bg-white/[0.06]" : "border border-transparent text-[#E8DCC6]/60 hover:text-white hover:bg-white/[0.04]"}`}>{tab.name}</button>
                   {isHovered && (
-                    <div className="absolute left-0 top-[44px] w-auto min-w-[240px] max-w-[360px] bg-[#141414] border border-[#D4A574]/30 rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.6)] z-50 overflow-hidden p-2">
+                    <div className="absolute left-0 top-[44px] w-auto min-w-[260px] max-w-[380px] bg-[#141414] border border-[#D4A574]/30 rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.6)] z-50 overflow-hidden p-2">
                       {tab.items.map((item) => (
-                        <button key={item.label} onClick={() => handleHeaderItemClick(tab.name, item)} className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-[#1F1F1F] cursor-pointer"><div><div className="text-[13px] text-white flex items-center gap-2">{item.label}{item.badge && <span className="text-[9px] bg-[#e69f50] text-black px-1.5 py-0.5 rounded-full font-bold">{item.badge}</span>}</div><div className="text-[11px] text-[#E8DCC6]/40">{item.desc}</div></div></button>
+                        <button 
+                          key={item.label} 
+                          onClick={() => handleHeaderItemClick(tab.name, item)} 
+                          className="group w-full text-left px-3 py-2.5 rounded-xl border border-transparent hover:bg-[#e69f50]/12 hover:border-[#e69f50]/30 cursor-pointer transition-all duration-200"
+                        >
+                          <div>
+                            <div className="text-[13px] text-white group-hover:text-[#e69f50] flex items-center gap-2 transition-colors">
+                              {item.label}
+                              {item.badge && <span className="text-[9px] bg-[#e69f50] text-black px-1.5 py-0.5 rounded-full font-bold">{item.badge}</span>}
+                            </div>
+                            {/* FIXED: More visible sub-text + hover visible */}
+                            <div className="text-[11px] text-[#E8DCC6]/70 group-hover:text-white transition-colors mt-[2px]">
+                              {item.desc}
+                            </div>
+                          </div>
+                        </button>
                       ))}
                     </div>
                   )}
@@ -189,12 +236,11 @@ export default function PhotoStudio() {
           </div>
         </div>
 
-        {/* ===== MIDDLE SECTION RECTIFIED - CLEAN ===== */}
         <div id="studio-canvas-wrapper" className="shrink-0 border border-[#D4A574]/30 rounded-2xl bg-[#141414] flex flex-col overflow-hidden w-full h-[640px] min-h-[640px] max-h-[640px]">
           <div className="p-3 px-4 border-b border-[#D4A574]/20 flex items-center justify-between shrink-0 bg-[#0F0F0F]/50">
             <h3 className="text-[#E8DCC6] text-[12px] font-bold tracking-[0.15em] flex items-center gap-2"><span className="w-2 h-2 bg-[#e69f50] rounded-full animate-pulse"></span>STUDIO CANVAS • {activeToolLabel.toUpperCase()}</h3>
             <div className="flex items-center gap-2">
-              <button onClick={handleReset} title="Reset" className="w-[28px] h-[28px] flex items-center justify-center rounded-full bg-[#1F1F1F] border border-[#D4A574]/30 hover:border-[#e69f50] text-[#E8DCC6]/60 hover:text-[#e69f50] cursor-pointer">↺</button>
+              <button onClick={handleReset} title="Reset to Original" className="w-[32px] h-[32px] flex items-center justify-center rounded-full bg-[#1F1F1F] border border-[#D4A574]/30 hover:border-[#e69f50] hover:bg-[#e69f50]/10 text-[#E8DCC6]/60 hover:text-[#e69f50] cursor-pointer transition-all">↺</button>
               <div className="flex items-center gap-2 bg-[#1F1F1F] border border-[#D4A574]/20 rounded-full pl-3 pr-1 py-1">
                 <span className="text-[10px] font-bold tracking-wide">BG</span>
                 <button onClick={()=>setIsBgRemoved(!isBgRemoved)} className={`relative w-[56px] h-[24px] rounded-full p-[2px] cursor-pointer transition-all ${isBgRemoved ? "bg-[#e69f50]" : "bg-[#0A0A0A]"}`}><div className={`w-[20px] h-[20px] rounded-full bg-white shadow transition-all ${isBgRemoved ? "translate-x-[32px]" : "translate-x-0"}`} /></button>
@@ -210,7 +256,6 @@ export default function PhotoStudio() {
               {isProcessing ? <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 text-[#e69f50] z-10"><div className="w-8 h-8 border-2 border-[#e69f50] border-t-transparent rounded-full animate-spin" /><span className="text-xs animate-pulse">Processing {activeToolLabel}...</span></div> : afterImage ? <img src={afterImage} className="absolute inset-0 w-full h-full object-contain z-10 p-4" alt="after" /> : <div className="absolute inset-0 flex items-center justify-center text-[#E8DCC6]/30 text-xs z-10">Click Apply</div>}
             </div>
           </div>
-          {/* Clean status - only file + bg color */}
           <div className="p-2.5 px-4 flex items-center justify-between bg-[#0F0F0F] border-t border-[#D4A574]/20 shrink-0">
             <span className="text-[11px] text-[#E8DCC6]/60 flex items-center gap-2"><span className="w-2 h-2 rounded-full" style={{background:bgColor}} />{fileName} • {bgColor}</span>
             <span className="text-[10px] text-[#E8DCC6]/30">{exportFormat} • 2048px • {activeHeaderTab}</span>
