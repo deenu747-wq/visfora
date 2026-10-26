@@ -267,7 +267,8 @@ export default function PhotoStudio() {
     <img src="/Logo-White.png" alt="VISFORA Logo" className="h-11 w-auto object-contain" />
     <span className="text-[26px] tracking-[0.18em] font-light text-white leading-none">VIS<span className="font-semibold text-[#d6a85a]">FORA</span></span>
   </Link>
-  <span className="text-[26px] tracking-[0.18em] font-light text-white leading-none select-none cursor-default">Photo Studio</span>
+    <span className="text-[26px] font-light text-[#d6a85a] leading-none select-none mx-1">-</span>
+  <span className="text-[26px] tracking-normal font-light text-white leading-none select-none cursor-default">Photo Studio</span>
 </div>
           <nav className="hidden lg:flex items-center gap-1 text-[15px]">
             {HEADER_TABS.map((tab) => {
@@ -328,31 +329,33 @@ export default function PhotoStudio() {
         </div>
 
         <div id="studio-canvas-wrapper" className="shrink-0 border border-[#D4A574]/30 rounded-2xl bg-[#141414] flex flex-col overflow-hidden w-full h-[640px] min-h-[640px] max-h-[640px]">
-          <div className="p-3 border-b border-[#D4A574]/20 flex items-center justify-between shrink-0">
+                    <div className="p-3 border-b border-[#D4A574]/20 flex items-center justify-between shrink-0">
             <h3 className="text-[#E8DCC6] font-medium tracking-wide flex items-center gap-2">
-               <span className="w-2 h-2 bg-[#e69f50] rounded-full animate-pulse"></span>Studio Canvas</h3>
-            <div className="flex items-center gap-2">
-              <div className="flex items-center gap-2 bg-[#1F1F1F] border border-[#D4A574]/30 rounded-full pl-3 pr-1 py-1 ml-2">
-                <span className="text-[10px] text-[#E8DCC6]/70">Background Removal</span>
-                <button onClick={()=>setIsBgRemoved(!isBgRemoved)} className={`relative w-[64px] h-[28px] rounded-full p-1 transition-all cursor-pointer flex items-center ${isBgRemoved ? "bg-[#e69f50]" : "bg-[#2A2A2A] border border-[#D4A574]/20"}`}>
-                  <span className={`absolute text-[10px] font-bold ${isBgRemoved ? "left-2.5 text-black" : "right-2.5 text-[#E8DCC6]/50"}`}>{isBgRemoved ? "ON" : "OFF"}</span>
-                  <div className={`w-5 h-5 rounded-full shadow-md transition-all z-10 ${isBgRemoved ? "translate-x-[36px] bg-black" : "translate-x-0 bg-[#E8DCC6]"}`} />
+              <span className="w-2 h-2 bg-[#e69f50] rounded-full animate-pulse"></span>
+              Studio Canvas
+            </h3>
+            <div className="flex items-center gap-2.5">
+              {/* 2. RESET MOVED BEFORE + SIZE MATCHED TO TOGGLE 32px */}
+              <button onClick={handleReset} title="Reset" className="w-[32px] h-[32px] flex items-center justify-center rounded-full bg-[#1F1F1F] border border-[#D4A574]/30 hover:bg-[#e69f50]/15 hover:border-[#e69f50]/50 hover:text-[#e69f50] text-[#E8DCC6]/70 cursor-pointer transition-all active:scale-90">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+              </button>
+
+              {/* 4. NEW TRENDY CATCHY SLIDING BUTTON - NO TEXT CUT, ACTIVE */}
+              <div className="flex items-center gap-2.5 bg-[#0F0F0F] border border-[#D4A574]/20 rounded-full pl-3.5 pr-1.5 py-1.5">
+                <span className="text-[11px] tracking-wide font-medium text-[#E8DCC6]/80">BG Remove</span>
+                <button
+                  onClick={()=>setIsBgRemoved(!isBgRemoved)}
+                  className={`relative w-[68px] h-[28px] rounded-full p-[3px] transition-all duration-300 cursor-pointer flex items-center shadow-inner ${isBgRemoved ? "bg-gradient-to-r from-[#e69f50] to-[#d48e40] shadow-[0_0_12px_rgba(230,159,80,0.4)]" : "bg-[#1F1F1F] border border-white/10"}`}
+                >
+                  <div className={`w-[22px] h-[22px] rounded-full bg-white shadow-[0_2px_8px_rgba(0,0,0,0.4)] flex items-center justify-center text-[10px] font-bold transition-all duration-300 ${isBgRemoved ? "translate-x-[40px] text-black" : "translate-x-0 text-[#E8DCC6]/40"}`}>
+                    {isBgRemoved ? "✓" : "○"}
+                  </div>
+                  <span className={`absolute text-[9px] font-black tracking-widest transition-all ${isBgRemoved ? "left-[10px] text-black/80" : "right-[10px] text-[#E8DCC6]/40"}`}>
+                    {isBgRemoved ? "ON" : "OFF"}
+                  </span>
                 </button>
               </div>
-              <button onClick={handleReset} title="Reset View" className="w-8 h-8 flex items-center justify-center rounded-full bg-[#1F1F1F] border border-[#D4A574]/20 hover:bg-[#e69f50]/20 hover:border-[#e69f50] hover:text-[#e69f50] cursor-pointer transition active:scale-95">
-               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
-              </button>
-              <button 
-        title="Fullscreen" 
-     onClick={() => {
-    const el = document.getElementById('studio-canvas-wrapper');
-    if (!document.fullscreenElement) el?.requestFullscreen();
-    else document.exitFullscreen();
-  }} 
-  className="w-8 h-8 flex items-center justify-center rounded-full bg-[#1F1F1F] border border-[#D4A574]/20 hover:bg-[#e69f50]/20 hover:border-[#e69f50] hover:text-[#e69f50] cursor-pointer transition active:scale-95"
->
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
-</button>
+              {/* 3. FULLSCREEN REMOVED */}
             </div>
           </div>
           <div className="flex-1 relative bg-[#0F0F0F] flex min-h-0">
